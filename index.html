@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Bibliotecas do Firebase (Login e Banco de Dados) -->
+    <!-- Bibliotecas do Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
@@ -132,14 +132,12 @@
         .color-section { margin-bottom: 24px; }
         .color-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 12px; }
         .color-options { display: flex; gap: 14px; flex-wrap: wrap; }
-        .color-dot { width: 36px; height: 36px; border-radius: 50%; cursor: pointer; border: 1px solid var(--border-color); transition: all 0.2s; position: relative; }
+        .color-dot { width: 36px; height: 36px; border-radius: 50%; cursor: pointer; border: 1px solid rgba(0,0,0,0.15); transition: all 0.2s; position: relative; }
         .color-dot:hover { transform: scale(1.1); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .color-dot.selected { border-color: var(--dark-heading); transform: scale(1.1); box-shadow: 0 0 0 2px var(--bg-white), 0 0 0 4px var(--dark-heading); }
         .color-dot::after { content: attr(data-color); position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: var(--dark-heading); color: white; padding: 4px 8px; border-radius: 4px; font-size: 10px; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.2s; margin-bottom: 8px; text-transform: capitalize; z-index: 20;}
         .color-dot:hover::after { opacity: 1; }
-        
-        /* Fundo especial para Personalizado (arco-íris) */
-        .color-dot.custom-gradient { background: conic-gradient(from 90deg, #ff595e, #ffca3a, #8ac926, #1982c4, #6a4c93, #ff595e); border: none; }
+        .color-dot.custom-gradient { background: conic-gradient(from 90deg, #ff595e, #ffca3a, #8ac926, #1982c4, #6a4c93, #ff595e); border: 1px solid rgba(0,0,0,0.15); }
 
         .selector-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 12px; display: flex; justify-content: space-between; }
         .sizes-grid { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 32px; }
@@ -376,13 +374,21 @@
             appId: "1:895353456691:web:53c4f6bbe2987f86e1fb46"
         };
         
-        // Mapeamento de cores para as bolinhas
+        // Mapeamento Expandido de Cores
         const COLOR_HEX = {
             'branco': '#FFFFFF', 'preto': '#2C2C2C', 'cinza': '#6B6E70',
             'vermelho': '#D93838', 'azul': '#1B365D', 'marrom': '#5C4033',
             'verde': '#2E4A35', 'rosa': '#D4A5A5', 'dourado': '#967645',
-            'bordo': '#6A2E35', 'grafite': '#4A4A4A', 'nude': '#E2C2B3'
+            'bordo': '#6A2E35', 'grafite': '#4A4A4A', 'nude': '#E2C2B3',
+            'amarelo': '#F4C430', 'laranja': '#E67E22', 'roxo': '#6A0DAD',
+            'bege': '#F5F5DC', 'azul marinho': '#000080', 'verde musgo': '#2E8B57',
+            'vinho': '#722F37', 'chumbo': '#36454F', 'off white': '#FAF9F6'
         };
+
+        // Função para garantir que uma cor sólida tenha uma representação, mesmo que não esteja no dicionário
+        function getHex(colorName) {
+            return COLOR_HEX[colorName] || colorName; 
+        }
 
         let PRODUCTS = [];
         const SIZES = ['PP', 'P', 'M', 'G', 'GG', 'XG', 'G1', 'G2'];
@@ -518,12 +524,13 @@
                     let colorCombinations = {};
 
                     if (item.image) {
-                        const imgItems = item.image.split(',').map(i => i.trim()).filter(i => i !== '');
+                        // NOVIDADE: A quebra é feita por vírgula OU quebra de linha (Enter na planilha)
+                        const imgItems = item.image.split(/,|\n|\r/).map(i => i.trim()).filter(i => i !== '');
                         imgItems.forEach(imgData => {
-                            if(imgData.includes('=')) {
-                                let parts = imgData.split('=');
-                                let combo = parts[0].trim().toLowerCase();
-                                let url = parts[1].trim();
+                            let eqIndex = imgData.indexOf('=');
+                            if(eqIndex !== -1) {
+                                let combo = imgData.substring(0, eqIndex).trim().toLowerCase();
+                                let url = imgData.substring(eqIndex + 1).trim();
                                 
                                 if(!colorCombinations[combo]) colorCombinations[combo] = [];
                                 colorCombinations[combo].push(url);
@@ -644,11 +651,11 @@
                     let bgStyle = '';
                     
                     if(parts.length > 1) {
-                        let topHex = COLOR_HEX[parts[0]] || '#E5E5E5';
-                        let bottomHex = COLOR_HEX[parts[1]] || '#E5E5E5';
+                        let topHex = getHex(parts[0]);
+                        let bottomHex = getHex(parts[1]);
                         bgStyle = `background: linear-gradient(135deg, ${topHex} 50%, ${bottomHex} 50%);`;
                     } else {
-                        let hex = COLOR_HEX[parts[0]] || '#E5E5E5';
+                        let hex = getHex(parts[0]);
                         bgStyle = `background: ${hex};`;
                     }
 
@@ -713,7 +720,9 @@
 
         function renderThumbnails() {
             const thumbsContainer = document.getElementById('detail-thumbnails'); thumbsContainer.innerHTML = '';
-            if(currentDetailImages.length > 1) {
+            
+            // Renderiza as miniaturas sempre que houver 1 ou mais fotos (para não deixar o espaço vazio na tela de cores exclusivas)
+            if(currentDetailImages.length > 0) {
                 currentDetailImages.forEach((imgUrl, index) => {
                     const thumb = document.createElement('img'); thumb.src = imgUrl; thumb.className = index === 0 ? 'thumb-img active' : 'thumb-img';
                     thumb.onclick = () => { currentImageIndex = index; updateMainImage(); };
@@ -810,7 +819,7 @@
             const cep = document.getElementById('cust-cep').value.trim() || "Não informado";
             const delivery = document.getElementById('cust-delivery').options[document.getElementById('cust-delivery').selectedIndex].text;
 
-            let text = `*NOVO PEDIDO - VERICTA* \n\n*Cliente:* ${name}\n*CEP:* ${cep}\n*Entrega:* ${delivery}\n\n*ITENS DO PEDIDO:*\n`;
+            let text = `*NOVO PEDIDO - VERICTA*\n\n*Cliente:* ${name}\n*CEP:* ${cep}\n*Entrega:* ${delivery}\n\n*ITENS DO PEDIDO:*\n`;
             let total = 0;
             cart.forEach((item, index) => {
                 const sub = item.price * item.qty; total += sub;
