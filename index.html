@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vericta - High Performance Sportswear</title>
+    <title>Vericta</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
+    <!-- Bibliotecas do Firebase (Login e Banco de Dados) -->
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
@@ -103,9 +104,21 @@
         .back-btn:hover { color: var(--primary-gold); }
 
         .details-container { background: var(--bg-white); border-radius: var(--radius-lg); padding: 40px; box-shadow: var(--shadow-card); display: grid; grid-template-columns: 1fr 1fr; gap: 60px; margin-bottom: 60px; }
+        
+        /* GALERIA E SETAS */
         .gallery-section { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
-        .main-gallery-img { width: 100%; height: 500px; border-radius: var(--radius-md); object-fit: cover; background-color: #F8F8F8; border: 1px solid var(--border-color); }
-        .thumbnails-row { display: flex; gap: 12px; overflow-x: auto; width: 100%; scrollbar-width: none; }
+        .main-image-container { position: relative; border-radius: var(--radius-md); overflow: hidden; background-color: #F8F8F8; border: 1px solid var(--border-color); }
+        .main-gallery-img { width: 100%; height: 500px; object-fit: cover; display: block; }
+        
+        .nav-arrow { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.85); color: var(--dark-heading); border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.2s; }
+        .nav-arrow:hover { background: var(--primary-gold); color: white; }
+        .nav-arrow.left { left: 12px; }
+        .nav-arrow.right { right: 12px; }
+
+        .thumbnails-wrapper { position: relative; display: flex; align-items: center; gap: 8px; width: 100%; }
+        .thumb-nav-arrow { background: var(--bg-white); border: 1px solid var(--border-color); color: var(--dark-heading); width: 30px; height: 30px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; }
+        .thumb-nav-arrow:hover { border-color: var(--primary-gold); color: var(--primary-gold); }
+        .thumbnails-row { display: flex; gap: 12px; overflow-x: auto; width: 100%; scrollbar-width: none; scroll-behavior: smooth; }
         .thumbnails-row::-webkit-scrollbar { display: none; }
         .thumb-img { min-width: 80px; width: 80px; height: 80px; border-radius: var(--radius-md); object-fit: cover; cursor: pointer; border: 2px solid transparent; transition: all 0.3s; opacity: 0.6; }
         .thumb-img.active, .thumb-img:hover { border-color: var(--primary-gold); opacity: 1; }
@@ -115,15 +128,18 @@
         .details-price { font-size: 28px; font-weight: 500; color: var(--primary-gold); margin-bottom: 24px; }
         .details-description { color: var(--text-main); font-size: 15px; line-height: 1.8; margin-bottom: 32px; padding-bottom: 32px; border-bottom: 1px solid var(--border-color); white-space: pre-wrap; font-weight: 300; word-wrap: break-word; overflow-wrap: break-word;}
         
-        /* CORES */
+        /* CORES (Bicolores e Personalizado) */
         .color-section { margin-bottom: 24px; }
         .color-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 12px; }
-        .color-options { display: flex; gap: 12px; flex-wrap: wrap; }
-        .color-dot { width: 34px; height: 34px; border-radius: 50%; cursor: pointer; border: 2px solid var(--border-color); transition: all 0.2s; position: relative; }
-        .color-dot:hover { transform: scale(1.1); }
+        .color-options { display: flex; gap: 14px; flex-wrap: wrap; }
+        .color-dot { width: 36px; height: 36px; border-radius: 50%; cursor: pointer; border: 1px solid var(--border-color); transition: all 0.2s; position: relative; }
+        .color-dot:hover { transform: scale(1.1); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .color-dot.selected { border-color: var(--dark-heading); transform: scale(1.1); box-shadow: 0 0 0 2px var(--bg-white), 0 0 0 4px var(--dark-heading); }
-        .color-dot::after { content: attr(data-color); position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: var(--dark-heading); color: white; padding: 4px 8px; border-radius: 4px; font-size: 10px; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.2s; margin-bottom: 8px; text-transform: capitalize; }
+        .color-dot::after { content: attr(data-color); position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: var(--dark-heading); color: white; padding: 4px 8px; border-radius: 4px; font-size: 10px; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.2s; margin-bottom: 8px; text-transform: capitalize; z-index: 20;}
         .color-dot:hover::after { opacity: 1; }
+        
+        /* Fundo especial para Personalizado (arco-íris) */
+        .color-dot.custom-gradient { background: conic-gradient(from 90deg, #ff595e, #ffca3a, #8ac926, #1982c4, #6a4c93, #ff595e); border: none; }
 
         .selector-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 12px; display: flex; justify-content: space-between; }
         .sizes-grid { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 32px; }
@@ -136,7 +152,6 @@
         .qty-picker-btn { width: 46px; height: 46px; background: none; border: none; font-size: 18px; font-weight: 400; cursor: pointer; color: var(--dark-heading); transition: background 0.3s; }
         .qty-picker-btn:hover { background: var(--bg-cream); color: var(--primary-gold); }
         .qty-picker-value { width: 50px; text-align: center; font-size: 16px; font-weight: 600; color: var(--dark-heading); border:none; outline:none; background:transparent;}
-        
         .btn-add-to-cart-large { width: 100%; background: var(--dark-heading); color: var(--bg-white); border: none; padding: 18px; border-radius: 30px; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; transition: all 0.3s ease; }
         .btn-add-to-cart-large:hover { background: var(--primary-gold); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(150, 118, 69, 0.2); }
 
@@ -154,7 +169,7 @@
         .cart-item-row { display: flex; gap: 16px; padding-bottom: 20px; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); align-items: center; }
         .cart-item-img { width: 76px; height: 76px; border-radius: var(--radius-md); object-fit: cover; background: #F8F8F8;}
         .cart-item-info { flex-grow: 1; }
-        .cart-item-title { font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 600; color: var(--dark-heading); margin-bottom: 4px;}
+        .cart-item-title { font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 600; color: var(--dark-heading); margin-bottom: 4px; text-transform: capitalize;}
         .cart-item-meta { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; text-transform: capitalize;}
         .cart-item-price { font-size: 14px; font-weight: 600; color: var(--primary-gold); }
         .cart-footer { padding: 32px; border-top: 1px solid var(--border-color); background: var(--bg-cream); }
@@ -230,6 +245,7 @@
     <div id="toast" class="toast-notify">Ação realizada!</div>
 
     <div id="main-content">
+        <!-- ================= CATALOG VIEW ================= -->
         <div id="view-catalog" class="page-view active">
             <div class="hero-section" id="hero-banner">
                 <div class="hero-slider" id="hero-slider">
@@ -255,16 +271,37 @@
             </main>
         </div>
 
+        <!-- ================= PRODUCT DETAILS VIEW ================= -->
         <div id="view-details" class="page-view main-wrapper">
             <button class="back-btn" onclick="showCatalogPage()">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
                 Voltar
             </button>
             <div class="details-container">
+                
+                <!-- GALERIA DE IMAGENS COM SETAS -->
                 <div class="gallery-section">
-                    <img id="detail-main-img" src="" alt="Produto" class="main-gallery-img">
-                    <div class="thumbnails-row" id="detail-thumbnails"></div>
+                    <div class="main-image-container">
+                        <button class="nav-arrow left" onclick="navigateGallery(-1)">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                        </button>
+                        <img id="detail-main-img" src="" alt="Produto" class="main-gallery-img">
+                        <button class="nav-arrow right" onclick="navigateGallery(1)">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </button>
+                    </div>
+                    
+                    <div class="thumbnails-wrapper">
+                        <button class="thumb-nav-arrow left" onclick="scrollThumbs(-1)">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                        </button>
+                        <div class="thumbnails-row" id="detail-thumbnails"></div>
+                        <button class="thumb-nav-arrow right" onclick="scrollThumbs(1)">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </button>
+                    </div>
                 </div>
+
                 <div class="details-info-section">
                     <div class="breadcrumb">Catálogo / <span id="bread-category"></span> / <span id="bread-name" style="color:var(--text-main);"></span></div>
                     <h1 id="detail-title" class="details-title">Nome</h1>
@@ -330,7 +367,7 @@
         // ================= CONFIGURAÇÃO DE BANCOS DE DADOS =================
         const DATABASE_URL = 'https://sheetdb.io/api/v1/67x4h7xe1wzcg';
         
- const firebaseConfig = {
+        const firebaseConfig = {
             apiKey: "AIzaSyCZGWrGi2dD91qq2KOP0_JiNQzJz3xdZbQ",
             authDomain: "banco-de-dados-vericta.firebaseapp.com",
             projectId: "banco-de-dados-vericta",
@@ -343,15 +380,17 @@
         const COLOR_HEX = {
             'branco': '#FFFFFF', 'preto': '#2C2C2C', 'cinza': '#6B6E70',
             'vermelho': '#D93838', 'azul': '#1B365D', 'marrom': '#5C4033',
-            'verde': '#2E4A35', 'rosa': '#D4A5A5', 'dourado': '#967645'
+            'verde': '#2E4A35', 'rosa': '#D4A5A5', 'dourado': '#967645',
+            'bordo': '#6A2E35', 'grafite': '#4A4A4A', 'nude': '#E2C2B3'
         };
 
         let PRODUCTS = [];
         const SIZES = ['PP', 'P', 'M', 'G', 'GG', 'XG', 'G1', 'G2'];
         let currentDetailProduct = null;
+        let currentDetailImages = [];
+        let currentImageIndex = 0;
         let selectedSize = null;
-        let selectedTopColor = null;
-        let selectedBottomColor = null;
+        let selectedColorCombo = null;
         let detailQty = 1;
         let cart = [];
         let favorites = [];
@@ -372,7 +411,7 @@
         function toggleMobileMenu() { document.getElementById('mobile-nav').classList.toggle('open'); }
 
         function initFirebase() {
-            if (firebaseConfig.apiKey !== "COLE_SUA_API_KEY_AQUI") {
+            if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "") {
                 firebase.initializeApp(firebaseConfig);
                 auth = firebase.auth();
                 db = firebase.firestore();
@@ -477,8 +516,6 @@
 
                     let rawImagesArray = [];
                     let colorCombinations = {};
-                    let topColorsArray = [];
-                    let bottomColorsArray = [];
 
                     if (item.image) {
                         const imgItems = item.image.split(',').map(i => i.trim()).filter(i => i !== '');
@@ -489,10 +526,6 @@
                                 let url = parts[1].trim();
                                 colorCombinations[combo] = url;
                                 rawImagesArray.push(url);
-                                
-                                let colors = combo.split('_');
-                                if(colors[0] && !topColorsArray.includes(colors[0])) topColorsArray.push(colors[0]);
-                                if(colors[1] && !bottomColorsArray.includes(colors[1])) bottomColorsArray.push(colors[1]);
                             } else {
                                 rawImagesArray.push(imgData);
                             }
@@ -507,7 +540,7 @@
                         id: parseInt(item.id) || Math.floor(Math.random() * 1000), name: item.name || 'Produto Vericta', category: rawCategory,
                         price: parseFloat(rawPrice), desc: item.desc || '', images: rawImagesArray, 
                         stockBySize: stockBySize, totalStock: totalStock,
-                        colorCombinations: colorCombinations, topColors: topColorsArray, bottomColors: bottomColorsArray
+                        colorCombinations: colorCombinations
                     };
                 });
                 renderCatalog(PRODUCTS);
@@ -581,53 +614,47 @@
             const product = PRODUCTS.find(p => p.id === id);
             if(!product || product.totalStock <= 0) return; 
             
-            currentDetailProduct = product; detailQty = 1; selectedSize = null;
-            selectedTopColor = product.topColors.length > 0 ? product.topColors[0] : null;
-            selectedBottomColor = product.bottomColors.length > 0 ? product.bottomColors[0] : null;
+            currentDetailProduct = product; detailQty = 1; selectedSize = null; selectedColorCombo = 'personalizado';
+            currentDetailImages = product.images;
+            currentImageIndex = 0;
 
             document.getElementById('bread-category').textContent = product.category; document.getElementById('bread-category').style.textTransform = "capitalize";
             document.getElementById('bread-name').textContent = product.name; document.getElementById('detail-title').textContent = product.name;
             document.getElementById('detail-price').textContent = formatMoney(product.price); document.getElementById('detail-desc').textContent = product.desc;
             document.getElementById('detail-qty').value = detailQty;
 
-            const mainImg = document.getElementById('detail-main-img'); mainImg.src = product.images[0]; mainImg.onerror = function() { this.src='https://via.placeholder.com/400x400?text=Vericta'; };
-            const thumbsContainer = document.getElementById('detail-thumbnails'); thumbsContainer.innerHTML = '';
-            
-            if(product.images.length > 1) {
-                product.images.forEach((imgUrl, index) => {
-                    const thumb = document.createElement('img'); thumb.src = imgUrl; thumb.className = index === 0 ? 'thumb-img active' : 'thumb-img';
-                    thumb.onclick = () => { mainImg.src = imgUrl; document.querySelectorAll('.thumb-img').forEach(t => t.classList.remove('active')); thumb.classList.add('active'); };
-                    thumbsContainer.appendChild(thumb);
-                });
-            }
+            updateMainImage();
+            renderThumbnails();
 
-            // Geração das Bolinhas de Cores
+            // Geração das Bolinhas de Cores (Divididas ao meio)
             const colorsContainer = document.getElementById('detail-colors-container');
             colorsContainer.innerHTML = '';
             
-            if(product.topColors.length > 0 || product.bottomColors.length > 0) {
-                let colorHTML = '';
-                if(product.topColors.length > 0) {
-                    colorHTML += `<div class="color-section"><div class="color-label">Cor: Parte de Cima</div><div class="color-options">`;
-                    product.topColors.forEach(color => {
-                        const hex = COLOR_HEX[color] || '#E5E5E5';
-                        const selClass = color === selectedTopColor ? 'selected' : '';
-                        colorHTML += `<div class="color-dot top-color-dot ${selClass}" style="background: ${hex};" data-color="${color}" onclick="selectDetailColor('top', '${color}', this)"></div>`;
-                    });
-                    colorHTML += `</div></div>`;
+            if(Object.keys(product.colorCombinations).length > 0) {
+                let colorHTML = `<div class="color-section"><div class="color-label">Cores Disponíveis</div><div class="color-options">`;
+                
+                // Primeiro botão: Personalizado (Gradiente arco-íris)
+                colorHTML += `<div class="color-dot custom-gradient selected" data-color="Personalizado" onclick="selectDetailColor('personalizado', this)"></div>`;
+
+                // Botões de combinações
+                for (let combo in product.colorCombinations) {
+                    let parts = combo.split('_');
+                    let bgStyle = '';
+                    
+                    if(parts.length > 1) {
+                        let topHex = COLOR_HEX[parts[0]] || '#E5E5E5';
+                        let bottomHex = COLOR_HEX[parts[1]] || '#E5E5E5';
+                        bgStyle = `background: linear-gradient(135deg, ${topHex} 50%, ${bottomHex} 50%);`;
+                    } else {
+                        let hex = COLOR_HEX[parts[0]] || '#E5E5E5';
+                        bgStyle = `background: ${hex};`;
+                    }
+
+                    let labelNome = combo.replace('_', ' / ');
+                    colorHTML += `<div class="color-dot" style="${bgStyle}" data-color="${labelNome}" onclick="selectDetailColor('${combo}', this)"></div>`;
                 }
-                if(product.bottomColors.length > 0) {
-                    colorHTML += `<div class="color-section"><div class="color-label">Cor: Parte de Baixo</div><div class="color-options">`;
-                    product.bottomColors.forEach(color => {
-                        const hex = COLOR_HEX[color] || '#E5E5E5';
-                        const selClass = color === selectedBottomColor ? 'selected' : '';
-                        colorHTML += `<div class="color-dot bottom-color-dot ${selClass}" style="background: ${hex};" data-color="${color}" onclick="selectDetailColor('bottom', '${color}', this)"></div>`;
-                    });
-                    colorHTML += `</div></div>`;
-                }
+                colorHTML += `</div></div>`;
                 colorsContainer.innerHTML = colorHTML;
-                // Força a seleção inicial
-                updateDetailImageFromColor();
             }
 
             const sizesContainer = document.getElementById('detail-sizes'); sizesContainer.innerHTML = '';
@@ -652,44 +679,73 @@
             showDetailsPage();
         }
 
-        // Função de seleção de cor
-        window.selectDetailColor = function(type, color, element) {
-            if(type === 'top') {
-                selectedTopColor = color;
-                document.querySelectorAll('.top-color-dot').forEach(d => d.classList.remove('selected'));
-            } else {
-                selectedBottomColor = color;
-                document.querySelectorAll('.bottom-color-dot').forEach(d => d.classList.remove('selected'));
-            }
-            element.classList.add('selected');
-            updateDetailImageFromColor();
+        // --- SISTEMA DA GALERIA COM SETAS ---
+        function updateMainImage() {
+            const mainImg = document.getElementById('detail-main-img');
+            mainImg.src = currentDetailImages[currentImageIndex];
+            mainImg.onerror = function() { this.src='https://via.placeholder.com/400x400?text=Vericta'; };
+            
+            document.querySelectorAll('.thumb-img').forEach((t, index) => {
+                t.classList.remove('active');
+                if(index === currentImageIndex) t.classList.add('active');
+            });
         }
 
-        function updateDetailImageFromColor() {
-            if(!currentDetailProduct || Object.keys(currentDetailProduct.colorCombinations).length === 0) return;
+        function navigateGallery(direction) {
+            if(currentDetailImages.length <= 1) return;
+            currentImageIndex += direction;
+            if(currentImageIndex < 0) currentImageIndex = currentDetailImages.length - 1;
+            if(currentImageIndex >= currentDetailImages.length) currentImageIndex = 0;
+            updateMainImage();
             
-            let comboKey = '';
-            if(selectedTopColor && selectedBottomColor) comboKey = `${selectedTopColor}_${selectedBottomColor}`;
-            else if(selectedTopColor) comboKey = selectedTopColor;
-            else if(selectedBottomColor) comboKey = selectedBottomColor;
+            // Tenta manter a miniatura visível
+            const thumbsRow = document.getElementById('detail-thumbnails');
+            const activeThumb = thumbsRow.children[currentImageIndex];
+            if(activeThumb) activeThumb.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+        }
 
-            const newImgUrl = currentDetailProduct.colorCombinations[comboKey];
-            if(newImgUrl) {
-                const mainImg = document.getElementById('detail-main-img');
-                mainImg.src = newImgUrl;
-                document.querySelectorAll('.thumb-img').forEach(t => {
-                    t.classList.remove('active');
-                    if(t.src === mainImg.src) t.classList.add('active');
+        function scrollThumbs(direction) {
+            const row = document.getElementById('detail-thumbnails');
+            row.scrollBy({ left: direction * 150, behavior: 'smooth' });
+        }
+
+        function renderThumbnails() {
+            const thumbsContainer = document.getElementById('detail-thumbnails'); thumbsContainer.innerHTML = '';
+            if(currentDetailImages.length > 1) {
+                currentDetailImages.forEach((imgUrl, index) => {
+                    const thumb = document.createElement('img'); thumb.src = imgUrl; thumb.className = index === 0 ? 'thumb-img active' : 'thumb-img';
+                    thumb.onclick = () => { currentImageIndex = index; updateMainImage(); };
+                    thumbsContainer.appendChild(thumb);
                 });
+            }
+        }
+
+        // Função de seleção de cor nos botões bicolores
+        window.selectDetailColor = function(combo, element) {
+            selectedColorCombo = combo;
+            document.querySelectorAll('#detail-colors-container .color-dot').forEach(d => d.classList.remove('selected'));
+            element.classList.add('selected');
+
+            if(combo !== 'personalizado' && currentDetailProduct.colorCombinations[combo]) {
+                const imgUrl = currentDetailProduct.colorCombinations[combo];
+                const idx = currentDetailImages.indexOf(imgUrl);
+                if(idx !== -1) {
+                    currentImageIndex = idx;
+                    updateMainImage();
+                } else {
+                    document.getElementById('detail-main-img').src = imgUrl;
+                    document.querySelectorAll('.thumb-img').forEach(t => t.classList.remove('active'));
+                }
             }
         }
 
         function changeDetailQty(amount) {
             if (!selectedSize) return;
-            const maxStock = currentDetailProduct.stockBySize[selectedSize];
+            const maxStockForSelectedSize = currentDetailProduct.stockBySize[selectedSize];
             let newQty = detailQty + amount;
-            if (newQty >= 1 && newQty <= maxStock) { detailQty = newQty; document.getElementById('detail-qty').value = detailQty; } 
-            else if (newQty > maxStock) showToast(`Limite de estoque atingido`);
+            if (newQty >= 1 && newQty <= maxStockForSelectedSize) {
+                detailQty = newQty; document.getElementById('detail-qty').value = detailQty;
+            } else if (newQty > maxStockForSelectedSize) showToast(`Limite de estoque atingido`);
         }
 
         function addToCartFromDetail() {
@@ -697,9 +753,11 @@
             const maxStock = currentDetailProduct.stockBySize[selectedSize];
             
             let colorDesc = "";
-            if(selectedTopColor && selectedBottomColor) colorDesc = ` (${selectedTopColor}/${selectedBottomColor})`;
-            else if(selectedTopColor) colorDesc = ` (${selectedTopColor})`;
-            else if(selectedBottomColor) colorDesc = ` (${selectedBottomColor})`;
+            if(selectedColorCombo && selectedColorCombo !== 'personalizado') {
+                colorDesc = ` (${selectedColorCombo.replace('_', '/')})`;
+            } else if(selectedColorCombo === 'personalizado') {
+                colorDesc = ` (Personalizado)`;
+            }
 
             const cartItem = { cartId: Date.now() + Math.random(), productId: currentDetailProduct.id, name: currentDetailProduct.name + colorDesc, price: currentDetailProduct.price, img: document.getElementById('detail-main-img').src, size: selectedSize, qty: detailQty };
             const existingIndex = cart.findIndex(item => item.productId === cartItem.productId && item.size === cartItem.size && item.name === cartItem.name);
@@ -753,7 +811,7 @@
             const cep = document.getElementById('cust-cep').value.trim() || "Não informado";
             const delivery = document.getElementById('cust-delivery').options[document.getElementById('cust-delivery').selectedIndex].text;
 
-            let text = `*NOVO PEDIDO - VERICTA SPORTSWEAR* 🏆\n\n*Cliente:* ${name}\n*CEP:* ${cep}\n*Entrega:* ${delivery}\n\n*ITENS DO PEDIDO:*\n`;
+            let text = `*NOVO PEDIDO - VERICTA * \n\n*Cliente:* ${name}\n*CEP:* ${cep}\n*Entrega:* ${delivery}\n\n*ITENS DO PEDIDO:*\n`;
             let total = 0;
             cart.forEach((item, index) => {
                 const sub = item.price * item.qty; total += sub;
@@ -761,7 +819,7 @@
             });
             text += `\n*TOTAL:* ${formatMoney(total)}\n\n_Aguardo o cálculo do frete._`;
 
-            window.open(`https://wa.me/5511999999999?text=${encodeURIComponent(text)}`, '_blank');
+            window.open(`https://wa.me/5515991347011?text=${encodeURIComponent(text)}`, '_blank');
         }
 
         function showToast(msg) { const toast = document.getElementById('toast'); toast.textContent = msg; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 3000); }
