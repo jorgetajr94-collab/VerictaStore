@@ -289,6 +289,38 @@
             text-transform: uppercase;
             z-index: 2;
         }
+        
+        /* IMAGE SLIDER BUTTONS (CATALOG) */
+        .slider-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(17, 24, 39, 0.6);
+            color: white;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0; /* Invisível por padrão */
+            transition: all 0.2s ease;
+        }
+
+        .card-img-wrapper:hover .slider-btn {
+            opacity: 1; /* Fica visível quando passa o mouse no card */
+        }
+
+        .slider-btn.prev { left: 10px; }
+        .slider-btn.next { right: 10px; }
+        
+        .slider-btn:hover {
+            background: var(--primary-gold);
+            transform: translateY(-50%) scale(1.1);
+        }
 
         .card-content {
             padding: 20px;
@@ -456,9 +488,10 @@
             margin-bottom: 28px;
             padding-bottom: 24px;
             border-bottom: 1px solid var(--border-color);
+            white-space: pre-wrap; /* Respeita quebras de linha da planilha */
         }
 
-        /* SIZE SELECTOR (PP to G2) */
+        /* SIZE SELECTOR */
         .selector-label {
             font-size: 14px;
             font-weight: 700;
@@ -973,7 +1006,8 @@
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
-        const DATABASE_URL = 'https://sheetdb.io/api/v1/lho2ozzts7v65';
+        // COLOQUE O SEU NOVO LINK AQUI
+        const DATABASE_URL = 'https://sheetdb.io/api/v1/lho2ozzts7v65/cache/purge/8fcb5016';
         
         let PRODUCTS = [];
         const SIZES = ['PP', 'P', 'M', 'G', 'GG', 'XG', 'G1', 'G2'];
@@ -1003,13 +1037,11 @@
                 const rawData = await response.json();
 
                 PRODUCTS = rawData.map(rawItem => {
-                    // 1. NORMALIZAÇÃO: Limpa espaços e deixa tudo minúsculo nas chaves (cabeçalhos)
                     const item = {};
                     for (let key in rawItem) {
                         item[key.trim().toLowerCase()] = rawItem[key];
                     }
 
-                    // 2. LÊ OS ESTOQUES (agora as chaves estão seguras)
                     const stockBySize = {
                         'PP': parseInt(item.pp) || 0,
                         'P': parseInt(item.p) || 0,
@@ -1023,12 +1055,20 @@
                     };
 
                     const totalStock = Object.values(stockBySize).reduce((acc, curr) => acc + curr, 0);
-                    
                     let rawPrice = item.price ? item.price.toString().replace(',', '.') : '0';
                     let rawCategory = item.category ? item.category.trim().toLowerCase() : 'outros';
                     let rawName = item.name ? item.name : 'Produto sem nome';
                     let rawDesc = item.desc ? item.desc : 'Sem descrição';
-                    let rawImage = item.image ? item.image : 'https://via.placeholder.com/400x400?text=Sem+Imagem';
+                    
+                    // --- NOVA LÓGICA DE MÚLTIPLAS IMAGENS ---
+                    let rawImagesArray = ['https://via.placeholder.com/400x400?text=Sem+Imagem'];
+                    if (item.image) {
+                        // Corta as imagens pela vírgula, remove os espaços sobrando e ignora textos vazios
+                        const urls = item.image.split(',').map(url => url.trim()).filter(url => url !== '');
+                        if (urls.length > 0) {
+                            rawImagesArray = urls;
+                        }
+                    }
 
                     return {
                         id: parseInt(item.id) || Math.floor(Math.random() * 1000),
@@ -1036,7 +1076,7 @@
                         category: rawCategory,
                         price: parseFloat(rawPrice),
                         desc: rawDesc,
-                        images: [rawImage], 
+                        images: rawImagesArray, 
                         stockBySize: stockBySize,
                         totalStock: totalStock
                     };
@@ -1071,10 +1111,20 @@
                     card.onclick = () => openProductDetails(prod.id);
                 }
                 
+                // Cria os botões de slide caso tenha mais de 1 imagem
+                let sliderHTML = '';
+                if(prod.images.length > 1) {
+                    sliderHTML = `
+                        <button class="slider-btn prev" onclick="event.stopPropagation(); changeCatalogImage(-1, ${prod.id})">&#10094;</button>
+                        <button class="slider-btn next" onclick="event.stopPropagation(); changeCatalogImage(1, ${prod.id})">&#10095;</button>
+                    `;
+                }
+                
                 card.innerHTML = `
                     <div class="card-img-wrapper" style="${isOutOfStock ? 'opacity: 0.5;' : ''}">
                         <span class="card-tag" style="text-transform: capitalize;">${prod.category}</span>
-                        <img src="${prod.images[0]}" alt="${prod.name}" loading="lazy" onerror="this.src='https://via.placeholder.com/400x400?text=Sem+Imagem'">
+                        ${sliderHTML}
+                        <img src="${prod.images[0]}" alt="${prod.name}" loading="lazy" id="catalog-img-${prod.id}" data-index="0" onerror="this.src='https://via.placeholder.com/400x400?text=Sem+Imagem'">
                     </div>
                     <div class="card-content">
                         <h3 class="card-title">${prod.name}</h3>
@@ -1084,6 +1134,24 @@
                 `;
                 container.appendChild(card);
             });
+        }
+
+        // Função para passar a imagem no catálogo
+        function changeCatalogImage(direction, productId) {
+            const product = PRODUCTS.find(p => p.id === productId);
+            if(!product) return;
+            
+            const imgElement = document.getElementById(`catalog-img-${productId}`);
+            let currentIndex = parseInt(imgElement.getAttribute('data-index'));
+            
+            currentIndex += direction;
+            
+            // Lógica para fazer a imagem rodar em looping (vai para a última se apertar voltar na primeira)
+            if(currentIndex >= product.images.length) currentIndex = 0;
+            if(currentIndex < 0) currentIndex = product.images.length - 1;
+            
+            imgElement.src = product.images[currentIndex];
+            imgElement.setAttribute('data-index', currentIndex);
         }
 
         function filterCategory(cat, btnElement) {
@@ -1134,11 +1202,28 @@
             document.getElementById('detail-desc').textContent = product.desc;
             document.getElementById('detail-qty').value = detailQty;
 
+            // Galeria principal
             const mainImg = document.getElementById('detail-main-img');
             mainImg.src = product.images[0];
             mainImg.onerror = function() { this.src='https://via.placeholder.com/400x400?text=Sem+Imagem'; };
 
-            document.getElementById('detail-thumbnails').innerHTML = '';
+            // Miniaturas (só aparecem se tiver mais de 1)
+            const thumbsContainer = document.getElementById('detail-thumbnails');
+            thumbsContainer.innerHTML = '';
+            
+            if(product.images.length > 1) {
+                product.images.forEach((imgUrl, index) => {
+                    const thumb = document.createElement('img');
+                    thumb.src = imgUrl;
+                    thumb.className = index === 0 ? 'thumb-img active' : 'thumb-img';
+                    thumb.onclick = () => {
+                        mainImg.src = imgUrl;
+                        document.querySelectorAll('.thumb-img').forEach(t => t.classList.remove('active'));
+                        thumb.classList.add('active');
+                    };
+                    thumbsContainer.appendChild(thumb);
+                });
+            }
 
             const sizesContainer = document.getElementById('detail-sizes');
             sizesContainer.innerHTML = '';
@@ -1332,7 +1417,7 @@
             text += `\n_Aguardo o cálculo do frete e os dados para pagamento._`;
 
             const encodedText = encodeURIComponent(text);
-            const phone = "5515981466189"; 
+            const phone = "5511999999999"; 
             
             const whatsappUrl = `https://wa.me/${phone}?text=${encodedText}`;
             window.open(whatsappUrl, '_blank');
