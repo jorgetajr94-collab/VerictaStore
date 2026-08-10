@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vericta Sportswear</title>
+    <title>Vericta - High Performance Sportswear</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -158,11 +158,23 @@
         .toast-notify { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--dark-heading); color: var(--bg-white); padding: 16px 32px; border-radius: 30px; font-size: 13px; font-weight: 600; letter-spacing: 1px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); z-index: 2000; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-transform: uppercase;}
         .toast-notify.show { transform: translateX(-50%) translateY(0); }
 
-        /* HEADER MOBILE */
+        /* HEADER MOBILE & MENU RESPONSIVO */
         .mobile-menu-btn { display: none; background: none; border: none; font-size: 24px; cursor: pointer; color: var(--dark-heading); }
         
         @media (max-width: 900px) {
-            .header-categories { display: none; }
+            .header-categories { 
+                display: none; 
+                position: absolute; 
+                top: 83px; 
+                left: 0; 
+                width: 100%; 
+                background: var(--bg-cream); 
+                flex-direction: column; 
+                padding: 24px; 
+                box-shadow: 0 10px 15px rgba(0,0,0,0.05); 
+                gap: 16px;
+            }
+            .header-categories.open { display: flex; }
             .mobile-menu-btn { display: block; }
             .hero-slide::after { background: linear-gradient(to top, var(--bg-cream) 0%, var(--bg-cream) 40%, rgba(248, 246, 240, 0.4) 100%); }
             .hero-slide img { object-position: center top; }
@@ -183,7 +195,7 @@
     <header>
         <div class="nav-container">
             <!-- Menu Toggle (Mobile) -->
-            <button class="mobile-menu-btn" onclick="showCatalogPage(); filterCategory('all', null)">&#9776;</button>
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">&#9776;</button>
 
             <!-- Logo -->
             <a href="javascript:void(0)" class="brand-logo-wrap" onclick="showCatalogPage(); filterCategory('all', document.getElementById('cat-all'))">
@@ -191,7 +203,7 @@
             </a>
             
             <!-- Menu Central -->
-            <nav class="header-categories">
+            <nav class="header-categories" id="mobile-nav">
                 <button class="cat-nav-btn active" id="cat-all" onclick="filterCategory('all', this)">Lançamentos</button>
                 <button class="cat-nav-btn" onclick="filterCategory('masculino', this)">Masculino</button>
                 <button class="cat-nav-btn" onclick="filterCategory('feminino', this)">Feminino</button>
@@ -201,7 +213,6 @@
 
             <!-- Ícones Direita -->
             <div class="nav-actions">
-                
                 <!-- LOGIN COM GOOGLE -->
                 <button class="icon-btn" onclick="toggleLogin()" title="Entrar com Google">
                     <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
@@ -343,7 +354,7 @@
         const DATABASE_URL = 'https://sheetdb.io/api/v1/67x4h7xe1wzcg';
         
         // 2. Banco de Usuários na Nuvem (Firebase)
-        const firebaseConfig = {
+    const firebaseConfig = {
             apiKey: "AIzaSyCZGWrGi2dD91qq2KOP0_JiNQzJz3xdZbQ",
             authDomain: "banco-de-dados-vericta.firebaseapp.com",
             projectId: "banco-de-dados-vericta",
@@ -374,9 +385,13 @@
             loadCartFromStorage();
             loadProductsFromDB();
             initHeroSlider();
-            // Se o firebase não for configurado, puxa os favoritos da memória local do celular
             if (!auth) loadFavoritesFromStorage(); 
         });
+
+        // MENU MOBILE TOGGLE
+        function toggleMobileMenu() {
+            document.getElementById('mobile-nav').classList.toggle('open');
+        }
 
         // ================= FIREBASE E LOGIN (NUVEM) =================
         function initFirebase() {
@@ -385,7 +400,6 @@
                 auth = firebase.auth();
                 db = firebase.firestore();
 
-                // Fica ouvindo se o usuário fez login ou logout
                 auth.onAuthStateChanged(user => {
                     const userDisplay = document.getElementById('user-display');
                     if(user) {
@@ -397,7 +411,7 @@
                         userDisplay.textContent = "Entrar";
                         loadFavoritesFromStorage();
                         if(document.getElementById('section-title').textContent === "Meus Favoritos") {
-                            showFavorites(); // Atualiza a tela se estiver na aba de favoritos
+                            showFavorites(); 
                         }
                     }
                 });
@@ -425,7 +439,7 @@
         function loadFavoritesFromStorage() {
             const saved = localStorage.getItem('vericta_favs');
             if (saved) { try { favorites = JSON.parse(saved); } catch(e) { favorites = []; } }
-            renderCatalog(PRODUCTS); // Atualiza os corações na tela
+            renderCatalog(PRODUCTS);
         }
 
         function saveFavoritesLocally() { 
@@ -440,7 +454,6 @@
             if(doc.exists) {
                 favorites = doc.data().favorites || [];
             } else {
-                // Se o usuário logou pela 1º vez, mas já tinha favoritado no celular sem logar, sobe pra nuvem
                 if(favorites.length > 0) saveFavoritesToFirebase();
             }
             
@@ -473,11 +486,10 @@
             }
             
             saveFavoritesLocally();
-            if(currentUser) saveFavoritesToFirebase(); // Espelha na nuvem
+            if(currentUser) saveFavoritesToFirebase(); 
             
             event.currentTarget.classList.toggle('active');
             
-            // Se estiver vendo a aba de favoritos e remover um, ele some da tela
             if (document.getElementById('section-title').textContent === "Meus Favoritos") {
                 showFavorites();
             }
@@ -485,6 +497,7 @@
 
         function showFavorites() {
             showCatalogPage();
+            document.getElementById('mobile-nav').classList.remove('open');
             document.getElementById('hero-banner').style.display = 'none';
             document.getElementById('section-title').style.display = 'block';
             document.getElementById('section-title').textContent = "Meus Favoritos";
@@ -587,6 +600,7 @@
 
         function handleSearch(term) {
             showCatalogPage();
+            document.getElementById('mobile-nav').classList.remove('open');
             document.getElementById('hero-banner').style.display = 'none';
             document.getElementById('section-title').style.display = 'block';
             document.getElementById('section-title').textContent = `Resultados para "${term}"`;
@@ -640,6 +654,7 @@
         }
 
         function filterCategory(cat, btnElement) {
+            document.getElementById('mobile-nav').classList.remove('open');
             document.getElementById('search-box').classList.remove('active');
             document.getElementById('search-input').value = '';
             document.getElementById('section-title').style.display = 'none';
@@ -659,8 +674,15 @@
                 document.getElementById('hero-banner').style.display = 'none';
                 document.getElementById('section-title').style.display = 'block';
                 document.getElementById('section-title').textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
-                if(cat === 'acessorios') renderCatalog(PRODUCTS.filter(p => p.category === 'acessorios' || p.category === 'unissex'));
-                else renderCatalog(PRODUCTS.filter(p => p.category === cat));
+                
+                // --- AJUSTE NO FILTRO DE ACESSÓRIOS ---
+                if(cat === 'acessorios') {
+                    // Cobre múltiplas variações e possíveis erros de digitação comuns
+                    const acs = ['acessorios', 'acessórios', 'acessorio', 'acessório', 'unissex'];
+                    renderCatalog(PRODUCTS.filter(p => acs.includes(p.category)));
+                } else {
+                    renderCatalog(PRODUCTS.filter(p => p.category === cat));
+                }
             }
         }
 
@@ -715,7 +737,10 @@
 
             const sizesContainer = document.getElementById('detail-sizes');
             sizesContainer.innerHTML = '';
-            if (product.category !== 'acessorios' && product.category !== 'unissex') {
+            
+            const isAcessorio = ['acessorios', 'acessórios', 'acessorio', 'acessório', 'unissex'].includes(product.category);
+
+            if (!isAcessorio) {
                 let firstAvailableSize = null;
                 SIZES.forEach(size => {
                     const stockOfThisSize = product.stockBySize[size];
@@ -822,7 +847,7 @@
             });
             text += `\n*TOTAL:* ${formatMoney(total)}\n\n_Aguardo o cálculo do frete._`;
 
-            window.open(`https://wa.me/5515991347011?text=${encodeURIComponent(text)}`, '_blank');
+            window.open(`https://wa.me/5511999999999?text=${encodeURIComponent(text)}`, '_blank');
         }
 
         function showToast(msg) { const toast = document.getElementById('toast'); toast.textContent = msg; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 3000); }
