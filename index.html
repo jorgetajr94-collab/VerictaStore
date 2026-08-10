@@ -259,6 +259,9 @@
             height: 280px;
             background-color: #F1F5F9;
             overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .card-img-wrapper img {
@@ -284,6 +287,7 @@
             border-radius: 20px;
             letter-spacing: 0.5px;
             text-transform: uppercase;
+            z-index: 2;
         }
 
         .card-content {
@@ -969,7 +973,6 @@
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
-        // URL do seu banco de dados configurada
         const DATABASE_URL = 'https://sheetdb.io/api/v1/lho2ozzts7v65';
         
         let PRODUCTS = [];
@@ -979,7 +982,6 @@
         let detailQty = 1;
         let cart = [];
 
-        // Formatação de Moeda
         function formatMoney(value) {
             return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         }
@@ -992,41 +994,49 @@
 
         async function loadProductsFromDB() {
             const container = document.getElementById('catalog-container');
-            // Como o código inteiro agora está certinho, o container vai existir!
             if (!container) return; 
 
             container.innerHTML = '<p style="text-align:center; padding: 40px; color: var(--text-muted);">Carregando produtos e estoque...</p>';
 
             try {
                 const response = await fetch(DATABASE_URL);
-                const data = await response.json();
+                const rawData = await response.json();
 
-                PRODUCTS = data.map(item => {
+                PRODUCTS = rawData.map(rawItem => {
+                    // 1. NORMALIZAÇÃO: Limpa espaços e deixa tudo minúsculo nas chaves (cabeçalhos)
+                    const item = {};
+                    for (let key in rawItem) {
+                        item[key.trim().toLowerCase()] = rawItem[key];
+                    }
+
+                    // 2. LÊ OS ESTOQUES (agora as chaves estão seguras)
                     const stockBySize = {
-                        'PP': parseInt(item.PP) || 0,
-                        'P': parseInt(item.P) || 0,
-                        'M': parseInt(item.M) || 0,
-                        'G': parseInt(item.G) || 0,
-                        'GG': parseInt(item.GG) || 0,
-                        'XG': parseInt(item.XG) || 0,
-                        'G1': parseInt(item.G1) || 0,
-                        'G2': parseInt(item.G2) || 0,
-                        'U': parseInt(item.U) || 0
+                        'PP': parseInt(item.pp) || 0,
+                        'P': parseInt(item.p) || 0,
+                        'M': parseInt(item.m) || 0,
+                        'G': parseInt(item.g) || 0,
+                        'GG': parseInt(item.gg) || 0,
+                        'XG': parseInt(item.xg) || 0,
+                        'G1': parseInt(item.g1) || 0,
+                        'G2': parseInt(item.g2) || 0,
+                        'U': parseInt(item.u) || 0
                     };
 
                     const totalStock = Object.values(stockBySize).reduce((acc, curr) => acc + curr, 0);
-                    let rawPrice = item.price ? item.price.toString().replace(',', '.') : '0';
                     
-                    // Padronizando a categoria lida da planilha para minúscula
-                    let rawCategory = item.category ? item.category.toLowerCase() : 'outros';
+                    let rawPrice = item.price ? item.price.toString().replace(',', '.') : '0';
+                    let rawCategory = item.category ? item.category.trim().toLowerCase() : 'outros';
+                    let rawName = item.name ? item.name : 'Produto sem nome';
+                    let rawDesc = item.desc ? item.desc : 'Sem descrição';
+                    let rawImage = item.image ? item.image : 'https://via.placeholder.com/400x400?text=Sem+Imagem';
 
                     return {
-                        id: parseInt(item.id),
-                        name: item.name,
+                        id: parseInt(item.id) || Math.floor(Math.random() * 1000),
+                        name: rawName,
                         category: rawCategory,
                         price: parseFloat(rawPrice),
-                        desc: item.desc,
-                        images: [item.image || 'https://via.placeholder.com/400x400?text=Sem+Imagem'], 
+                        desc: rawDesc,
+                        images: [rawImage], 
                         stockBySize: stockBySize,
                         totalStock: totalStock
                     };
@@ -1035,7 +1045,7 @@
                 renderCatalog(PRODUCTS);
             } catch (error) {
                 console.error("Erro ao carregar o banco de dados:", error);
-                container.innerHTML = '<p style="text-align:center; color: red;">Erro ao carregar produtos. Verifique se as colunas da planilha estão exatamente como o sistema espera.</p>';
+                container.innerHTML = '<p style="text-align:center; color: red;">Erro ao carregar produtos. Verifique sua conexão ou configuração.</p>';
             }
         }
 
@@ -1083,7 +1093,6 @@
             if (cat === 'all') {
                 renderCatalog(PRODUCTS);
             } else {
-                // Se o filtro for 'acessorios', a planilha pode ter 'unissex'. Vamos cobrir ambas.
                 if(cat === 'acessorios') {
                     const filtered = PRODUCTS.filter(p => p.category === 'acessorios' || p.category === 'unissex');
                     renderCatalog(filtered);
@@ -1127,7 +1136,6 @@
 
             const mainImg = document.getElementById('detail-main-img');
             mainImg.src = product.images[0];
-            // Se der erro na imagem (por exemplo, nome errado do arquivo no github), carrega um placeholder
             mainImg.onerror = function() { this.src='https://via.placeholder.com/400x400?text=Sem+Imagem'; };
 
             document.getElementById('detail-thumbnails').innerHTML = '';
@@ -1324,7 +1332,7 @@
             text += `\n_Aguardo o cálculo do frete e os dados para pagamento._`;
 
             const encodedText = encodeURIComponent(text);
-            const phone = "5511999999999"; 
+            const phone = "5515981466189"; 
             
             const whatsappUrl = `https://wa.me/${phone}?text=${encodedText}`;
             window.open(whatsappUrl, '_blank');
