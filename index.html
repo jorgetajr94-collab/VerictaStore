@@ -90,7 +90,6 @@
         .product-card { background: var(--bg-white); border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-card); transition: transform 0.3s ease, box-shadow 0.3s ease; cursor: pointer; display: flex; flex-direction: column; position: relative; }
         .product-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-hover); }
         .card-img-wrapper { position: relative; height: 380px; background-color: #F8F8F8; overflow: hidden; }
-        /* No card usamos cover para preencher o quadradinho perfeito */
         .card-img-wrapper img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
         .product-card:hover .card-img-wrapper img { transform: scale(1.05); }
         .card-tag { position: absolute; top: 16px; left: 16px; background: var(--bg-white); color: var(--dark-heading); font-size: 11px; font-weight: 700; padding: 6px 14px; border-radius: 20px; letter-spacing: 0.5px; text-transform: uppercase; z-index: 2; }
@@ -117,9 +116,15 @@
         /* GALERIA DE DETALHES DO PRODUTO */
         .gallery-section { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
         .main-image-container { position: relative; border-radius: var(--radius-md); overflow: hidden; background-color: #F8F8F8; border: 1px solid var(--border-color); }
-        /* CORREÇÃO: object-fit contain e fundo para mostrar a foto inteira sem cortar */
         .main-gallery-img { width: 100%; height: 500px; object-fit: contain; display: block; cursor: zoom-in; background-color: #F8F8F8; }
         
+        /* BOTÃO DE FAVORITO NA PÁGINA DO PRODUTO */
+        .btn-favorite-detail { position: absolute; top: 16px; right: 16px; background: var(--bg-white); color: var(--border-color); border: none; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 15; box-shadow: 0 4px 12px rgba(0,0,0,0.1); transition: all 0.2s; }
+        .btn-favorite-detail:hover { color: #EF4444; transform: scale(1.05); }
+        .btn-favorite-detail.active { color: var(--primary-gold); }
+        .btn-favorite-detail svg { fill: transparent; transition: fill 0.2s; }
+        .btn-favorite-detail.active svg { fill: var(--primary-gold); }
+
         .nav-arrow { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.85); color: var(--dark-heading); border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.2s; }
         .nav-arrow:hover { background: var(--primary-gold); color: white; }
         .nav-arrow.left { left: 12px; }
@@ -162,31 +167,6 @@
         .qty-picker-value { width: 50px; text-align: center; font-size: 16px; font-weight: 600; color: var(--dark-heading); border:none; outline:none; background:transparent;}
         .btn-add-to-cart-large { width: 100%; background: var(--dark-heading); color: var(--bg-white); border: none; padding: 18px; border-radius: 30px; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; transition: all 0.3s ease; }
         .btn-add-to-cart-large:hover { background: var(--primary-gold); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(150, 118, 69, 0.2); }
-
-        /* CART DRAWER */
-        .cart-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(3px); z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
-        .cart-overlay.open { opacity: 1; pointer-events: auto; }
-        .cart-drawer { position: fixed; top: 0; right: -480px; width: 100%; max-width: 450px; height: 100%; background: var(--bg-white); z-index: 1001; box-shadow: -10px 0 40px rgba(0,0,0,0.1); transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; }
-        .cart-overlay.open .cart-drawer { right: 0; }
-        .cart-header { padding: 24px 32px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); }
-        .cart-header h2 { font-family: 'Montserrat', serif; font-size: 18px; font-weight: 700; }
-        .close-cart-btn { background: none; border: none; color: var(--text-muted); font-size: 28px; cursor: pointer; transition: color 0.3s; }
-        .close-cart-btn:hover { color: var(--primary-gold); }
-        .cart-body { padding: 32px; flex-grow: 1; overflow-y: auto; }
-        .empty-cart-view { text-align: center; padding: 60px 0; color: var(--text-muted); font-weight: 300;}
-        .cart-item-row { display: flex; gap: 16px; padding-bottom: 20px; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); align-items: center; }
-        .cart-item-img { width: 76px; height: 76px; border-radius: var(--radius-md); object-fit: cover; background: #F8F8F8;}
-        .cart-item-info { flex-grow: 1; }
-        .cart-item-title { font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 600; color: var(--dark-heading); margin-bottom: 4px; text-transform: capitalize;}
-        .cart-item-meta { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; text-transform: capitalize;}
-        .cart-item-price { font-size: 14px; font-weight: 600; color: var(--primary-gold); }
-        .cart-footer { padding: 32px; border-top: 1px solid var(--border-color); background: var(--bg-cream); }
-        .cust-form-group { margin-bottom: 16px; }
-        .cust-form-group label { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 8px; }
-        .cust-form-group input, .cust-form-group select { width: 100%; padding: 12px 16px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 14px; outline: none; background: var(--bg-white); color: var(--dark-heading); }
-        .cart-total-row { display: flex; justify-content: space-between; align-items: center; font-size: 18px; font-weight: 700; color: var(--dark-heading); margin: 24px 0; }
-        .btn-checkout-whatsapp { width: 100%; background-color: var(--whatsapp-green); color: white; border: none; padding: 18px; border-radius: 30px; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.3s ease; }
-        .btn-checkout-whatsapp:hover { background-color: var(--whatsapp-hover); transform: translateY(-2px); }
 
         /* LIGHTBOX MODAL (ZOOM) */
         .lightbox-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 3000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
@@ -271,7 +251,6 @@
         <div id="view-catalog" class="page-view active">
             <div class="hero-section" id="hero-banner">
                 
-                <!-- SETAS DO BANNER -->
                 <button class="hero-nav-arrow left" onclick="moveHeroSlide(-1)">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
                 </button>
@@ -280,7 +259,7 @@
                 </button>
 
                 <div class="hero-slider" id="hero-slider">
-                     <!-- SLIDE 1 -->
+                                         <!-- SLIDE 1 -->
                     <div class="hero-slide active">
                         <picture>
                             <!-- COLE AQUI A IMAGEM DO CELULAR (Formato vertical 4:3, 4:5 ou 9:16) -->
@@ -319,8 +298,6 @@
                             <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786399021/Complete_image_leaving_person_un__202608101856.jpg" alt="Lançamento 4">
                         </picture>
                     </div>
-                    
-                    <!-- Pode colar mais slides aqui embaixo, o código lerá automaticamente! -->
                 </div>
 
                 <div class="hero-content">
@@ -329,7 +306,6 @@
                     <button class="btn-hero" onclick="document.getElementById('catalog-container').scrollIntoView({behavior: 'smooth'})">Comprar Agora</button>
                 </div>
                 
-                <!-- O CÓDIGO VAI INJETAR AS BOLINHAS AQUI DENTRO AUTOMATICAMENTE -->
                 <div class="hero-dots" id="hero-dots"></div>
             </div>
 
@@ -354,7 +330,11 @@
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
                         </button>
                         
-                        <!-- IMAGEM PRINCIPAL COM FUNÇÃO LIGHTBOX -->
+                        <!-- BOTÃO DE FAVORITO DA PÁGINA DE DETALHES -->
+                        <button id="detail-fav-btn" class="btn-favorite-detail" onclick="toggleFavoriteDetail(event)" title="Adicionar aos Favoritos">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                        </button>
+
                         <img id="detail-main-img" src="" alt="Produto" class="main-gallery-img" onclick="openLightbox()" title="Clique para ampliar">
                         
                         <button class="nav-arrow right" onclick="navigateGallery(1)">
@@ -468,7 +448,8 @@
         function getHex(colorName) { return COLOR_HEX[colorName] || colorName; }
 
         let PRODUCTS = [];
-        const SIZES = ['PP', 'P', 'M', 'G', 'GG', 'XG', 'G1', 'G2'];
+        const SIZES = ['PP', 'P', 'M', 'G', 'GG'];
+        
         let currentDetailProduct = null;
         let currentDetailImages = [];
         let currentImageIndex = 0;
@@ -532,6 +513,7 @@
             }
         }
 
+        // ================= SISTEMA DE FAVORITOS (GLOBAL) =================
         function loadFavoritesFromStorage() {
             const saved = localStorage.getItem('vericta_favs');
             if (saved) { try { favorites = JSON.parse(saved); } catch(e) { favorites = []; } }
@@ -555,6 +537,7 @@
             if(currentUser && db) { db.collection('users').doc(currentUser.uid).set({ favorites: favorites, email: currentUser.email }, {merge: true}); }
         }
 
+        // Favoritar pelo Catálogo Principal
         function toggleFavorite(event, productId) {
             event.stopPropagation(); 
             const index = favorites.indexOf(productId);
@@ -563,8 +546,29 @@
             
             saveFavoritesLocally();
             if(currentUser) saveFavoritesToFirebase(); 
-            event.currentTarget.classList.toggle('active');
+            
+            const isFav = favorites.includes(productId);
+            
+            // Sincroniza todos os botões do catálogo para este produto
+            document.querySelectorAll(`.fav-btn-${productId}`).forEach(btn => {
+                if(isFav) btn.classList.add('active');
+                else btn.classList.remove('active');
+            });
+
+            // Sincroniza o botão da página de detalhes (se o produto atual for o mesmo)
+            const detailBtn = document.getElementById('detail-fav-btn');
+            if(detailBtn && currentDetailProduct && currentDetailProduct.id === productId) {
+                if(isFav) detailBtn.classList.add('active');
+                else detailBtn.classList.remove('active');
+            }
+
             if (document.getElementById('section-title').textContent === "Meus Favoritos") showFavorites();
+        }
+
+        // Favoritar direto da Página do Produto
+        window.toggleFavoriteDetail = function(event) {
+            if(!currentDetailProduct) return;
+            toggleFavorite(event, currentDetailProduct.id);
         }
 
         function showFavorites() {
@@ -585,9 +589,8 @@
             if(heroSlidesHTML.length === 0) return;
             
             const dotsContainer = document.getElementById('hero-dots');
-            dotsContainer.innerHTML = ''; // Limpa bolinhas antigas
+            dotsContainer.innerHTML = ''; 
             
-            // Cria bolinhas automaticamente baseado na quantidade de imagens
             heroSlidesHTML.forEach((_, index) => {
                 const dot = document.createElement('span');
                 dot.className = index === 0 ? 'hero-dot active' : 'hero-dot';
@@ -607,7 +610,6 @@
             if(dots[index]) dots[index].classList.add('active');
         }
 
-        // Função chamada pelas setas Esquerda/Direita do Banner
         window.moveHeroSlide = function(direction) {
             currentHeroSlide += direction;
             if(currentHeroSlide < 0) currentHeroSlide = heroSlidesHTML.length - 1;
@@ -725,7 +727,8 @@
                     <div class="card-img-wrapper">
                         ${outOfStockHTML}
                         <span class="card-tag">${prod.category}</span>
-                        <button class="${favClass}" onclick="toggleFavorite(event, ${prod.id})">
+                        <!-- ID ÚNICO ADICIONADO PARA O BOTÃO DO CATÁLOGO -->
+                        <button class="${favClass} fav-btn-${prod.id}" onclick="toggleFavorite(event, ${prod.id})">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
                         </button>
                         <img src="${prod.images[0]}" alt="${prod.name}" loading="lazy" onerror="this.src='https://via.placeholder.com/400x400?text=Vericta'">
@@ -779,8 +782,18 @@
             currentDetailProduct = product; 
             detailQty = 1; 
             selectedSize = null; 
-            selectedColorCombo = Object.keys(product.colorCombinations).length > 0 ? 'personalizado' : null;
-            currentDetailImages = product.images;
+            
+            const isAcessorio = ['acessorios', 'acessórios', 'acessorio', 'acessório', 'unissex'].includes(product.category);
+            const colorKeys = Object.keys(product.colorCombinations);
+            
+            // LÓGICA DE TAMANHO ÚNICO: Se for tamanho único, não exibe "Personalizado" como padrão.
+            selectedColorCombo = colorKeys.length > 0 ? (isAcessorio ? colorKeys[0] : 'personalizado') : null;
+
+            if (selectedColorCombo && selectedColorCombo !== 'personalizado') {
+                currentDetailImages = product.colorCombinations[selectedColorCombo];
+            } else {
+                currentDetailImages = product.images;
+            }
             currentImageIndex = 0;
 
             document.getElementById('bread-category').textContent = product.category; document.getElementById('bread-category').style.textTransform = "capitalize";
@@ -788,18 +801,27 @@
             document.getElementById('detail-price').textContent = formatMoney(product.price); document.getElementById('detail-desc').textContent = product.desc;
             document.getElementById('detail-qty').value = detailQty;
 
-            updateMainImage();
-            renderThumbnails();
+            // Define o botão de favorito da tela de detalhes
+            const detailFavBtn = document.getElementById('detail-fav-btn');
+            if(favorites.includes(product.id)) {
+                detailFavBtn.classList.add('active');
+            } else {
+                detailFavBtn.classList.remove('active');
+            }
 
             const colorsContainer = document.getElementById('detail-colors-container');
             colorsContainer.innerHTML = '';
             
-            if(Object.keys(product.colorCombinations).length > 0) {
+            if(colorKeys.length > 0) {
                 let colorHTML = `<div class="color-section"><div class="color-label">Cores Disponíveis</div><div class="color-options">`;
                 
-                colorHTML += `<div class="color-dot custom-gradient selected" data-color="Personalizado" onclick="selectDetailColor('personalizado', this)"></div>`;
+                // Se NÃO FOR tamanho único, mostra o arco-íris
+                if (!isAcessorio) {
+                    const selClass = selectedColorCombo === 'personalizado' ? 'selected' : '';
+                    colorHTML += `<div class="color-dot custom-gradient ${selClass}" data-color="Personalizado" onclick="selectDetailColor('personalizado', this)"></div>`;
+                }
 
-                for (let combo in product.colorCombinations) {
+                for (let combo of colorKeys) {
                     let parts = combo.split('_');
                     let bgStyle = '';
                     
@@ -813,14 +835,14 @@
                     }
 
                     let labelNome = combo.replace('_', ' / ');
-                    colorHTML += `<div class="color-dot" style="${bgStyle}" data-color="${labelNome}" onclick="selectDetailColor('${combo}', this)"></div>`;
+                    const selClass = selectedColorCombo === combo ? 'selected' : '';
+                    colorHTML += `<div class="color-dot ${selClass}" style="${bgStyle}" data-color="${labelNome}" onclick="selectDetailColor('${combo}', this)"></div>`;
                 }
                 colorHTML += `</div></div>`;
                 colorsContainer.innerHTML = colorHTML;
             }
 
             const sizesContainer = document.getElementById('detail-sizes'); sizesContainer.innerHTML = '';
-            const isAcessorio = ['acessorios', 'acessórios', 'acessorio', 'acessório', 'unissex'].includes(product.category);
 
             if (!isAcessorio) {
                 let firstAvailableSize = null;
@@ -839,6 +861,8 @@
                 if(stockOfU > 0) { sizesContainer.innerHTML = `<div class="size-chip selected size-selectable">Tamanho Único</div>`; selectedSize = 'U'; }
             }
             
+            updateMainImage();
+            renderThumbnails();
             showDetailsPage();
             if(pushHash) window.location.hash = 'produto-' + id;
         }
