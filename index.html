@@ -524,7 +524,9 @@
                                 let parts = imgData.split('=');
                                 let combo = parts[0].trim().toLowerCase();
                                 let url = parts[1].trim();
-                                colorCombinations[combo] = url;
+                                
+                                if(!colorCombinations[combo]) colorCombinations[combo] = [];
+                                colorCombinations[combo].push(url);
                                 rawImagesArray.push(url);
                             } else {
                                 rawImagesArray.push(imgData);
@@ -614,7 +616,10 @@
             const product = PRODUCTS.find(p => p.id === id);
             if(!product || product.totalStock <= 0) return; 
             
-            currentDetailProduct = product; detailQty = 1; selectedSize = null; selectedColorCombo = 'personalizado';
+            currentDetailProduct = product; 
+            detailQty = 1; 
+            selectedSize = null; 
+            selectedColorCombo = Object.keys(product.colorCombinations).length > 0 ? 'personalizado' : null;
             currentDetailImages = product.images;
             currentImageIndex = 0;
 
@@ -626,17 +631,14 @@
             updateMainImage();
             renderThumbnails();
 
-            // Geração das Bolinhas de Cores (Divididas ao meio)
             const colorsContainer = document.getElementById('detail-colors-container');
             colorsContainer.innerHTML = '';
             
             if(Object.keys(product.colorCombinations).length > 0) {
                 let colorHTML = `<div class="color-section"><div class="color-label">Cores Disponíveis</div><div class="color-options">`;
                 
-                // Primeiro botão: Personalizado (Gradiente arco-íris)
                 colorHTML += `<div class="color-dot custom-gradient selected" data-color="Personalizado" onclick="selectDetailColor('personalizado', this)"></div>`;
 
-                // Botões de combinações
                 for (let combo in product.colorCombinations) {
                     let parts = combo.split('_');
                     let bgStyle = '';
@@ -679,16 +681,17 @@
             showDetailsPage();
         }
 
-        // --- SISTEMA DA GALERIA COM SETAS ---
         function updateMainImage() {
             const mainImg = document.getElementById('detail-main-img');
-            mainImg.src = currentDetailImages[currentImageIndex];
-            mainImg.onerror = function() { this.src='https://via.placeholder.com/400x400?text=Vericta'; };
-            
-            document.querySelectorAll('.thumb-img').forEach((t, index) => {
-                t.classList.remove('active');
-                if(index === currentImageIndex) t.classList.add('active');
-            });
+            if(currentDetailImages.length > 0) {
+                mainImg.src = currentDetailImages[currentImageIndex];
+                mainImg.onerror = function() { this.src='https://via.placeholder.com/400x400?text=Vericta'; };
+                
+                document.querySelectorAll('.thumb-img').forEach((t, index) => {
+                    t.classList.remove('active');
+                    if(index === currentImageIndex) t.classList.add('active');
+                });
+            }
         }
 
         function navigateGallery(direction) {
@@ -698,7 +701,6 @@
             if(currentImageIndex >= currentDetailImages.length) currentImageIndex = 0;
             updateMainImage();
             
-            // Tenta manter a miniatura visível
             const thumbsRow = document.getElementById('detail-thumbnails');
             const activeThumb = thumbsRow.children[currentImageIndex];
             if(activeThumb) activeThumb.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
@@ -720,23 +722,20 @@
             }
         }
 
-        // Função de seleção de cor nos botões bicolores
         window.selectDetailColor = function(combo, element) {
             selectedColorCombo = combo;
             document.querySelectorAll('#detail-colors-container .color-dot').forEach(d => d.classList.remove('selected'));
             element.classList.add('selected');
 
-            if(combo !== 'personalizado' && currentDetailProduct.colorCombinations[combo]) {
-                const imgUrl = currentDetailProduct.colorCombinations[combo];
-                const idx = currentDetailImages.indexOf(imgUrl);
-                if(idx !== -1) {
-                    currentImageIndex = idx;
-                    updateMainImage();
-                } else {
-                    document.getElementById('detail-main-img').src = imgUrl;
-                    document.querySelectorAll('.thumb-img').forEach(t => t.classList.remove('active'));
-                }
+            if(combo === 'personalizado') {
+                currentDetailImages = currentDetailProduct.images;
+            } else if (currentDetailProduct.colorCombinations[combo]) {
+                currentDetailImages = currentDetailProduct.colorCombinations[combo];
             }
+            
+            currentImageIndex = 0;
+            updateMainImage();
+            renderThumbnails();
         }
 
         function changeDetailQty(amount) {
@@ -811,7 +810,7 @@
             const cep = document.getElementById('cust-cep').value.trim() || "Não informado";
             const delivery = document.getElementById('cust-delivery').options[document.getElementById('cust-delivery').selectedIndex].text;
 
-            let text = `*NOVO PEDIDO - VERICTA * \n\n*Cliente:* ${name}\n*CEP:* ${cep}\n*Entrega:* ${delivery}\n\n*ITENS DO PEDIDO:*\n`;
+            let text = `*NOVO PEDIDO - VERICTA* \n\n*Cliente:* ${name}\n*CEP:* ${cep}\n*Entrega:* ${delivery}\n\n*ITENS DO PEDIDO:*\n`;
             let total = 0;
             cart.forEach((item, index) => {
                 const sub = item.price * item.qty; total += sub;
