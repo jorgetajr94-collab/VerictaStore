@@ -56,7 +56,7 @@
         .search-container.active { display: flex; opacity: 1; }
         .search-container input { border: 1px solid var(--border-color); padding: 8px 12px; border-radius: 4px; outline: none; width: 250px; font-family: 'Plus Jakarta Sans'; }
 
-        /* HERO BANNER CAROUSEL */
+        /* HERO BANNER COM SETAS E SLIDER INTELIGENTE */
         .hero-section { max-width: 1300px; margin: 0 auto; position: relative; height: 480px; background-color: var(--bg-cream); display: flex; align-items: center; overflow: hidden; }
         .hero-slider { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
         .hero-slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 0.8s ease-in-out; }
@@ -64,12 +64,19 @@
         .hero-slide picture { display: block; width: 100%; height: 100%; }
         .hero-slide img { width: 100%; height: 100%; object-fit: cover; object-position: right center; }
         .hero-slide::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to right, var(--bg-cream) 0%, var(--bg-cream) 35%, transparent 70%); pointer-events: none;}
-        .hero-content { position: relative; z-index: 2; padding: 0 60px; max-width: 650px; }
+        
+        .hero-content { position: relative; z-index: 2; padding: 0 70px; max-width: 650px; }
         .hero-title { font-family: 'Montserrat', sans-serif; font-size: 56px; font-weight: 800; color: var(--primary-gold); line-height: 1.1; margin-bottom: 16px; text-transform: uppercase; }
         .hero-subtitle { font-size: 18px; color: var(--text-main); margin-bottom: 30px; font-weight: 500; }
         .btn-hero { background: var(--bg-white); color: var(--primary-gold); border: none; padding: 14px 32px; border-radius: 30px; font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: transform 0.2s; }
         .btn-hero:hover { transform: scale(1.05); }
-        .hero-dots { position: absolute; bottom: 24px; left: 60px; display: flex; gap: 8px; z-index: 3; }
+        
+        .hero-nav-arrow { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.7); color: var(--dark-heading); border: none; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; transition: all 0.3s; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .hero-nav-arrow:hover { background: var(--primary-gold); color: var(--bg-white); }
+        .hero-nav-arrow.left { left: 16px; }
+        .hero-nav-arrow.right { right: 16px; }
+
+        .hero-dots { position: absolute; bottom: 24px; left: 70px; display: flex; gap: 8px; z-index: 3; }
         .hero-dot { width: 12px; height: 4px; border-radius: 2px; background: rgba(150, 118, 69, 0.3); cursor: pointer; transition: all 0.3s; }
         .hero-dot.active { background: var(--primary-gold); width: 24px; }
 
@@ -83,6 +90,7 @@
         .product-card { background: var(--bg-white); border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-card); transition: transform 0.3s ease, box-shadow 0.3s ease; cursor: pointer; display: flex; flex-direction: column; position: relative; }
         .product-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-hover); }
         .card-img-wrapper { position: relative; height: 380px; background-color: #F8F8F8; overflow: hidden; }
+        /* No card usamos cover para preencher o quadradinho perfeito */
         .card-img-wrapper img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
         .product-card:hover .card-img-wrapper img { transform: scale(1.05); }
         .card-tag { position: absolute; top: 16px; left: 16px; background: var(--bg-white); color: var(--dark-heading); font-size: 11px; font-weight: 700; padding: 6px 14px; border-radius: 20px; letter-spacing: 0.5px; text-transform: uppercase; z-index: 2; }
@@ -106,10 +114,11 @@
 
         .details-container { background: var(--bg-white); border-radius: var(--radius-lg); padding: 40px; box-shadow: var(--shadow-card); display: grid; grid-template-columns: 1fr 1fr; gap: 60px; margin-bottom: 60px; }
         
-        /* GALERIA E SETAS */
+        /* GALERIA DE DETALHES DO PRODUTO */
         .gallery-section { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
         .main-image-container { position: relative; border-radius: var(--radius-md); overflow: hidden; background-color: #F8F8F8; border: 1px solid var(--border-color); }
-        .main-gallery-img { width: 100%; height: 500px; object-fit: cover; display: block; }
+        /* CORREÇÃO: object-fit contain e fundo para mostrar a foto inteira sem cortar */
+        .main-gallery-img { width: 100%; height: 500px; object-fit: contain; display: block; cursor: zoom-in; background-color: #F8F8F8; }
         
         .nav-arrow { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.85); color: var(--dark-heading); border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.2s; }
         .nav-arrow:hover { background: var(--primary-gold); color: white; }
@@ -129,7 +138,7 @@
         .details-price { font-size: 28px; font-weight: 500; color: var(--primary-gold); margin-bottom: 24px; }
         .details-description { color: var(--text-main); font-size: 15px; line-height: 1.8; margin-bottom: 32px; padding-bottom: 32px; border-bottom: 1px solid var(--border-color); white-space: pre-wrap; font-weight: 300; word-wrap: break-word; overflow-wrap: break-word;}
         
-        /* CORES (Bicolores e Personalizado) */
+        /* CORES */
         .color-section { margin-bottom: 24px; }
         .color-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 12px; }
         .color-options { display: flex; gap: 14px; flex-wrap: wrap; }
@@ -179,6 +188,14 @@
         .btn-checkout-whatsapp { width: 100%; background-color: var(--whatsapp-green); color: white; border: none; padding: 18px; border-radius: 30px; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.3s ease; }
         .btn-checkout-whatsapp:hover { background-color: var(--whatsapp-hover); transform: translateY(-2px); }
 
+        /* LIGHTBOX MODAL (ZOOM) */
+        .lightbox-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 3000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .lightbox-modal.active { opacity: 1; pointer-events: auto; }
+        .lightbox-content { position: relative; max-width: 95%; max-height: 95%; }
+        .lightbox-img { max-width: 100%; max-height: 90vh; border-radius: var(--radius-md); object-fit: contain; }
+        .lightbox-close { position: absolute; top: -40px; right: 0; color: white; background: none; border: none; font-size: 36px; cursor: pointer; transition: color 0.2s; }
+        .lightbox-close:hover { color: var(--primary-gold); }
+
         /* TOAST NOTIFICATION */
         .toast-notify { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--dark-heading); color: var(--bg-white); padding: 16px 32px; border-radius: 30px; font-size: 13px; font-weight: 600; letter-spacing: 1px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); z-index: 2000; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-transform: uppercase;}
         .toast-notify.show { transform: translateX(-50%) translateY(0); }
@@ -191,17 +208,20 @@
             .header-categories.open { display: flex; }
             .mobile-menu-btn { display: block; }
             
-            /* Ajuste do degradê no mobile para focar mais na foto */
             .hero-slide::after { background: linear-gradient(to top, var(--bg-cream) 0%, var(--bg-cream) 40%, transparent 80%); }
-            .hero-slide img { object-position: center; } /* Centraliza melhor se usar foto única */
+            .hero-slide img { object-position: center; } 
             
             .hero-content { padding: 40px 24px 0; max-width: 100%; text-align: center; margin-top: auto;}
             .hero-dots { left: 50%; transform: translateX(-50%); bottom: 10px; }
             .hero-section { align-items: flex-end; padding-bottom: 40px; height: 500px;}
             .hero-title { font-size: 40px; }
+            .hero-nav-arrow { width: 36px; height: 36px; }
+            .hero-nav-arrow.left { left: 8px; }
+            .hero-nav-arrow.right { right: 8px; }
+            
             .main-wrapper { padding: 0 16px; }
             .details-container { grid-template-columns: 1fr; padding: 24px 16px; gap: 24px; }
-            .main-gallery-img { height: 350px; }
+            .main-gallery-img { height: 400px; }
             .catalog-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; }
             .card-img-wrapper { height: 240px; }
         }
@@ -250,9 +270,17 @@
         <!-- ================= CATALOG VIEW ================= -->
         <div id="view-catalog" class="page-view active">
             <div class="hero-section" id="hero-banner">
+                
+                <!-- SETAS DO BANNER -->
+                <button class="hero-nav-arrow left" onclick="moveHeroSlide(-1)">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                </button>
+                <button class="hero-nav-arrow right" onclick="moveHeroSlide(1)">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
+
                 <div class="hero-slider" id="hero-slider">
-                    
-                    <!-- SLIDE 1 -->
+                     <!-- SLIDE 1 -->
                     <div class="hero-slide active">
                         <picture>
                             <!-- COLE AQUI A IMAGEM DO CELULAR (Formato vertical 4:3, 4:5 ou 9:16) -->
@@ -291,19 +319,18 @@
                             <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786399021/Complete_image_leaving_person_un__202608101856.jpg" alt="Lançamento 4">
                         </picture>
                     </div>
-
-
+                    
+                    <!-- Pode colar mais slides aqui embaixo, o código lerá automaticamente! -->
                 </div>
+
                 <div class="hero-content">
                     <h1 class="hero-title">Novos<br>Lançamentos</h1>
                     <p class="hero-subtitle">A força da sua performance começa aqui.</p>
                     <button class="btn-hero" onclick="document.getElementById('catalog-container').scrollIntoView({behavior: 'smooth'})">Comprar Agora</button>
                 </div>
-                <div class="hero-dots">
-                    <span class="hero-dot active" onclick="setHeroSlide(0)"></span>
-                    <span class="hero-dot" onclick="setHeroSlide(1)"></span>
-                    <span class="hero-dot" onclick="setHeroSlide(2)"></span>
-                </div>
+                
+                <!-- O CÓDIGO VAI INJETAR AS BOLINHAS AQUI DENTRO AUTOMATICAMENTE -->
+                <div class="hero-dots" id="hero-dots"></div>
             </div>
 
             <main class="main-wrapper">
@@ -326,7 +353,10 @@
                         <button class="nav-arrow left" onclick="navigateGallery(-1)">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
                         </button>
-                        <img id="detail-main-img" src="" alt="Produto" class="main-gallery-img">
+                        
+                        <!-- IMAGEM PRINCIPAL COM FUNÇÃO LIGHTBOX -->
+                        <img id="detail-main-img" src="" alt="Produto" class="main-gallery-img" onclick="openLightbox()" title="Clique para ampliar">
+                        
                         <button class="nav-arrow right" onclick="navigateGallery(1)">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                         </button>
@@ -365,6 +395,14 @@
                     <button class="btn-add-to-cart-large" onclick="addToCartFromDetail()">Adicionar ao Carrinho</button>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- LIGHTBOX MODAL (ZOOM DA IMAGEM) -->
+    <div class="lightbox-modal" id="lightbox-modal" onclick="if(event.target === this || event.target.className === 'lightbox-close') closeLightbox()">
+        <div class="lightbox-content">
+            <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+            <img src="" alt="Zoom" class="lightbox-img" id="lightbox-img">
         </div>
     </div>
 
@@ -417,7 +455,6 @@
             appId: "1:895353456691:web:53c4f6bbe2987f86e1fb46"
         };
         
-        // Mapeamento Expandido de Cores
         const COLOR_HEX = {
             'branco': '#FFFFFF', 'preto': '#2C2C2C', 'cinza': '#6B6E70',
             'vermelho': '#D93838', 'azul': '#1B365D', 'marrom': '#5C4033',
@@ -428,9 +465,7 @@
             'vinho': '#722F37', 'chumbo': '#36454F', 'off white': '#FAF9F6'
         };
 
-        function getHex(colorName) {
-            return COLOR_HEX[colorName] || colorName; 
-        }
+        function getHex(colorName) { return COLOR_HEX[colorName] || colorName; }
 
         let PRODUCTS = [];
         const SIZES = ['PP', 'P', 'M', 'G', 'GG', 'XG', 'G1', 'G2'];
@@ -456,12 +491,11 @@
             if (!auth) loadFavoritesFromStorage(); 
         });
 
-        // ================= DETECÇÃO DE HASH PARA EVITAR REFRESH (F5) =================
         window.addEventListener('hashchange', () => {
             const hash = window.location.hash;
             if (hash.startsWith('#produto-')) {
                 const id = parseInt(hash.replace('#produto-', ''));
-                openProductDetails(id, false); // false evita loop de hash
+                openProductDetails(id, false); 
             } else {
                 showCatalogPage(false);
             }
@@ -541,19 +575,57 @@
             renderCatalog(PRODUCTS.filter(p => favorites.includes(p.id)));
         }
 
+        // ================= HERO SLIDER INTELIGENTE =================
         let currentHeroSlide = 0;
         let heroSlideInterval;
+        let heroSlidesHTML = [];
 
         function initHeroSlider() {
-            const slides = document.querySelectorAll('.hero-slide');
-            const dots = document.querySelectorAll('.hero-dot');
-            if(slides.length === 0) return;
-            function showSlide(index) { slides.forEach(s => s.classList.remove('active')); dots.forEach(d => d.classList.remove('active')); slides[index].classList.add('active'); if(dots[index]) dots[index].classList.add('active'); }
-            function nextSlide() { currentHeroSlide = (currentHeroSlide + 1) % slides.length; showSlide(currentHeroSlide); }
-            heroSlideInterval = setInterval(nextSlide, 4000); 
-            window.setHeroSlide = function(index) { currentHeroSlide = index; showSlide(currentHeroSlide); clearInterval(heroSlideInterval); heroSlideInterval = setInterval(nextSlide, 4000); }
+            heroSlidesHTML = document.querySelectorAll('.hero-slide');
+            if(heroSlidesHTML.length === 0) return;
+            
+            const dotsContainer = document.getElementById('hero-dots');
+            dotsContainer.innerHTML = ''; // Limpa bolinhas antigas
+            
+            // Cria bolinhas automaticamente baseado na quantidade de imagens
+            heroSlidesHTML.forEach((_, index) => {
+                const dot = document.createElement('span');
+                dot.className = index === 0 ? 'hero-dot active' : 'hero-dot';
+                dot.onclick = () => setHeroSlide(index);
+                dotsContainer.appendChild(dot);
+            });
+
+            startHeroTimer();
         }
 
+        function showHeroSlide(index) {
+            heroSlidesHTML.forEach(s => s.classList.remove('active'));
+            const dots = document.querySelectorAll('.hero-dot');
+            dots.forEach(d => d.classList.remove('active'));
+            
+            heroSlidesHTML[index].classList.add('active');
+            if(dots[index]) dots[index].classList.add('active');
+        }
+
+        // Função chamada pelas setas Esquerda/Direita do Banner
+        window.moveHeroSlide = function(direction) {
+            currentHeroSlide += direction;
+            if(currentHeroSlide < 0) currentHeroSlide = heroSlidesHTML.length - 1;
+            if(currentHeroSlide >= heroSlidesHTML.length) currentHeroSlide = 0;
+            showHeroSlide(currentHeroSlide);
+            resetHeroTimer();
+        }
+
+        window.setHeroSlide = function(index) {
+            currentHeroSlide = index;
+            showHeroSlide(currentHeroSlide);
+            resetHeroTimer();
+        }
+
+        function startHeroTimer() { heroSlideInterval = setInterval(() => { moveHeroSlide(1); }, 4000); }
+        function resetHeroTimer() { clearInterval(heroSlideInterval); startHeroTimer(); }
+
+        // ================= LOGICA DO PRODUTO =================
         async function loadProductsFromDB() {
             const container = document.getElementById('catalog-container');
             if (!container) return; 
@@ -771,6 +843,18 @@
             if(pushHash) window.location.hash = 'produto-' + id;
         }
 
+        // ================= ZOOM DA IMAGEM =================
+        window.openLightbox = function() {
+            const src = document.getElementById('detail-main-img').src;
+            if(!src) return;
+            document.getElementById('lightbox-img').src = src;
+            document.getElementById('lightbox-modal').classList.add('active');
+        }
+
+        window.closeLightbox = function() {
+            document.getElementById('lightbox-modal').classList.remove('active');
+        }
+
         function updateMainImage() {
             const mainImg = document.getElementById('detail-main-img');
             if(currentDetailImages.length > 0) {
@@ -901,7 +985,7 @@
             const cep = document.getElementById('cust-cep').value.trim() || "Não informado";
             const delivery = document.getElementById('cust-delivery').options[document.getElementById('cust-delivery').selectedIndex].text;
 
-            let text = `*NOVO PEDIDO - VERICTA* 🏆\n\n*Cliente:* ${name}\n*CEP:* ${cep}\n*Entrega:* ${delivery}\n\n*ITENS DO PEDIDO:*\n`;
+            let text = `*NOVO PEDIDO - VERICTA* \n\n*Cliente:* ${name}\n*CEP:* ${cep}\n*Entrega:* ${delivery}\n\n*ITENS DO PEDIDO:*\n`;
             let total = 0;
             cart.forEach((item, index) => {
                 const sub = item.price * item.qty; total += sub;
