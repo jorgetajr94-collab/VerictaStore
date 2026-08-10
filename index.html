@@ -8,7 +8,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Bibliotecas do Firebase (Login e Banco de Dados) -->
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
@@ -40,22 +39,18 @@
         .brand-logo-wrap { display: flex; align-items: center; cursor: pointer; text-decoration: none; }
         .exact-logo-img { height: 50px; width: auto; object-fit: contain; transition: transform 0.3s ease; }
         
-        /* CATEGORIAS NO HEADER */
         .header-categories { display: flex; gap: 24px; }
         .cat-nav-btn { background: transparent; border: none; font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 500; color: var(--text-main); text-transform: uppercase; letter-spacing: 1px; cursor: pointer; padding: 8px 0; position: relative; transition: color 0.3s ease; }
         .cat-nav-btn::after { content: ''; position: absolute; width: 0; height: 2px; bottom: 0; left: 50%; background-color: var(--primary-gold); transition: all 0.3s ease; transform: translateX(-50%); }
         .cat-nav-btn:hover, .cat-nav-btn.active { color: var(--primary-gold); font-weight: 600; }
         .cat-nav-btn.active::after { width: 100%; }
 
-        /* ÍCONES DO HEADER */
         .nav-actions { display: flex; align-items: center; gap: 20px; position: relative; }
         .icon-btn { background: none; border: none; color: var(--text-main); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: color 0.3s; position: relative; }
         .icon-btn:hover { color: var(--primary-gold); }
         .user-name-display { font-family: 'Montserrat', sans-serif; font-size: 11px; margin-left: 6px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-
         .cart-badge { position: absolute; top: -6px; right: -8px; background-color: var(--primary-gold); color: var(--bg-white); font-size: 10px; font-weight: 700; width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
 
-        /* SEARCH BAR OVERLAY */
         .search-container { position: absolute; right: 0; top: 40px; background: var(--bg-white); padding: 10px; border-radius: var(--radius-md); box-shadow: var(--shadow-hover); display: none; opacity: 0; transition: opacity 0.3s ease; z-index: 10; }
         .search-container.active { display: flex; opacity: 1; }
         .search-container input { border: 1px solid var(--border-color); padding: 8px 12px; border-radius: 4px; outline: none; width: 250px; font-family: 'Plus Jakarta Sans'; }
@@ -102,15 +97,12 @@
         .out-of-stock-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.6); display: flex; align-items: center; justify-content: center; z-index: 5; font-family: 'Montserrat'; font-weight: 700; font-size: 20px; color: var(--text-main); letter-spacing: 2px; }
 
         /* PRODUCT DETAILS PAGE VIEW */
-        /* Flex-wrap adicionado para não quebrar a tela em caminhos longos */
         .breadcrumb { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; font-size: 13px; color: var(--text-muted); margin-bottom: 24px; text-transform: uppercase;}
         .breadcrumb span { color: var(--primary-gold); font-weight: 600; }
         .back-btn { background: none; border: none; color: var(--text-muted); font-weight: 600; font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; margin-bottom: 20px; transition: all 0.3s; text-transform: uppercase; letter-spacing: 1px;}
         .back-btn:hover { color: var(--primary-gold); }
 
         .details-container { background: var(--bg-white); border-radius: var(--radius-lg); padding: 40px; box-shadow: var(--shadow-card); display: grid; grid-template-columns: 1fr 1fr; gap: 60px; margin-bottom: 60px; }
-        
-        /* min-width: 0 adicionado para evitar overflow no Grid em telas pequenas */
         .gallery-section { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
         .main-gallery-img { width: 100%; height: 500px; border-radius: var(--radius-md); object-fit: cover; background-color: #F8F8F8; border: 1px solid var(--border-color); }
         .thumbnails-row { display: flex; gap: 12px; overflow-x: auto; width: 100%; scrollbar-width: none; }
@@ -118,12 +110,21 @@
         .thumb-img { min-width: 80px; width: 80px; height: 80px; border-radius: var(--radius-md); object-fit: cover; cursor: pointer; border: 2px solid transparent; transition: all 0.3s; opacity: 0.6; }
         .thumb-img.active, .thumb-img:hover { border-color: var(--primary-gold); opacity: 1; }
         
-        /* min-width: 0 adicionado para evitar overflow no Grid em telas pequenas */
         .details-info-section { display: flex; flex-direction: column; min-width: 0; }
         .details-title { font-family: 'Montserrat', serif; font-size: 32px; font-weight: 700; color: var(--dark-heading); margin-bottom: 12px; line-height: 1.2; word-wrap: break-word; overflow-wrap: break-word;}
         .details-price { font-size: 28px; font-weight: 500; color: var(--primary-gold); margin-bottom: 24px; }
         .details-description { color: var(--text-main); font-size: 15px; line-height: 1.8; margin-bottom: 32px; padding-bottom: 32px; border-bottom: 1px solid var(--border-color); white-space: pre-wrap; font-weight: 300; word-wrap: break-word; overflow-wrap: break-word;}
         
+        /* CORES */
+        .color-section { margin-bottom: 24px; }
+        .color-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 12px; }
+        .color-options { display: flex; gap: 12px; flex-wrap: wrap; }
+        .color-dot { width: 34px; height: 34px; border-radius: 50%; cursor: pointer; border: 2px solid var(--border-color); transition: all 0.2s; position: relative; }
+        .color-dot:hover { transform: scale(1.1); }
+        .color-dot.selected { border-color: var(--dark-heading); transform: scale(1.1); box-shadow: 0 0 0 2px var(--bg-white), 0 0 0 4px var(--dark-heading); }
+        .color-dot::after { content: attr(data-color); position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: var(--dark-heading); color: white; padding: 4px 8px; border-radius: 4px; font-size: 10px; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.2s; margin-bottom: 8px; text-transform: capitalize; }
+        .color-dot:hover::after { opacity: 1; }
+
         .selector-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 12px; display: flex; justify-content: space-between; }
         .sizes-grid { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 32px; }
         .size-chip { min-width: 50px; height: 46px; padding: 0 16px; border: 1px solid var(--border-color); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; color: var(--dark-heading); cursor: pointer; transition: all 0.3s ease; background: var(--bg-white); }
@@ -135,6 +136,7 @@
         .qty-picker-btn { width: 46px; height: 46px; background: none; border: none; font-size: 18px; font-weight: 400; cursor: pointer; color: var(--dark-heading); transition: background 0.3s; }
         .qty-picker-btn:hover { background: var(--bg-cream); color: var(--primary-gold); }
         .qty-picker-value { width: 50px; text-align: center; font-size: 16px; font-weight: 600; color: var(--dark-heading); border:none; outline:none; background:transparent;}
+        
         .btn-add-to-cart-large { width: 100%; background: var(--dark-heading); color: var(--bg-white); border: none; padding: 18px; border-radius: 30px; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; transition: all 0.3s ease; }
         .btn-add-to-cart-large:hover { background: var(--primary-gold); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(150, 118, 69, 0.2); }
 
@@ -153,7 +155,7 @@
         .cart-item-img { width: 76px; height: 76px; border-radius: var(--radius-md); object-fit: cover; background: #F8F8F8;}
         .cart-item-info { flex-grow: 1; }
         .cart-item-title { font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 600; color: var(--dark-heading); margin-bottom: 4px;}
-        .cart-item-meta { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
+        .cart-item-meta { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; text-transform: capitalize;}
         .cart-item-price { font-size: 14px; font-weight: 600; color: var(--primary-gold); }
         .cart-footer { padding: 32px; border-top: 1px solid var(--border-color); background: var(--bg-cream); }
         .cust-form-group { margin-bottom: 16px; }
@@ -171,18 +173,7 @@
         .mobile-menu-btn { display: none; background: none; border: none; font-size: 24px; cursor: pointer; color: var(--dark-heading); }
         
         @media (max-width: 900px) {
-            .header-categories { 
-                display: none; 
-                position: absolute; 
-                top: 83px; 
-                left: 0; 
-                width: 100%; 
-                background: var(--bg-cream); 
-                flex-direction: column; 
-                padding: 24px; 
-                box-shadow: 0 10px 15px rgba(0,0,0,0.05); 
-                gap: 16px;
-            }
+            .header-categories { display: none; position: absolute; top: 83px; left: 0; width: 100%; background: var(--bg-cream); flex-direction: column; padding: 24px; box-shadow: 0 10px 15px rgba(0,0,0,0.05); gap: 16px; }
             .header-categories.open { display: flex; }
             .mobile-menu-btn { display: block; }
             .hero-slide::after { background: linear-gradient(to top, var(--bg-cream) 0%, var(--bg-cream) 40%, rgba(248, 246, 240, 0.4) 100%); }
@@ -191,8 +182,6 @@
             .hero-dots { left: 50%; transform: translateX(-50%); bottom: 10px; }
             .hero-section { align-items: flex-end; padding-bottom: 40px; height: 500px;}
             .hero-title { font-size: 40px; }
-            
-            /* Ajustes de Padding no Mobile para caber na tela sem forçar scroll lateral */
             .main-wrapper { padding: 0 16px; }
             .details-container { grid-template-columns: 1fr; padding: 24px 16px; gap: 24px; }
             .main-gallery-img { height: 350px; }
@@ -203,18 +192,12 @@
 </head>
 <body>
 
-    <!-- NAVBAR HEADER -->
     <header>
         <div class="nav-container">
-            <!-- Menu Toggle (Mobile) -->
             <button class="mobile-menu-btn" onclick="toggleMobileMenu()">&#9776;</button>
-
-            <!-- Logo -->
             <a href="javascript:void(0)" class="brand-logo-wrap" onclick="showCatalogPage(); filterCategory('all', document.getElementById('cat-all'))">
                  <img src="logo.png" class="exact-logo-img" alt="Vericta Logo" onerror="this.src='https://via.placeholder.com/150x50?text=VERICTA'">
             </a>
-            
-            <!-- Menu Central -->
             <nav class="header-categories" id="mobile-nav">
                 <button class="cat-nav-btn active" id="cat-all" onclick="filterCategory('all', this)">Lançamentos</button>
                 <button class="cat-nav-btn" onclick="filterCategory('masculino', this)">Masculino</button>
@@ -222,31 +205,20 @@
                 <button class="cat-nav-btn" onclick="filterCategory('acessorios', this)">Acessórios</button>
                 <button class="cat-nav-btn" onclick="filterCategory('todos', this)">Todos</button>
             </nav>
-
-            <!-- Ícones Direita -->
             <div class="nav-actions">
-                <!-- LOGIN COM GOOGLE -->
                 <button class="icon-btn" onclick="toggleLogin()" title="Entrar com Google">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                     <span id="user-display" class="user-name-display">Entrar</span>
                 </button>
-
-                <!-- Busca -->
                 <button class="icon-btn" onclick="toggleSearch()" title="Buscar">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                 </button>
-                
-                <!-- Barra de Busca -->
                 <div class="search-container" id="search-box">
                     <input type="text" id="search-input" placeholder="Buscar produtos..." oninput="handleSearch(this.value)">
                 </div>
-
-                <!-- Favoritos -->
                 <button class="icon-btn" onclick="showFavorites()" title="Meus Favoritos">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
                 </button>
-
-                <!-- Carrinho -->
                 <button class="icon-btn" onclick="openCart()" title="Carrinho">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
                     <span class="cart-badge" id="cart-count">0</span>
@@ -258,20 +230,12 @@
     <div id="toast" class="toast-notify">Ação realizada!</div>
 
     <div id="main-content">
-        <!-- ================= CATALOG VIEW ================= -->
         <div id="view-catalog" class="page-view active">
-            <!-- HERO BANNER COM SLIDER -->
             <div class="hero-section" id="hero-banner">
                 <div class="hero-slider" id="hero-slider">
-                    <div class="hero-slide active">
-                        <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?ixlib=rb-1.2.1&auto=format&fit=crop&w=1400&q=80" alt="Lançamento 1">
-                    </div>
-                    <div class="hero-slide">
-                        <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?ixlib=rb-1.2.1&auto=format&fit=crop&w=1400&q=80" alt="Lançamento 2">
-                    </div>
-                    <div class="hero-slide">
-                        <img src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1400&q=80" alt="Lançamento 3">
-                    </div>
+                    <div class="hero-slide active"><img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?ixlib=rb-1.2.1&auto=format&fit=crop&w=1400&q=80" alt="Lançamento 1"></div>
+                    <div class="hero-slide"><img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?ixlib=rb-1.2.1&auto=format&fit=crop&w=1400&q=80" alt="Lançamento 2"></div>
+                    <div class="hero-slide"><img src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1400&q=80" alt="Lançamento 3"></div>
                 </div>
                 <div class="hero-content">
                     <h1 class="hero-title">Novos<br>Lançamentos</h1>
@@ -291,7 +255,6 @@
             </main>
         </div>
 
-        <!-- ================= PRODUCT DETAILS VIEW ================= -->
         <div id="view-details" class="page-view main-wrapper">
             <button class="back-btn" onclick="showCatalogPage()">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
@@ -307,6 +270,10 @@
                     <h1 id="detail-title" class="details-title">Nome</h1>
                     <div id="detail-price" class="details-price">R$ 0,00</div>
                     <p id="detail-desc" class="details-description">Descrição</p>
+                    
+                    <!-- Cores Dinâmicas -->
+                    <div id="detail-colors-container"></div>
+
                     <div class="selector-label">Tamanho</div>
                     <div class="sizes-grid" id="detail-sizes"></div>
                     <div class="selector-label">Quantidade</div>
@@ -323,7 +290,7 @@
         </div>
     </div>
 
-    <!-- ================= CART DRAWER ================= -->
+    <!-- CART DRAWER -->
     <div class="cart-overlay" id="cart-overlay" onclick="if(event.target === this) closeCart()">
         <div class="cart-drawer">
             <div class="cart-header">
@@ -359,13 +326,10 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT LOGIC -->
     <script>
         // ================= CONFIGURAÇÃO DE BANCOS DE DADOS =================
-        // 1. Planilha de Produtos
         const DATABASE_URL = 'https://sheetdb.io/api/v1/67x4h7xe1wzcg';
         
-        // 2. Banco de Usuários na Nuvem (Firebase)
  const firebaseConfig = {
             apiKey: "AIzaSyCZGWrGi2dD91qq2KOP0_JiNQzJz3xdZbQ",
             authDomain: "banco-de-dados-vericta.firebaseapp.com",
@@ -375,154 +339,110 @@
             appId: "1:895353456691:web:53c4f6bbe2987f86e1fb46"
         };
         
-        // Variáveis globais
+        // Mapeamento de cores para as bolinhas
+        const COLOR_HEX = {
+            'branco': '#FFFFFF', 'preto': '#2C2C2C', 'cinza': '#6B6E70',
+            'vermelho': '#D93838', 'azul': '#1B365D', 'marrom': '#5C4033',
+            'verde': '#2E4A35', 'rosa': '#D4A5A5', 'dourado': '#967645'
+        };
+
         let PRODUCTS = [];
         const SIZES = ['PP', 'P', 'M', 'G', 'GG', 'XG', 'G1', 'G2'];
         let currentDetailProduct = null;
         let selectedSize = null;
+        let selectedTopColor = null;
+        let selectedBottomColor = null;
         let detailQty = 1;
         let cart = [];
         let favorites = [];
-        
-        // Firebase variáveis
         let auth = null;
         let db = null;
         let currentUser = null;
 
         function formatMoney(value) { return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
 
-        // ================= INICIALIZAÇÃO =================
         document.addEventListener('DOMContentLoaded', () => {
             initFirebase();
             loadCartFromStorage();
             loadProductsFromDB();
             initHeroSlider();
-            // Se o firebase não for configurado, puxa os favoritos da memória local do celular
             if (!auth) loadFavoritesFromStorage(); 
         });
 
-        // MENU MOBILE TOGGLE
-        function toggleMobileMenu() {
-            document.getElementById('mobile-nav').classList.toggle('open');
-        }
+        function toggleMobileMenu() { document.getElementById('mobile-nav').classList.toggle('open'); }
 
-        // ================= FIREBASE E LOGIN (NUVEM) =================
         function initFirebase() {
             if (firebaseConfig.apiKey !== "COLE_SUA_API_KEY_AQUI") {
                 firebase.initializeApp(firebaseConfig);
                 auth = firebase.auth();
                 db = firebase.firestore();
 
-                // Fica ouvindo se o usuário fez login ou logout
                 auth.onAuthStateChanged(user => {
                     const userDisplay = document.getElementById('user-display');
                     if(user) {
-                        currentUser = user;
-                        userDisplay.textContent = user.displayName.split(' ')[0];
+                        currentUser = user; userDisplay.textContent = user.displayName.split(' ')[0];
                         loadFavoritesFromFirebase();
                     } else {
-                        currentUser = null;
-                        userDisplay.textContent = "Entrar";
+                        currentUser = null; userDisplay.textContent = "Entrar";
                         loadFavoritesFromStorage();
-                        if(document.getElementById('section-title').textContent === "Meus Favoritos") {
-                            showFavorites(); // Atualiza a tela se estiver na aba de favoritos
-                        }
+                        if(document.getElementById('section-title').textContent === "Meus Favoritos") showFavorites();
                     }
                 });
             }
         }
 
         function toggleLogin() {
-            if (!auth) {
-                showToast("O sistema de contas está em configuração.");
-                return;
-            }
-            if (currentUser) {
-                auth.signOut();
-                showToast("Você saiu da conta.");
-            } else {
+            if (!auth) { showToast("O sistema de contas está em configuração."); return; }
+            if (currentUser) { auth.signOut(); showToast("Você saiu da conta."); } 
+            else {
                 const provider = new firebase.auth.GoogleAuthProvider();
-                auth.signInWithPopup(provider).catch(error => {
-                    console.error("Erro no login", error);
-                    showToast("Erro ao fazer login.");
-                });
+                auth.signInWithPopup(provider).catch(error => showToast("Erro ao fazer login."));
             }
         }
 
-        // ================= SISTEMA DE FAVORITOS (NUVEM OU LOCAL) =================
         function loadFavoritesFromStorage() {
             const saved = localStorage.getItem('vericta_favs');
             if (saved) { try { favorites = JSON.parse(saved); } catch(e) { favorites = []; } }
-            renderCatalog(PRODUCTS); // Atualiza os corações na tela
+            renderCatalog(PRODUCTS); 
         }
 
-        function saveFavoritesLocally() { 
-            localStorage.setItem('vericta_favs', JSON.stringify(favorites)); 
-        }
+        function saveFavoritesLocally() { localStorage.setItem('vericta_favs', JSON.stringify(favorites)); }
 
         async function loadFavoritesFromFirebase() {
             if(!currentUser) return;
             const docRef = db.collection('users').doc(currentUser.uid);
             const doc = await docRef.get();
+            if(doc.exists) { favorites = doc.data().favorites || []; } 
+            else { if(favorites.length > 0) saveFavoritesToFirebase(); }
             
-            if(doc.exists) {
-                favorites = doc.data().favorites || [];
-            } else {
-                // Se o usuário logou pela 1º vez, mas já tinha favoritado no celular sem logar, sobe pra nuvem
-                if(favorites.length > 0) saveFavoritesToFirebase();
-            }
-            
-            if (document.getElementById('section-title').textContent === "Meus Favoritos") {
-                showFavorites();
-            } else {
-                renderCatalog(PRODUCTS);
-            }
+            if (document.getElementById('section-title').textContent === "Meus Favoritos") showFavorites();
+            else renderCatalog(PRODUCTS);
         }
 
         function saveFavoritesToFirebase() {
-            if(currentUser && db) {
-                db.collection('users').doc(currentUser.uid).set({
-                    favorites: favorites,
-                    email: currentUser.email
-                }, {merge: true});
-            }
+            if(currentUser && db) { db.collection('users').doc(currentUser.uid).set({ favorites: favorites, email: currentUser.email }, {merge: true}); }
         }
 
         function toggleFavorite(event, productId) {
             event.stopPropagation(); 
             const index = favorites.indexOf(productId);
-            
-            if (index > -1) {
-                favorites.splice(index, 1);
-                showToast("Removido dos favoritos");
-            } else {
-                favorites.push(productId);
-                showToast("Salvo nos favoritos!");
-            }
+            if (index > -1) { favorites.splice(index, 1); showToast("Removido dos favoritos"); } 
+            else { favorites.push(productId); showToast("Salvo nos favoritos!"); }
             
             saveFavoritesLocally();
-            if(currentUser) saveFavoritesToFirebase(); // Espelha na nuvem
-            
+            if(currentUser) saveFavoritesToFirebase(); 
             event.currentTarget.classList.toggle('active');
-            
-            // Se estiver vendo a aba de favoritos e remover um, ele some da tela
-            if (document.getElementById('section-title').textContent === "Meus Favoritos") {
-                showFavorites();
-            }
+            if (document.getElementById('section-title').textContent === "Meus Favoritos") showFavorites();
         }
 
         function showFavorites() {
-            showCatalogPage();
-            document.getElementById('mobile-nav').classList.remove('open');
+            showCatalogPage(); document.getElementById('mobile-nav').classList.remove('open');
             document.getElementById('hero-banner').style.display = 'none';
-            document.getElementById('section-title').style.display = 'block';
-            document.getElementById('section-title').textContent = "Meus Favoritos";
+            document.getElementById('section-title').style.display = 'block'; document.getElementById('section-title').textContent = "Meus Favoritos";
             document.querySelectorAll('.cat-nav-btn').forEach(b => b.classList.remove('active'));
-            const favProducts = PRODUCTS.filter(p => favorites.includes(p.id));
-            renderCatalog(favProducts);
+            renderCatalog(PRODUCTS.filter(p => favorites.includes(p.id)));
         }
 
-        // ================= HERO CAROUSEL =================
         let currentHeroSlide = 0;
         let heroSlideInterval;
 
@@ -530,30 +450,12 @@
             const slides = document.querySelectorAll('.hero-slide');
             const dots = document.querySelectorAll('.hero-dot');
             if(slides.length === 0) return;
-
-            function showSlide(index) {
-                slides.forEach(s => s.classList.remove('active'));
-                dots.forEach(d => d.classList.remove('active'));
-                slides[index].classList.add('active');
-                if(dots[index]) dots[index].classList.add('active');
-            }
-
-            function nextSlide() {
-                currentHeroSlide = (currentHeroSlide + 1) % slides.length;
-                showSlide(currentHeroSlide);
-            }
-
+            function showSlide(index) { slides.forEach(s => s.classList.remove('active')); dots.forEach(d => d.classList.remove('active')); slides[index].classList.add('active'); if(dots[index]) dots[index].classList.add('active'); }
+            function nextSlide() { currentHeroSlide = (currentHeroSlide + 1) % slides.length; showSlide(currentHeroSlide); }
             heroSlideInterval = setInterval(nextSlide, 4000); 
-
-            window.setHeroSlide = function(index) {
-                currentHeroSlide = index;
-                showSlide(currentHeroSlide);
-                clearInterval(heroSlideInterval);
-                heroSlideInterval = setInterval(nextSlide, 4000);
-            }
+            window.setHeroSlide = function(index) { currentHeroSlide = index; showSlide(currentHeroSlide); clearInterval(heroSlideInterval); heroSlideInterval = setInterval(nextSlide, 4000); }
         }
 
-        // ================= BANCO DE DADOS (PLANILHA) =================
         async function loadProductsFromDB() {
             const container = document.getElementById('catalog-container');
             if (!container) return; 
@@ -561,90 +463,78 @@
             try {
                 const response = await fetch(DATABASE_URL);
                 const rawData = await response.json();
-
-                if (!Array.isArray(rawData)) {
-                    container.innerHTML = '<p style="text-align:center; color: red;">Erro de conexão com o banco de dados.</p>';
-                    return; 
-                }
+                if (!Array.isArray(rawData)) { container.innerHTML = '<p style="text-align:center; color: red;">Erro de conexão com o banco de dados.</p>'; return; }
 
                 PRODUCTS = rawData.map(rawItem => {
                     const item = {};
                     for (let key in rawItem) item[key.trim().toLowerCase()] = rawItem[key];
 
                     const stockBySize = {
-                        'PP': parseInt(item.pp) || 0, 'P': parseInt(item.p) || 0,
-                        'M': parseInt(item.m) || 0, 'G': parseInt(item.g) || 0,
-                        'GG': parseInt(item.gg) || 0, 'XG': parseInt(item.xg) || 0,
-                        'G1': parseInt(item.g1) || 0, 'G2': parseInt(item.g2) || 0,
-                        'U': parseInt(item.u) || 0
+                        'PP': parseInt(item.pp) || 0, 'P': parseInt(item.p) || 0, 'M': parseInt(item.m) || 0, 'G': parseInt(item.g) || 0,
+                        'GG': parseInt(item.gg) || 0, 'XG': parseInt(item.xg) || 0, 'G1': parseInt(item.g1) || 0, 'G2': parseInt(item.g2) || 0, 'U': parseInt(item.u) || 0
                     };
-
                     const totalStock = Object.values(stockBySize).reduce((acc, curr) => acc + curr, 0);
+
+                    let rawImagesArray = [];
+                    let colorCombinations = {};
+                    let topColorsArray = [];
+                    let bottomColorsArray = [];
+
+                    if (item.image) {
+                        const imgItems = item.image.split(',').map(i => i.trim()).filter(i => i !== '');
+                        imgItems.forEach(imgData => {
+                            if(imgData.includes('=')) {
+                                let parts = imgData.split('=');
+                                let combo = parts[0].trim().toLowerCase();
+                                let url = parts[1].trim();
+                                colorCombinations[combo] = url;
+                                rawImagesArray.push(url);
+                                
+                                let colors = combo.split('_');
+                                if(colors[0] && !topColorsArray.includes(colors[0])) topColorsArray.push(colors[0]);
+                                if(colors[1] && !bottomColorsArray.includes(colors[1])) bottomColorsArray.push(colors[1]);
+                            } else {
+                                rawImagesArray.push(imgData);
+                            }
+                        });
+                    }
+                    if (rawImagesArray.length === 0) rawImagesArray.push('https://via.placeholder.com/400x400?text=Vericta');
+
                     let rawPrice = item.price ? item.price.toString().replace(',', '.') : '0';
                     let rawCategory = item.category ? item.category.trim().toLowerCase() : 'outros';
-                    
-                    let rawImagesArray = ['https://via.placeholder.com/400x400?text=Vericta'];
-                    if (item.image) {
-                        const urls = item.image.split(',').map(url => url.trim()).filter(url => url !== '');
-                        if (urls.length > 0) rawImagesArray = urls;
-                    }
 
                     return {
-                        id: parseInt(item.id) || Math.floor(Math.random() * 1000),
-                        name: item.name || 'Produto Vericta',
-                        category: rawCategory,
-                        price: parseFloat(rawPrice),
-                        desc: item.desc || '',
-                        images: rawImagesArray, 
-                        stockBySize: stockBySize,
-                        totalStock: totalStock
+                        id: parseInt(item.id) || Math.floor(Math.random() * 1000), name: item.name || 'Produto Vericta', category: rawCategory,
+                        price: parseFloat(rawPrice), desc: item.desc || '', images: rawImagesArray, 
+                        stockBySize: stockBySize, totalStock: totalStock,
+                        colorCombinations: colorCombinations, topColors: topColorsArray, bottomColors: bottomColorsArray
                     };
                 });
-
                 renderCatalog(PRODUCTS);
-            } catch (error) {
-                container.innerHTML = '<p style="text-align:center; color: red;">Falha ao carregar vitrine.</p>';
-            }
+            } catch (error) { container.innerHTML = '<p style="text-align:center; color: red;">Falha ao carregar vitrine.</p>'; }
         }
 
-        // ================= BUSCA =================
         function toggleSearch() {
-            const searchBox = document.getElementById('search-box');
-            searchBox.classList.toggle('active');
+            const searchBox = document.getElementById('search-box'); searchBox.classList.toggle('active');
             if (searchBox.classList.contains('active')) document.getElementById('search-input').focus();
         }
 
         function handleSearch(term) {
-            showCatalogPage();
-            document.getElementById('mobile-nav').classList.remove('open');
-            document.getElementById('hero-banner').style.display = 'none';
-            document.getElementById('section-title').style.display = 'block';
-            document.getElementById('section-title').textContent = `Resultados para "${term}"`;
+            showCatalogPage(); document.getElementById('mobile-nav').classList.remove('open'); document.getElementById('hero-banner').style.display = 'none';
+            document.getElementById('section-title').style.display = 'block'; document.getElementById('section-title').textContent = `Resultados para "${term}"`;
             document.querySelectorAll('.cat-nav-btn').forEach(b => b.classList.remove('active'));
 
-            if(term.trim() === '') {
-                filterCategory('todos', document.getElementById('cat-all'));
-                return;
-            }
-            const filtered = PRODUCTS.filter(p => p.name.toLowerCase().includes(term.toLowerCase()));
-            renderCatalog(filtered);
+            if(term.trim() === '') { filterCategory('todos', document.getElementById('cat-all')); return; }
+            renderCatalog(PRODUCTS.filter(p => p.name.toLowerCase().includes(term.toLowerCase())));
         }
 
-        // ================= CATÁLOGO =================
         function renderCatalog(productsToRender) {
-            const container = document.getElementById('catalog-container');
-            container.innerHTML = '';
-
-            if(productsToRender.length === 0) {
-                container.innerHTML = '<p style="grid-column: 1/-1; text-align:center; padding: 40px; color: var(--text-muted);">Nenhum produto encontrado.</p>';
-                return;
-            }
+            const container = document.getElementById('catalog-container'); container.innerHTML = '';
+            if(productsToRender.length === 0) { container.innerHTML = '<p style="grid-column: 1/-1; text-align:center; padding: 40px; color: var(--text-muted);">Nenhum produto encontrado.</p>'; return; }
 
             productsToRender.forEach(prod => {
-                const card = document.createElement('div');
-                card.className = 'product-card';
+                const card = document.createElement('div'); card.className = 'product-card';
                 const isOutOfStock = prod.totalStock <= 0;
-                
                 if(!isOutOfStock) card.onclick = () => openProductDetails(prod.id);
 
                 const isFav = favorites.includes(prod.id);
@@ -656,7 +546,7 @@
                         ${outOfStockHTML}
                         <span class="card-tag">${prod.category}</span>
                         <button class="${favClass}" onclick="toggleFavorite(event, ${prod.id})">
-                            <svg width="18" height="18" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
                         </button>
                         <img src="${prod.images[0]}" alt="${prod.name}" loading="lazy" onerror="this.src='https://via.placeholder.com/400x400?text=Vericta'">
                     </div>
@@ -670,140 +560,149 @@
         }
 
         function filterCategory(cat, btnElement) {
-            document.getElementById('mobile-nav').classList.remove('open');
-            document.getElementById('search-box').classList.remove('active');
-            document.getElementById('search-input').value = '';
-            document.getElementById('section-title').style.display = 'none';
-
+            document.getElementById('mobile-nav').classList.remove('open'); document.getElementById('search-box').classList.remove('active');
+            document.getElementById('search-input').value = ''; document.getElementById('section-title').style.display = 'none';
             document.querySelectorAll('.cat-nav-btn').forEach(btn => btn.classList.remove('active'));
             if(btnElement) btnElement.classList.add('active');
 
-            if (cat === 'all') {
-                document.getElementById('hero-banner').style.display = 'flex';
-                renderCatalog(PRODUCTS);
-            } else if (cat === 'todos') {
-                document.getElementById('hero-banner').style.display = 'none';
-                document.getElementById('section-title').style.display = 'block';
-                document.getElementById('section-title').textContent = "Todos os Produtos";
-                renderCatalog(PRODUCTS);
-            } else {
-                document.getElementById('hero-banner').style.display = 'none';
-                document.getElementById('section-title').style.display = 'block';
-                document.getElementById('section-title').textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
-                
-                // --- AJUSTE NO FILTRO DE ACESSÓRIOS ---
-                if(cat === 'acessorios') {
-                    // Cobre múltiplas variações e possíveis erros de digitação comuns
-                    const acs = ['acessorios', 'acessórios', 'acessorio', 'acessório', 'unissex'];
-                    renderCatalog(PRODUCTS.filter(p => acs.includes(p.category)));
-                } else {
-                    renderCatalog(PRODUCTS.filter(p => p.category === cat));
-                }
+            if (cat === 'all') { document.getElementById('hero-banner').style.display = 'flex'; renderCatalog(PRODUCTS); } 
+            else if (cat === 'todos') { document.getElementById('hero-banner').style.display = 'none'; document.getElementById('section-title').style.display = 'block'; document.getElementById('section-title').textContent = "Todos os Produtos"; renderCatalog(PRODUCTS); } 
+            else {
+                document.getElementById('hero-banner').style.display = 'none'; document.getElementById('section-title').style.display = 'block'; document.getElementById('section-title').textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
+                if(cat === 'acessorios') renderCatalog(PRODUCTS.filter(p => ['acessorios', 'acessórios', 'acessorio', 'acessório', 'unissex'].includes(p.category)));
+                else renderCatalog(PRODUCTS.filter(p => p.category === cat));
             }
         }
 
-        // ================= TRANSIÇÃO DE PÁGINAS E DETALHES =================
-        function showCatalogPage() {
-            document.getElementById('view-details').classList.remove('active');
-            document.getElementById('view-catalog').classList.add('active');
-            window.scrollTo(0,0);
-        }
-
-        function showDetailsPage() {
-            document.getElementById('view-catalog').classList.remove('active');
-            document.getElementById('view-details').classList.add('active');
-            window.scrollTo(0,0);
-        }
+        function showCatalogPage() { document.getElementById('view-details').classList.remove('active'); document.getElementById('view-catalog').classList.add('active'); window.scrollTo(0,0); }
+        function showDetailsPage() { document.getElementById('view-catalog').classList.remove('active'); document.getElementById('view-details').classList.add('active'); window.scrollTo(0,0); }
 
         function openProductDetails(id) {
             const product = PRODUCTS.find(p => p.id === id);
             if(!product || product.totalStock <= 0) return; 
             
-            currentDetailProduct = product;
-            detailQty = 1;
-            selectedSize = null;
+            currentDetailProduct = product; detailQty = 1; selectedSize = null;
+            selectedTopColor = product.topColors.length > 0 ? product.topColors[0] : null;
+            selectedBottomColor = product.bottomColors.length > 0 ? product.bottomColors[0] : null;
 
-            document.getElementById('bread-category').textContent = product.category;
-            document.getElementById('bread-category').style.textTransform = "capitalize";
-            document.getElementById('bread-name').textContent = product.name;
-            document.getElementById('detail-title').textContent = product.name;
-            document.getElementById('detail-price').textContent = formatMoney(product.price);
-            document.getElementById('detail-desc').textContent = product.desc;
+            document.getElementById('bread-category').textContent = product.category; document.getElementById('bread-category').style.textTransform = "capitalize";
+            document.getElementById('bread-name').textContent = product.name; document.getElementById('detail-title').textContent = product.name;
+            document.getElementById('detail-price').textContent = formatMoney(product.price); document.getElementById('detail-desc').textContent = product.desc;
             document.getElementById('detail-qty').value = detailQty;
 
-            const mainImg = document.getElementById('detail-main-img');
-            mainImg.src = product.images[0];
-            mainImg.onerror = function() { this.src='https://via.placeholder.com/400x400?text=Vericta'; };
-
-            const thumbsContainer = document.getElementById('detail-thumbnails');
-            thumbsContainer.innerHTML = '';
+            const mainImg = document.getElementById('detail-main-img'); mainImg.src = product.images[0]; mainImg.onerror = function() { this.src='https://via.placeholder.com/400x400?text=Vericta'; };
+            const thumbsContainer = document.getElementById('detail-thumbnails'); thumbsContainer.innerHTML = '';
+            
             if(product.images.length > 1) {
                 product.images.forEach((imgUrl, index) => {
-                    const thumb = document.createElement('img');
-                    thumb.src = imgUrl;
-                    thumb.className = index === 0 ? 'thumb-img active' : 'thumb-img';
-                    thumb.onclick = () => {
-                        mainImg.src = imgUrl;
-                        document.querySelectorAll('.thumb-img').forEach(t => t.classList.remove('active'));
-                        thumb.classList.add('active');
-                    };
+                    const thumb = document.createElement('img'); thumb.src = imgUrl; thumb.className = index === 0 ? 'thumb-img active' : 'thumb-img';
+                    thumb.onclick = () => { mainImg.src = imgUrl; document.querySelectorAll('.thumb-img').forEach(t => t.classList.remove('active')); thumb.classList.add('active'); };
                     thumbsContainer.appendChild(thumb);
                 });
             }
 
-            const sizesContainer = document.getElementById('detail-sizes');
-            sizesContainer.innerHTML = '';
+            // Geração das Bolinhas de Cores
+            const colorsContainer = document.getElementById('detail-colors-container');
+            colorsContainer.innerHTML = '';
             
+            if(product.topColors.length > 0 || product.bottomColors.length > 0) {
+                let colorHTML = '';
+                if(product.topColors.length > 0) {
+                    colorHTML += `<div class="color-section"><div class="color-label">Cor: Parte de Cima</div><div class="color-options">`;
+                    product.topColors.forEach(color => {
+                        const hex = COLOR_HEX[color] || '#E5E5E5';
+                        const selClass = color === selectedTopColor ? 'selected' : '';
+                        colorHTML += `<div class="color-dot top-color-dot ${selClass}" style="background: ${hex};" data-color="${color}" onclick="selectDetailColor('top', '${color}', this)"></div>`;
+                    });
+                    colorHTML += `</div></div>`;
+                }
+                if(product.bottomColors.length > 0) {
+                    colorHTML += `<div class="color-section"><div class="color-label">Cor: Parte de Baixo</div><div class="color-options">`;
+                    product.bottomColors.forEach(color => {
+                        const hex = COLOR_HEX[color] || '#E5E5E5';
+                        const selClass = color === selectedBottomColor ? 'selected' : '';
+                        colorHTML += `<div class="color-dot bottom-color-dot ${selClass}" style="background: ${hex};" data-color="${color}" onclick="selectDetailColor('bottom', '${color}', this)"></div>`;
+                    });
+                    colorHTML += `</div></div>`;
+                }
+                colorsContainer.innerHTML = colorHTML;
+                // Força a seleção inicial
+                updateDetailImageFromColor();
+            }
+
+            const sizesContainer = document.getElementById('detail-sizes'); sizesContainer.innerHTML = '';
             const isAcessorio = ['acessorios', 'acessórios', 'acessorio', 'acessório', 'unissex'].includes(product.category);
 
             if (!isAcessorio) {
                 let firstAvailableSize = null;
                 SIZES.forEach(size => {
-                    const stockOfThisSize = product.stockBySize[size];
-                    const chip = document.createElement('div');
+                    const stockOfThisSize = product.stockBySize[size]; const chip = document.createElement('div');
                     if (stockOfThisSize > 0) {
                         if (!firstAvailableSize) firstAvailableSize = size; 
                         chip.className = 'size-chip size-selectable'; chip.textContent = size;
-                        chip.onclick = () => {
-                            selectedSize = size; detailQty = 1; document.getElementById('detail-qty').value = detailQty;
-                            document.querySelectorAll('.size-selectable').forEach(c => c.classList.remove('selected'));
-                            chip.classList.add('selected');
-                        };
-                    } else {
-                        chip.className = 'size-chip'; chip.textContent = size;
-                        chip.style.opacity = '0.3'; chip.style.cursor = 'not-allowed'; chip.style.textDecoration = 'line-through';
-                    }
+                        chip.onclick = () => { selectedSize = size; detailQty = 1; document.getElementById('detail-qty').value = detailQty; document.querySelectorAll('.size-selectable').forEach(c => c.classList.remove('selected')); chip.classList.add('selected'); };
+                    } else { chip.className = 'size-chip'; chip.textContent = size; chip.style.opacity = '0.3'; chip.style.cursor = 'not-allowed'; chip.style.textDecoration = 'line-through'; }
                     sizesContainer.appendChild(chip);
                 });
-                if(firstAvailableSize) {
-                    selectedSize = firstAvailableSize;
-                    const firstChip = Array.from(sizesContainer.children).find(c => c.textContent === firstAvailableSize);
-                    if(firstChip) firstChip.classList.add('selected');
-                }
+                if(firstAvailableSize) { selectedSize = firstAvailableSize; const firstChip = Array.from(sizesContainer.children).find(c => c.textContent === firstAvailableSize); if(firstChip) firstChip.classList.add('selected'); }
             } else {
                 const stockOfU = product.stockBySize['U'];
-                if(stockOfU > 0) {
-                    sizesContainer.innerHTML = `<div class="size-chip selected size-selectable">Tamanho Único</div>`;
-                    selectedSize = 'U';
-                }
+                if(stockOfU > 0) { sizesContainer.innerHTML = `<div class="size-chip selected size-selectable">Tamanho Único</div>`; selectedSize = 'U'; }
             }
             showDetailsPage();
         }
 
+        // Função de seleção de cor
+        window.selectDetailColor = function(type, color, element) {
+            if(type === 'top') {
+                selectedTopColor = color;
+                document.querySelectorAll('.top-color-dot').forEach(d => d.classList.remove('selected'));
+            } else {
+                selectedBottomColor = color;
+                document.querySelectorAll('.bottom-color-dot').forEach(d => d.classList.remove('selected'));
+            }
+            element.classList.add('selected');
+            updateDetailImageFromColor();
+        }
+
+        function updateDetailImageFromColor() {
+            if(!currentDetailProduct || Object.keys(currentDetailProduct.colorCombinations).length === 0) return;
+            
+            let comboKey = '';
+            if(selectedTopColor && selectedBottomColor) comboKey = `${selectedTopColor}_${selectedBottomColor}`;
+            else if(selectedTopColor) comboKey = selectedTopColor;
+            else if(selectedBottomColor) comboKey = selectedBottomColor;
+
+            const newImgUrl = currentDetailProduct.colorCombinations[comboKey];
+            if(newImgUrl) {
+                const mainImg = document.getElementById('detail-main-img');
+                mainImg.src = newImgUrl;
+                document.querySelectorAll('.thumb-img').forEach(t => {
+                    t.classList.remove('active');
+                    if(t.src === mainImg.src) t.classList.add('active');
+                });
+            }
+        }
+
         function changeDetailQty(amount) {
             if (!selectedSize) return;
-            const maxStockForSelectedSize = currentDetailProduct.stockBySize[selectedSize];
+            const maxStock = currentDetailProduct.stockBySize[selectedSize];
             let newQty = detailQty + amount;
-            if (newQty >= 1 && newQty <= maxStockForSelectedSize) {
-                detailQty = newQty; document.getElementById('detail-qty').value = detailQty;
-            } else if (newQty > maxStockForSelectedSize) showToast(`Limite de estoque atingido`);
+            if (newQty >= 1 && newQty <= maxStock) { detailQty = newQty; document.getElementById('detail-qty').value = detailQty; } 
+            else if (newQty > maxStock) showToast(`Limite de estoque atingido`);
         }
 
         function addToCartFromDetail() {
             if(!currentDetailProduct || !selectedSize) { alert("Selecione um tamanho."); return; }
             const maxStock = currentDetailProduct.stockBySize[selectedSize];
-            const cartItem = { cartId: Date.now() + Math.random(), productId: currentDetailProduct.id, name: currentDetailProduct.name, price: currentDetailProduct.price, img: currentDetailProduct.images[0], size: selectedSize, qty: detailQty };
-            const existingIndex = cart.findIndex(item => item.productId === cartItem.productId && item.size === cartItem.size);
+            
+            let colorDesc = "";
+            if(selectedTopColor && selectedBottomColor) colorDesc = ` (${selectedTopColor}/${selectedBottomColor})`;
+            else if(selectedTopColor) colorDesc = ` (${selectedTopColor})`;
+            else if(selectedBottomColor) colorDesc = ` (${selectedBottomColor})`;
+
+            const cartItem = { cartId: Date.now() + Math.random(), productId: currentDetailProduct.id, name: currentDetailProduct.name + colorDesc, price: currentDetailProduct.price, img: document.getElementById('detail-main-img').src, size: selectedSize, qty: detailQty };
+            const existingIndex = cart.findIndex(item => item.productId === cartItem.productId && item.size === cartItem.size && item.name === cartItem.name);
             
             if(existingIndex >= 0) {
                 if((cart[existingIndex].qty + cartItem.qty) > maxStock) { showToast("Estoque insuficiente"); return; }
@@ -821,8 +720,7 @@
         function updateCartUI() {
             const container = document.getElementById('cart-items-container');
             const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
-            document.getElementById('cart-header-count').textContent = totalItems;
-            document.getElementById('cart-count').textContent = totalItems;
+            document.getElementById('cart-header-count').textContent = totalItems; document.getElementById('cart-count').textContent = totalItems;
             const totalValue = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
             document.getElementById('cart-total-value').textContent = formatMoney(totalValue);
 
@@ -834,7 +732,7 @@
                 row.innerHTML = `
                     <img src="${item.img}" class="cart-item-img" alt="${item.name}" onerror="this.src='https://via.placeholder.com/68x68?text=V'">
                     <div class="cart-item-info">
-                        <div class="cart-item-title">${item.name}</div>
+                        <div class="cart-item-title" style="text-transform: capitalize;">${item.name}</div>
                         <div class="cart-item-meta">Tam: ${item.size} | Qtd: ${item.qty}</div>
                         <div class="cart-item-price">${formatMoney(item.price * item.qty)}</div>
                     </div>
@@ -859,11 +757,11 @@
             let total = 0;
             cart.forEach((item, index) => {
                 const sub = item.price * item.qty; total += sub;
-                text += `${index + 1}. ${item.name}\n   Tamanho: *${item.size}* | Qtd: *${item.qty}* | Sub: ${formatMoney(sub)}\n`;
+                text += `${index + 1}. *${item.name.toUpperCase()}*\n   Tamanho: *${item.size}* | Qtd: *${item.qty}* | Sub: ${formatMoney(sub)}\n`;
             });
             text += `\n*TOTAL:* ${formatMoney(total)}\n\n_Aguardo o cálculo do frete._`;
 
-            window.open(`https://wa.me/5515991347011?text=${encodeURIComponent(text)}`, '_blank');
+            window.open(`https://wa.me/5511999999999?text=${encodeURIComponent(text)}`, '_blank');
         }
 
         function showToast(msg) { const toast = document.getElementById('toast'); toast.textContent = msg; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 3000); }
