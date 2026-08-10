@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vericta Sports</title>
+    <title>Vericta - High Performance Sportswear</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -1288,7 +1288,7 @@
             const deliverySelect = document.getElementById('cust-delivery');
             const delivery = deliverySelect.options[deliverySelect.selectedIndex].text;
 
-            let text = `*NOVO PEDIDO - VERICTA SPORTS* 🏆\n\n`;
+            let text = `*NOVO PEDIDO - VERICTA* 🏆\n\n`;
             text += `*Cliente:* ${name}\n`;
             text += `*CEP:* ${cep}\n`;
             text += `*Entrega:* ${delivery}\n\n`;
@@ -1303,12 +1303,12 @@
             });
 
             text += `\n*TOTAL DOS PRODUTOS:* ${formatMoney(total)}\n`;
-            text += `\n_Aguardo o cálculo do frete e as formas de pagamento._`;
+            text += `\n_Aguardo o cálculo do frete e os dados para pagamento via PIX._`;
 
             // Codificar para URL
             const encodedText = encodeURIComponent(text);
-            // Substitua '5515981163408' pelo número real do WhatsApp da loja
-            const phone = "5515981163408"; 
+            // Substitua '5515981466189' pelo número real do WhatsApp da loja
+            const phone = "5515981466189"; 
             
             const whatsappUrl = `https://wa.me/${phone}?text=${encodedText}`;
             window.open(whatsappUrl, '_blank');
