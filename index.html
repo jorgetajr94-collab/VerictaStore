@@ -257,16 +257,54 @@
                         <picture>
                             <!-- COLE AQUI A IMAGEM DO CELULAR (Formato vertical 4:3, 4:5 ou 9:16) -->
                             <source media="(max-width: 900px)" srcset="https://res.cloudinary.com/ofymcuuj/image/upload/v1786402319/Centering_person_in_image_202608101950.jpg">
-                            <source media="(max-width: 900px)" srcset="https://res.cloudinary.com/ofymcuuj/image/upload/v1786402318/Centering_person_in_image_202608101950_1.jpg">
-                            <source media="(max-width: 900px)" srcset="https://res.cloudinary.com/ofymcuuj/image/upload/v1786402319/Person_centered_in_image_202608101950.jpg">
-                            <source media="(max-width: 900px)" srcset="https://res.cloudinary.com/ofymcuuj/image/upload/v1786402319/Centering_person_in_image_202608101950_2.jpg">
                             <!-- COLE AQUI A IMAGEM DO COMPUTADOR (Formato 16:9 ou Panorâmico) -->
                             <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786399017/Complete_image_leaving_person_un__202608101856_2.jpg" alt="Lançamento 1">
-                            <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786399016/Complete_image_leaving_person_un__202608101856_1.jpg" alt="Lançamento 2">
-                            <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786399021/Complete_image_leaving_person_un__202608101856.jpg" alt="Lançamento 3">
-                            <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786399017/Complete_left_image_preserving_r__202608101856.jpg" alt="Lançamento 4">
                         </picture>
                     </div>
+
+                    <!-- SLIDE 2 -->
+                    <div class="hero-slide">
+                        <picture>
+                            <!-- COLE AQUI A IMAGEM DO CELULAR -->
+                            <source media="(max-width: 900px)" srcset="https://res.cloudinary.com/ofymcuuj/image/upload/v1786402318/Centering_person_in_image_202608101950_1.jpg">
+                            <!-- COLE AQUI A IMAGEM DO COMPUTADOR -->
+                            <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786399016/Complete_image_leaving_person_un__202608101856_1.jpg" alt="Lançamento 2">
+                        </picture>
+                    </div>
+
+                    <!-- SLIDE 3 -->
+                    <div class="hero-slide">
+                        <picture>
+                            <!-- COLE AQUI A IMAGEM DO CELULAR -->
+                            <source media="(max-width: 900px)" srcset="https://res.cloudinary.com/ofymcuuj/image/upload/v1786402319/Person_centered_in_image_202608101950.jpg">
+                            <!-- COLE AQUI A IMAGEM DO COMPUTADOR -->
+                            <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786399017/Complete_left_image_preserving_r__202608101856.jpg" alt="Lançamento 3">
+                        </picture>
+                    </div>
+
+                     <!-- SLIDE 4 -->
+                    <div class="hero-slide">
+                        <picture>
+                            <!-- COLE AQUI A IMAGEM DO CELULAR -->
+                            <source media="(max-width: 900px)" srcset="https://res.cloudinary.com/ofymcuuj/image/upload/v1786402319/Centering_person_in_image_202608101950_2.jpg">
+                            <!-- COLE AQUI A IMAGEM DO COMPUTADOR -->
+                            <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786399021/Complete_image_leaving_person_un__202608101856.jpg" alt="Lançamento 4">
+                        </picture>
+                    </div>
+
+
+                </div>
+                <div class="hero-content">
+                    <h1 class="hero-title">Novos<br>Lançamentos</h1>
+                    <p class="hero-subtitle">A força da sua performance começa aqui.</p>
+                    <button class="btn-hero" onclick="document.getElementById('catalog-container').scrollIntoView({behavior: 'smooth'})">Comprar Agora</button>
+                </div>
+                <div class="hero-dots">
+                    <span class="hero-dot active" onclick="setHeroSlide(0)"></span>
+                    <span class="hero-dot" onclick="setHeroSlide(1)"></span>
+                    <span class="hero-dot" onclick="setHeroSlide(2)"></span>
+                </div>
+            </div>
 
             <main class="main-wrapper">
                 <h2 id="section-title" style="margin-bottom: 24px; font-family: 'Montserrat'; font-weight: 700; display: none;"></h2>
@@ -863,7 +901,7 @@
             const cep = document.getElementById('cust-cep').value.trim() || "Não informado";
             const delivery = document.getElementById('cust-delivery').options[document.getElementById('cust-delivery').selectedIndex].text;
 
-            let text = `*NOVO PEDIDO - VERICTA* \n\n*Cliente:* ${name}\n*CEP:* ${cep}\n*Entrega:* ${delivery}\n\n*ITENS DO PEDIDO:*\n`;
+            let text = `*NOVO PEDIDO - VERICTA* 🏆\n\n*Cliente:* ${name}\n*CEP:* ${cep}\n*Entrega:* ${delivery}\n\n*ITENS DO PEDIDO:*\n`;
             let total = 0;
             cart.forEach((item, index) => {
                 const sub = item.price * item.qty; total += sub;
