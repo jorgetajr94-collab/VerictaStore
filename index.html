@@ -61,8 +61,9 @@
         .hero-slider { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
         .hero-slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 0.8s ease-in-out; }
         .hero-slide.active { opacity: 1; }
+        .hero-slide picture { display: block; width: 100%; height: 100%; }
         .hero-slide img { width: 100%; height: 100%; object-fit: cover; object-position: right center; }
-        .hero-slide::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to right, var(--bg-cream) 0%, var(--bg-cream) 35%, transparent 70%); }
+        .hero-slide::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to right, var(--bg-cream) 0%, var(--bg-cream) 35%, transparent 70%); pointer-events: none;}
         .hero-content { position: relative; z-index: 2; padding: 0 60px; max-width: 650px; }
         .hero-title { font-family: 'Montserrat', sans-serif; font-size: 56px; font-weight: 800; color: var(--primary-gold); line-height: 1.1; margin-bottom: 16px; text-transform: uppercase; }
         .hero-subtitle { font-size: 18px; color: var(--text-main); margin-bottom: 30px; font-weight: 500; }
@@ -186,11 +187,14 @@
         .mobile-menu-btn { display: none; background: none; border: none; font-size: 24px; cursor: pointer; color: var(--dark-heading); }
         
         @media (max-width: 900px) {
-            .header-categories { display: none; position: absolute; top: 83px; left: 0; width: 100%; background: var(--bg-cream); flex-direction: column; padding: 24px; box-shadow: 0 10px 15px rgba(0,0,0,0.05); gap: 16px; }
+            .header-categories { display: none; position: absolute; top: 83px; left: 0; width: 100%; background: var(--bg-cream); flex-direction: column; padding: 24px; box-shadow: 0 10px 15px rgba(0,0,0,0.05); gap: 16px; z-index: 10;}
             .header-categories.open { display: flex; }
             .mobile-menu-btn { display: block; }
-            .hero-slide::after { background: linear-gradient(to top, var(--bg-cream) 0%, var(--bg-cream) 40%, rgba(248, 246, 240, 0.4) 100%); }
-            .hero-slide img { object-position: center top; }
+            
+            /* Ajuste do degradê no mobile para focar mais na foto */
+            .hero-slide::after { background: linear-gradient(to top, var(--bg-cream) 0%, var(--bg-cream) 40%, transparent 80%); }
+            .hero-slide img { object-position: center; } /* Centraliza melhor se usar foto única */
+            
             .hero-content { padding: 40px 24px 0; max-width: 100%; text-align: center; margin-top: auto;}
             .hero-dots { left: 50%; transform: translateX(-50%); bottom: 10px; }
             .hero-section { align-items: flex-end; padding-bottom: 40px; height: 500px;}
@@ -247,10 +251,43 @@
         <div id="view-catalog" class="page-view active">
             <div class="hero-section" id="hero-banner">
                 <div class="hero-slider" id="hero-slider">
-                    <div class="hero-slide active"><img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786399016/Complete_image_leaving_person_un__202608101856_1.jpg" alt="Lançamento 1"></div>
-                    <div class="hero-slide"><img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786399017/Complete_image_leaving_person_un__202608101856_2.jpg" alt="Lançamento 2"></div>
-                    <div class="hero-slide"><img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786399021/Complete_image_leaving_person_un__202608101856.jpg" alt="Lançamento 3"></div>
-                    <div class="hero-slide"><img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786399017/Complete_left_image_preserving_r__202608101856.jpg" alt="Lançamento 4"></div>
+                    
+                    <!-- SLIDE 1 -->
+                    <div class="hero-slide active">
+                        <picture>
+                            <!-- COLE AQUI A IMAGEM DO CELULAR (Formato vertical 4:3, 4:5 ou 9:16) -->
+                            <source media="(max-width: 900px)" srcset="https://res.cloudinary.com/ofymcuuj/image/upload/v1786402319/Centering_person_in_image_202608101950.jpg">
+                            <source media="(max-width: 900px)" srcset="https://res.cloudinary.com/ofymcuuj/image/upload/v1786402318/Centering_person_in_image_202608101950_1.jpg">
+                            <source media="(max-width: 900px)" srcset="https://res.cloudinary.com/ofymcuuj/image/upload/v1786402319/Person_centered_in_image_202608101950.jpg">
+                            <source media="(max-width: 900px)" srcset="https://res.cloudinary.com/ofymcuuj/image/upload/v1786402319/Centering_person_in_image_202608101950_2.jpg">
+                            <!-- COLE AQUI A IMAGEM DO COMPUTADOR (Formato 16:9 ou Panorâmico) -->
+                            <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786399017/Complete_image_leaving_person_un__202608101856_2.jpg" alt="Lançamento 1">
+                            <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786399016/Complete_image_leaving_person_un__202608101856_1.jpg" alt="Lançamento 2">
+                            <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786399021/Complete_image_leaving_person_un__202608101856.jpg" alt="Lançamento 3">
+                            <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786399017/Complete_left_image_preserving_r__202608101856.jpg" alt="Lançamento 4">
+                        </picture>
+                    </div>
+
+                    <!-- SLIDE 2 -->
+                    <div class="hero-slide">
+                        <picture>
+                            <!-- COLE AQUI A IMAGEM DO CELULAR -->
+                            <source media="(max-width: 900px)" srcset="COLE_O_LINK_DO_CELULAR_AQUI.jpg">
+                            <!-- COLE AQUI A IMAGEM DO COMPUTADOR -->
+                            <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?ixlib=rb-1.2.1&auto=format&fit=crop&w=1400&q=80" alt="Lançamento 2">
+                        </picture>
+                    </div>
+
+                    <!-- SLIDE 3 -->
+                    <div class="hero-slide">
+                        <picture>
+                            <!-- COLE AQUI A IMAGEM DO CELULAR -->
+                            <source media="(max-width: 900px)" srcset="COLE_O_LINK_DO_CELULAR_AQUI.jpg">
+                            <!-- COLE AQUI A IMAGEM DO COMPUTADOR -->
+                            <img src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1400&q=80" alt="Lançamento 3">
+                        </picture>
+                    </div>
+
                 </div>
                 <div class="hero-content">
                     <h1 class="hero-title">Novos<br>Lançamentos</h1>
@@ -570,7 +607,6 @@
                     };
                 });
                 
-                // Se a pessoa atualizou a página direto no produto, abre o produto
                 if(window.location.hash.startsWith('#produto-')) {
                     const id = parseInt(window.location.hash.replace('#produto-', ''));
                     openProductDetails(id, false);
@@ -637,7 +673,6 @@
             else {
                 document.getElementById('hero-banner').style.display = 'none'; document.getElementById('section-title').style.display = 'block'; document.getElementById('section-title').textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
                 
-                // --- AJUSTE NO FILTRO DE ACESSÓRIOS ---
                 if(cat === 'acessorios') {
                     const acs = ['acessorios', 'acessórios', 'acessorio', 'acessório', 'unissex'];
                     renderCatalog(PRODUCTS.filter(p => acs.includes(p.category)));
@@ -861,7 +896,7 @@
             const cep = document.getElementById('cust-cep').value.trim() || "Não informado";
             const delivery = document.getElementById('cust-delivery').options[document.getElementById('cust-delivery').selectedIndex].text;
 
-            let text = `*NOVO PEDIDO - VERICTA*\n\n*Cliente:* ${name}\n*CEP:* ${cep}\n*Entrega:* ${delivery}\n\n*ITENS DO PEDIDO:*\n`;
+            let text = `*NOVO PEDIDO - VERICTA* \n\n*Cliente:* ${name}\n*CEP:* ${cep}\n*Entrega:* ${delivery}\n\n*ITENS DO PEDIDO:*\n`;
             let total = 0;
             cart.forEach((item, index) => {
                 const sub = item.price * item.qty; total += sub;
