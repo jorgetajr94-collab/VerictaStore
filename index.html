@@ -1,5 +1,5 @@
 <script>
-    // URL gerada pelo SheetDB. Cole a sua aqui!
+    // URL do seu banco de dados configurada
     const DATABASE_URL = 'https://sheetdb.io/api/v1/lho2ozzts7v65';
     
     let PRODUCTS = [];
@@ -29,7 +29,7 @@
             const data = await response.json();
 
             PRODUCTS = data.map(item => {
-                // Organiza o estoque por tamanho garantindo que será número (ou 0 se vazio)
+                // Organiza o estoque por tamanho garantindo que será número (ou 0 se vazio/inválido)
                 const stockBySize = {
                     'PP': parseInt(item.PP) || 0,
                     'P': parseInt(item.P) || 0,
@@ -45,13 +45,16 @@
                 // Soma tudo para saber o estoque total do produto
                 const totalStock = Object.values(stockBySize).reduce((acc, curr) => acc + curr, 0);
 
+                // O preço deve ser lido corretamente mesmo se houver vírgula em vez de ponto
+                let rawPrice = item.price ? item.price.toString().replace(',', '.') : '0';
+
                 return {
                     id: parseInt(item.id),
                     name: item.name,
                     category: item.category,
-                    price: parseFloat(item.price),
+                    price: parseFloat(rawPrice),
                     desc: item.desc,
-                    images: [item.image],
+                    images: [item.image], // Puxa a imagem (nome do arquivo ou URL)
                     stockBySize: stockBySize,
                     totalStock: totalStock
                 };
@@ -60,7 +63,7 @@
             renderCatalog(PRODUCTS);
         } catch (error) {
             console.error("Erro ao carregar o banco de dados:", error);
-            container.innerHTML = '<p style="text-align:center; color: red;">Erro ao carregar produtos. Verifique sua conexão.</p>';
+            container.innerHTML = '<p style="text-align:center; color: red;">Erro ao carregar produtos. Verifique se as colunas da planilha estão exatamente como o sistema espera.</p>';
         }
     }
 
@@ -160,7 +163,7 @@
                 
                 // Se tiver estoque, botão normal
                 if (stockOfThisSize > 0) {
-                    if (!firstAvailableSize) firstAvailableSize = size; // Guarda o 1º tamanho disponível
+                    if (!firstAvailableSize) firstAvailableSize = size; 
                     
                     chip.className = 'size-chip size-selectable';
                     chip.textContent = size;
@@ -186,7 +189,6 @@
             // Seleciona automaticamente o primeiro tamanho disponível
             if(firstAvailableSize) {
                 selectedSize = firstAvailableSize;
-                // Simula o clique para ficar escuro
                 const firstChip = Array.from(sizesContainer.children).find(c => c.textContent === firstAvailableSize);
                 if(firstChip) firstChip.classList.add('selected');
             }
@@ -343,7 +345,7 @@
         text += `\n_Aguardo o cálculo do frete e os dados para pagamento._`;
 
         const encodedText = encodeURIComponent(text);
-        const phone = "5511999999999"; 
+        const phone = "5515991347011"; 
         
         const whatsappUrl = `https://wa.me/${phone}?text=${encodedText}`;
         window.open(whatsappUrl, '_blank');
