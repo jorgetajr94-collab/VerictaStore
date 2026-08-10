@@ -208,7 +208,7 @@
     <header>
         <div class="nav-container">
             <button class="mobile-menu-btn" onclick="toggleMobileMenu()">&#9776;</button>
-            <a href="javascript:void(0)" class="brand-logo-wrap" onclick="showCatalogPage(); filterCategory('all', document.getElementById('cat-all'))">
+            <a href="javascript:void(0)" class="brand-logo-wrap" onclick="showCatalogPage(true); filterCategory('all', document.getElementById('cat-all'))">
                  <img src="logo.png" class="exact-logo-img" alt="Vericta Logo" onerror="this.src='https://via.placeholder.com/150x50?text=VERICTA'">
             </a>
             <nav class="header-categories" id="mobile-nav">
@@ -385,7 +385,6 @@
             'vinho': '#722F37', 'chumbo': '#36454F', 'off white': '#FAF9F6'
         };
 
-        // Função para garantir que uma cor sólida tenha uma representação, mesmo que não esteja no dicionário
         function getHex(colorName) {
             return COLOR_HEX[colorName] || colorName; 
         }
@@ -412,6 +411,17 @@
             loadProductsFromDB();
             initHeroSlider();
             if (!auth) loadFavoritesFromStorage(); 
+        });
+
+        // ================= DETECÇÃO DE HASH PARA EVITAR REFRESH (F5) =================
+        window.addEventListener('hashchange', () => {
+            const hash = window.location.hash;
+            if (hash.startsWith('#produto-')) {
+                const id = parseInt(hash.replace('#produto-', ''));
+                openProductDetails(id, false); // false evita loop de hash
+            } else {
+                showCatalogPage(false);
+            }
         });
 
         function toggleMobileMenu() { document.getElementById('mobile-nav').classList.toggle('open'); }
@@ -448,7 +458,7 @@
         function loadFavoritesFromStorage() {
             const saved = localStorage.getItem('vericta_favs');
             if (saved) { try { favorites = JSON.parse(saved); } catch(e) { favorites = []; } }
-            renderCatalog(PRODUCTS); 
+            if(!window.location.hash.startsWith('#produto-')) renderCatalog(PRODUCTS); 
         }
 
         function saveFavoritesLocally() { localStorage.setItem('vericta_favs', JSON.stringify(favorites)); }
@@ -461,7 +471,7 @@
             else { if(favorites.length > 0) saveFavoritesToFirebase(); }
             
             if (document.getElementById('section-title').textContent === "Meus Favoritos") showFavorites();
-            else renderCatalog(PRODUCTS);
+            else if(!window.location.hash.startsWith('#produto-')) renderCatalog(PRODUCTS);
         }
 
         function saveFavoritesToFirebase() {
@@ -481,7 +491,7 @@
         }
 
         function showFavorites() {
-            showCatalogPage(); document.getElementById('mobile-nav').classList.remove('open');
+            showCatalogPage(true); document.getElementById('mobile-nav').classList.remove('open');
             document.getElementById('hero-banner').style.display = 'none';
             document.getElementById('section-title').style.display = 'block'; document.getElementById('section-title').textContent = "Meus Favoritos";
             document.querySelectorAll('.cat-nav-btn').forEach(b => b.classList.remove('active'));
@@ -524,18 +534,24 @@
                     let colorCombinations = {};
 
                     if (item.image) {
-                        // NOVIDADE: A quebra é feita por vírgula OU quebra de linha (Enter na planilha)
                         const imgItems = item.image.split(/,|\n|\r/).map(i => i.trim()).filter(i => i !== '');
+                        let lastCombo = null;
+                        
                         imgItems.forEach(imgData => {
                             let eqIndex = imgData.indexOf('=');
                             if(eqIndex !== -1) {
                                 let combo = imgData.substring(0, eqIndex).trim().toLowerCase();
                                 let url = imgData.substring(eqIndex + 1).trim();
                                 
+                                lastCombo = combo;
                                 if(!colorCombinations[combo]) colorCombinations[combo] = [];
                                 colorCombinations[combo].push(url);
                                 rawImagesArray.push(url);
                             } else {
+                                if (lastCombo) {
+                                    if(!colorCombinations[lastCombo]) colorCombinations[lastCombo] = [];
+                                    colorCombinations[lastCombo].push(imgData);
+                                }
                                 rawImagesArray.push(imgData);
                             }
                         });
@@ -552,7 +568,15 @@
                         colorCombinations: colorCombinations
                     };
                 });
-                renderCatalog(PRODUCTS);
+                
+                // Se a pessoa atualizou a página direto no produto, abre o produto
+                if(window.location.hash.startsWith('#produto-')) {
+                    const id = parseInt(window.location.hash.replace('#produto-', ''));
+                    openProductDetails(id, false);
+                } else {
+                    renderCatalog(PRODUCTS);
+                }
+                
             } catch (error) { container.innerHTML = '<p style="text-align:center; color: red;">Falha ao carregar vitrine.</p>'; }
         }
 
@@ -562,7 +586,7 @@
         }
 
         function handleSearch(term) {
-            showCatalogPage(); document.getElementById('mobile-nav').classList.remove('open'); document.getElementById('hero-banner').style.display = 'none';
+            showCatalogPage(true); document.getElementById('mobile-nav').classList.remove('open'); document.getElementById('hero-banner').style.display = 'none';
             document.getElementById('section-title').style.display = 'block'; document.getElementById('section-title').textContent = `Resultados para "${term}"`;
             document.querySelectorAll('.cat-nav-btn').forEach(b => b.classList.remove('active'));
 
@@ -611,15 +635,31 @@
             else if (cat === 'todos') { document.getElementById('hero-banner').style.display = 'none'; document.getElementById('section-title').style.display = 'block'; document.getElementById('section-title').textContent = "Todos os Produtos"; renderCatalog(PRODUCTS); } 
             else {
                 document.getElementById('hero-banner').style.display = 'none'; document.getElementById('section-title').style.display = 'block'; document.getElementById('section-title').textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
-                if(cat === 'acessorios') renderCatalog(PRODUCTS.filter(p => ['acessorios', 'acessórios', 'acessorio', 'acessório', 'unissex'].includes(p.category)));
-                else renderCatalog(PRODUCTS.filter(p => p.category === cat));
+                
+                // --- AJUSTE NO FILTRO DE ACESSÓRIOS ---
+                if(cat === 'acessorios') {
+                    const acs = ['acessorios', 'acessórios', 'acessorio', 'acessório', 'unissex'];
+                    renderCatalog(PRODUCTS.filter(p => acs.includes(p.category)));
+                } else {
+                    renderCatalog(PRODUCTS.filter(p => p.category === cat));
+                }
             }
         }
 
-        function showCatalogPage() { document.getElementById('view-details').classList.remove('active'); document.getElementById('view-catalog').classList.add('active'); window.scrollTo(0,0); }
-        function showDetailsPage() { document.getElementById('view-catalog').classList.remove('active'); document.getElementById('view-details').classList.add('active'); window.scrollTo(0,0); }
+        function showCatalogPage(pushHash = true) { 
+            document.getElementById('view-details').classList.remove('active'); 
+            document.getElementById('view-catalog').classList.add('active'); 
+            window.scrollTo(0,0); 
+            if(pushHash) history.replaceState(null, null, ' '); 
+        }
+        
+        function showDetailsPage() { 
+            document.getElementById('view-catalog').classList.remove('active'); 
+            document.getElementById('view-details').classList.add('active'); 
+            window.scrollTo(0,0); 
+        }
 
-        function openProductDetails(id) {
+        function openProductDetails(id, pushHash = true) {
             const product = PRODUCTS.find(p => p.id === id);
             if(!product || product.totalStock <= 0) return; 
             
@@ -685,7 +725,9 @@
                 const stockOfU = product.stockBySize['U'];
                 if(stockOfU > 0) { sizesContainer.innerHTML = `<div class="size-chip selected size-selectable">Tamanho Único</div>`; selectedSize = 'U'; }
             }
+            
             showDetailsPage();
+            if(pushHash) window.location.hash = 'produto-' + id;
         }
 
         function updateMainImage() {
@@ -721,7 +763,6 @@
         function renderThumbnails() {
             const thumbsContainer = document.getElementById('detail-thumbnails'); thumbsContainer.innerHTML = '';
             
-            // Renderiza as miniaturas sempre que houver 1 ou mais fotos (para não deixar o espaço vazio na tela de cores exclusivas)
             if(currentDetailImages.length > 0) {
                 currentDetailImages.forEach((imgUrl, index) => {
                     const thumb = document.createElement('img'); thumb.src = imgUrl; thumb.className = index === 0 ? 'thumb-img active' : 'thumb-img';
