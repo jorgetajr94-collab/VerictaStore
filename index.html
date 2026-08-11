@@ -165,34 +165,8 @@
         .qty-picker-btn { width: 46px; height: 46px; background: none; border: none; font-size: 18px; font-weight: 400; cursor: pointer; color: var(--dark-heading); transition: background 0.3s; }
         .qty-picker-btn:hover { background: var(--bg-cream); color: var(--primary-gold); }
         .qty-picker-value { width: 50px; text-align: center; font-size: 16px; font-weight: 600; color: var(--dark-heading); border:none; outline:none; background:transparent;}
-        
         .btn-add-to-cart-large { width: 100%; background: var(--dark-heading); color: var(--bg-white); border: none; padding: 18px; border-radius: 30px; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; transition: all 0.3s ease; }
         .btn-add-to-cart-large:hover { background: var(--primary-gold); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(150, 118, 69, 0.2); }
-
-        /* ========== CÓDIGO DO CARRINHO RESTAURADO ========== */
-        .cart-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(3px); z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
-        .cart-overlay.open { opacity: 1; pointer-events: auto; }
-        .cart-drawer { position: fixed; top: 0; right: -480px; width: 100%; max-width: 450px; height: 100%; background: var(--bg-white); z-index: 1001; box-shadow: -10px 0 40px rgba(0,0,0,0.1); transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; }
-        .cart-overlay.open .cart-drawer { right: 0; }
-        .cart-header { padding: 24px 32px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); }
-        .cart-header h2 { font-family: 'Montserrat', serif; font-size: 18px; font-weight: 700; }
-        .close-cart-btn { background: none; border: none; color: var(--text-muted); font-size: 28px; cursor: pointer; transition: color 0.3s; }
-        .close-cart-btn:hover { color: var(--primary-gold); }
-        .cart-body { padding: 32px; flex-grow: 1; overflow-y: auto; }
-        .empty-cart-view { text-align: center; padding: 60px 0; color: var(--text-muted); font-weight: 300;}
-        .cart-item-row { display: flex; gap: 16px; padding-bottom: 20px; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); align-items: center; }
-        .cart-item-img { width: 76px; height: 76px; border-radius: var(--radius-md); object-fit: cover; background: #F8F8F8;}
-        .cart-item-info { flex-grow: 1; }
-        .cart-item-title { font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 600; color: var(--dark-heading); margin-bottom: 4px; text-transform: capitalize;}
-        .cart-item-meta { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; text-transform: capitalize;}
-        .cart-item-price { font-size: 14px; font-weight: 600; color: var(--primary-gold); }
-        .cart-footer { padding: 32px; border-top: 1px solid var(--border-color); background: var(--bg-cream); }
-        .cust-form-group { margin-bottom: 16px; }
-        .cust-form-group label { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 8px; }
-        .cust-form-group input, .cust-form-group select { width: 100%; padding: 12px 16px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 14px; outline: none; background: var(--bg-white); color: var(--dark-heading); }
-        .cart-total-row { display: flex; justify-content: space-between; align-items: center; font-size: 18px; font-weight: 700; color: var(--dark-heading); margin: 24px 0; }
-        .btn-checkout-whatsapp { width: 100%; background-color: var(--whatsapp-green); color: white; border: none; padding: 18px; border-radius: 30px; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.3s ease; }
-        .btn-checkout-whatsapp:hover { background-color: var(--whatsapp-hover); transform: translateY(-2px); }
 
         /* LIGHTBOX MODAL (ZOOM) */
         .lightbox-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 3000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
@@ -475,6 +449,7 @@
 
         let PRODUCTS = [];
         const SIZES = ['PP', 'P', 'M', 'G', 'GG'];
+        const PARSE_SIZES = ['pp', 'p', 'm', 'g', 'gg', 'u']; // Tamanhos permitidos para leitura
         
         let currentDetailProduct = null;
         let currentDetailImages = [];
@@ -510,6 +485,7 @@
 
         function toggleMobileMenu() { document.getElementById('mobile-nav').classList.toggle('open'); }
 
+        // ================= FIREBASE E FAVORITOS =================
         function initFirebase() {
             if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "") {
                 firebase.initializeApp(firebaseConfig);
@@ -539,7 +515,6 @@
             }
         }
 
-        // ================= SISTEMA DE FAVORITOS (GLOBAL) =================
         function loadFavoritesFromStorage() {
             const saved = localStorage.getItem('vericta_favs');
             if (saved) { try { favorites = JSON.parse(saved); } catch(e) { favorites = []; } }
@@ -563,7 +538,6 @@
             if(currentUser && db) { db.collection('users').doc(currentUser.uid).set({ favorites: favorites, email: currentUser.email }, {merge: true}); }
         }
 
-        // Favoritar pelo Catálogo Principal
         function toggleFavorite(event, productId) {
             event.stopPropagation(); 
             const index = favorites.indexOf(productId);
@@ -574,7 +548,6 @@
             if(currentUser) saveFavoritesToFirebase(); 
             
             const isFav = favorites.includes(productId);
-            
             document.querySelectorAll(`.fav-btn-${productId}`).forEach(btn => {
                 if(isFav) btn.classList.add('active');
                 else btn.classList.remove('active');
@@ -589,7 +562,6 @@
             if (document.getElementById('section-title').textContent === "Meus Favoritos") showFavorites();
         }
 
-        // Favoritar direto da Página do Produto
         window.toggleFavoriteDetail = function(event) {
             if(!currentDetailProduct) return;
             toggleFavorite(event, currentDetailProduct.id);
@@ -651,7 +623,7 @@
         function startHeroTimer() { heroSlideInterval = setInterval(() => { moveHeroSlide(1); }, 4000); }
         function resetHeroTimer() { clearInterval(heroSlideInterval); startHeroTimer(); }
 
-        // ================= LOGICA DO PRODUTO =================
+        // ================= LOGICA DO PRODUTO (LEITURA INTELIGENTE DE ESTOQUE) =================
         async function loadProductsFromDB() {
             const container = document.getElementById('catalog-container');
             if (!container) return; 
@@ -665,11 +637,37 @@
                     const item = {};
                     for (let key in rawItem) item[key.trim().toLowerCase()] = rawItem[key];
 
-                    const stockBySize = {
-                        'PP': parseInt(item.pp) || 0, 'P': parseInt(item.p) || 0, 'M': parseInt(item.m) || 0, 'G': parseInt(item.g) || 0,
-                        'GG': parseInt(item.gg) || 0, 'XG': parseInt(item.xg) || 0, 'G1': parseInt(item.g1) || 0, 'G2': parseInt(item.g2) || 0, 'U': parseInt(item.u) || 0
-                    };
-                    const totalStock = Object.values(stockBySize).reduce((acc, curr) => acc + curr, 0);
+                    let globalStockBySize = {};
+                    let stockByColorAndSize = {};
+                    let totalStock = 0;
+                    let hasColorSpecificStock = false;
+
+                    // Leitura Inteligente do Estoque por Cor
+                    PARSE_SIZES.forEach(sizeStr => {
+                        let val = item[sizeStr] ? item[sizeStr].toString().trim().toLowerCase() : '0';
+                        globalStockBySize[sizeStr.toUpperCase()] = 0;
+
+                        if (val.includes('=')) {
+                            hasColorSpecificStock = true;
+                            const parts = val.split(/,|\n|\r/).map(s => s.trim()).filter(s => s !== '');
+                            parts.forEach(part => {
+                                let eqIdx = part.indexOf('=');
+                                if (eqIdx !== -1) {
+                                    let colorKey = part.substring(0, eqIdx).trim();
+                                    let qty = parseInt(part.substring(eqIdx + 1).trim()) || 0;
+                                    
+                                    if (!stockByColorAndSize[colorKey]) stockByColorAndSize[colorKey] = {};
+                                    stockByColorAndSize[colorKey][sizeStr.toUpperCase()] = qty;
+                                    globalStockBySize[sizeStr.toUpperCase()] += qty;
+                                    totalStock += qty;
+                                }
+                            });
+                        } else {
+                            let qty = parseInt(val) || 0;
+                            globalStockBySize[sizeStr.toUpperCase()] = qty;
+                            totalStock += qty;
+                        }
+                    });
 
                     let rawImagesArray = [];
                     let colorCombinations = {};
@@ -703,9 +701,16 @@
                     let rawCategory = item.category ? item.category.trim().toLowerCase() : 'outros';
 
                     return {
-                        id: parseInt(item.id) || Math.floor(Math.random() * 1000), name: item.name || 'Produto Vericta', category: rawCategory,
-                        price: parseFloat(rawPrice), desc: item.desc || '', images: rawImagesArray, 
-                        stockBySize: stockBySize, totalStock: totalStock,
+                        id: parseInt(item.id) || Math.floor(Math.random() * 1000), 
+                        name: item.name || 'Produto Vericta', 
+                        category: rawCategory,
+                        price: parseFloat(rawPrice), 
+                        desc: item.desc || '', 
+                        images: rawImagesArray, 
+                        globalStockBySize: globalStockBySize, 
+                        stockByColorAndSize: stockByColorAndSize,
+                        totalStock: totalStock,
+                        hasColorSpecificStock: hasColorSpecificStock,
                         colorCombinations: colorCombinations
                     };
                 });
@@ -720,6 +725,7 @@
             } catch (error) { container.innerHTML = '<p style="text-align:center; color: red;">Falha ao carregar vitrine.</p>'; }
         }
 
+        // ================= BUSCA E CATÁLOGO =================
         function toggleSearch() {
             const searchBox = document.getElementById('search-box'); searchBox.classList.toggle('active');
             if (searchBox.classList.contains('active')) document.getElementById('search-input').focus();
@@ -751,7 +757,6 @@
                     <div class="card-img-wrapper">
                         ${outOfStockHTML}
                         <span class="card-tag">${prod.category}</span>
-                        <!-- ID ÚNICO ADICIONADO PARA O BOTÃO DO CATÁLOGO -->
                         <button class="${favClass} fav-btn-${prod.id}" onclick="toggleFavorite(event, ${prod.id})">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
                         </button>
@@ -799,6 +804,7 @@
             window.scrollTo(0,0); 
         }
 
+        // ================= INTERFACE DE DETALHES =================
         function openProductDetails(id, pushHash = true) {
             const product = PRODUCTS.find(p => p.id === id);
             if(!product || product.totalStock <= 0) return; 
@@ -863,29 +869,102 @@
                 colorsContainer.innerHTML = colorHTML;
             }
 
-            const sizesContainer = document.getElementById('detail-sizes'); sizesContainer.innerHTML = '';
+            // Renderiza tamanhos baseados no estoque inteligente
+            renderSizes();
+            updateMainImage();
+            renderThumbnails();
+            
+            showDetailsPage();
+            if(pushHash) window.location.hash = 'produto-' + id;
+        }
+
+        // Função que desenha a grade de tamanhos baseada na cor selecionada
+        function renderSizes() {
+            const sizesContainer = document.getElementById('detail-sizes'); 
+            sizesContainer.innerHTML = '';
+            const isAcessorio = ['acessorios', 'acessórios', 'acessorio', 'acessório', 'unissex'].includes(currentDetailProduct.category);
 
             if (!isAcessorio) {
                 let firstAvailableSize = null;
+                let currentSelectedStillAvailable = false;
+
                 SIZES.forEach(size => {
-                    const stockOfThisSize = product.stockBySize[size]; const chip = document.createElement('div');
+                    let stockOfThisSize = 0;
+                    if (currentDetailProduct.hasColorSpecificStock && selectedColorCombo && selectedColorCombo !== 'personalizado') {
+                        stockOfThisSize = currentDetailProduct.stockByColorAndSize[selectedColorCombo]?.[size] || 0;
+                    } else {
+                        stockOfThisSize = currentDetailProduct.globalStockBySize[size] || 0;
+                    }
+
+                    const chip = document.createElement('div');
                     if (stockOfThisSize > 0) {
-                        if (!firstAvailableSize) firstAvailableSize = size; 
-                        chip.className = 'size-chip size-selectable'; chip.textContent = size;
-                        chip.onclick = () => { selectedSize = size; detailQty = 1; document.getElementById('detail-qty').value = detailQty; document.querySelectorAll('.size-selectable').forEach(c => c.classList.remove('selected')); chip.classList.add('selected'); };
-                    } else { chip.className = 'size-chip'; chip.textContent = size; chip.style.opacity = '0.3'; chip.style.cursor = 'not-allowed'; chip.style.textDecoration = 'line-through'; }
+                        if (!firstAvailableSize) firstAvailableSize = size;
+                        if (selectedSize === size) currentSelectedStillAvailable = true;
+
+                        chip.className = 'size-chip size-selectable'; 
+                        if (selectedSize === size) chip.classList.add('selected');
+                        chip.textContent = size;
+                        chip.onclick = () => { 
+                            selectedSize = size; 
+                            detailQty = 1; 
+                            document.getElementById('detail-qty').value = detailQty; 
+                            document.querySelectorAll('.size-selectable').forEach(c => c.classList.remove('selected')); 
+                            chip.classList.add('selected'); 
+                        };
+                    } else { 
+                        chip.className = 'size-chip'; 
+                        chip.textContent = size; 
+                        chip.style.opacity = '0.3'; 
+                        chip.style.cursor = 'not-allowed'; 
+                        chip.style.textDecoration = 'line-through'; 
+                    }
                     sizesContainer.appendChild(chip);
                 });
-                if(firstAvailableSize) { selectedSize = firstAvailableSize; const firstChip = Array.from(sizesContainer.children).find(c => c.textContent === firstAvailableSize); if(firstChip) firstChip.classList.add('selected'); }
+
+                if (!currentSelectedStillAvailable) {
+                    selectedSize = firstAvailableSize;
+                    if (firstAvailableSize) {
+                        const newActiveChip = Array.from(sizesContainer.children).find(c => c.textContent === firstAvailableSize);
+                        if (newActiveChip) newActiveChip.classList.add('selected');
+                    }
+                }
             } else {
-                const stockOfU = product.stockBySize['U'];
-                if(stockOfU > 0) { sizesContainer.innerHTML = `<div class="size-chip selected size-selectable">Tamanho Único</div>`; selectedSize = 'U'; }
+                let stockOfU = 0;
+                if (currentDetailProduct.hasColorSpecificStock && selectedColorCombo && selectedColorCombo !== 'personalizado') {
+                    stockOfU = currentDetailProduct.stockByColorAndSize[selectedColorCombo]?.[('U')] || 0;
+                } else {
+                    stockOfU = currentDetailProduct.globalStockBySize['U'] || 0;
+                }
+                
+                if(stockOfU > 0) { 
+                    sizesContainer.innerHTML = `<div class="size-chip selected size-selectable">Tamanho Único</div>`; 
+                    selectedSize = 'U'; 
+                } else {
+                    sizesContainer.innerHTML = `<div class="size-chip" style="opacity: 0.3; cursor: not-allowed; text-decoration: line-through;">Tamanho Único</div>`; 
+                    selectedSize = null;
+                }
+            }
+            detailQty = 1;
+            document.getElementById('detail-qty').value = detailQty;
+        }
+
+        window.selectDetailColor = function(combo, element) {
+            selectedColorCombo = combo;
+            document.querySelectorAll('#detail-colors-container .color-dot').forEach(d => d.classList.remove('selected'));
+            element.classList.add('selected');
+
+            if(combo === 'personalizado') {
+                currentDetailImages = currentDetailProduct.images;
+            } else if (currentDetailProduct.colorCombinations[combo]) {
+                currentDetailImages = currentDetailProduct.colorCombinations[combo];
             }
             
+            currentImageIndex = 0;
             updateMainImage();
             renderThumbnails();
-            showDetailsPage();
-            if(pushHash) window.location.hash = 'produto-' + id;
+            
+            // Recalcula os tamanhos disponíveis para a nova cor
+            renderSizes();
         }
 
         // ================= ZOOM DA IMAGEM =================
@@ -942,34 +1021,25 @@
             }
         }
 
-        window.selectDetailColor = function(combo, element) {
-            selectedColorCombo = combo;
-            document.querySelectorAll('#detail-colors-container .color-dot').forEach(d => d.classList.remove('selected'));
-            element.classList.add('selected');
-
-            if(combo === 'personalizado') {
-                currentDetailImages = currentDetailProduct.images;
-            } else if (currentDetailProduct.colorCombinations[combo]) {
-                currentDetailImages = currentDetailProduct.colorCombinations[combo];
+        function getMaxStock() {
+            if (currentDetailProduct.hasColorSpecificStock && selectedColorCombo && selectedColorCombo !== 'personalizado') {
+                return currentDetailProduct.stockByColorAndSize[selectedColorCombo]?.[selectedSize] || 0;
             }
-            
-            currentImageIndex = 0;
-            updateMainImage();
-            renderThumbnails();
+            return currentDetailProduct.globalStockBySize[selectedSize] || 0;
         }
 
         function changeDetailQty(amount) {
             if (!selectedSize) return;
-            const maxStockForSelectedSize = currentDetailProduct.stockBySize[selectedSize];
+            const maxStock = getMaxStock();
             let newQty = detailQty + amount;
-            if (newQty >= 1 && newQty <= maxStockForSelectedSize) {
+            if (newQty >= 1 && newQty <= maxStock) {
                 detailQty = newQty; document.getElementById('detail-qty').value = detailQty;
-            } else if (newQty > maxStockForSelectedSize) showToast(`Limite de estoque atingido`);
+            } else if (newQty > maxStock) showToast(`Limite de estoque atingido`);
         }
 
         function addToCartFromDetail() {
             if(!currentDetailProduct || !selectedSize) { alert("Selecione um tamanho."); return; }
-            const maxStock = currentDetailProduct.stockBySize[selectedSize];
+            const maxStock = getMaxStock();
             
             let colorDesc = "";
             if(selectedColorCombo && selectedColorCombo !== 'personalizado') {
@@ -1030,7 +1100,7 @@
             const cep = document.getElementById('cust-cep').value.trim() || "Não informado";
             const delivery = document.getElementById('cust-delivery').options[document.getElementById('cust-delivery').selectedIndex].text;
 
-            let text = `*NOVO PEDIDO - VERICTA* \n\n*Cliente:* ${name}\n*CEP:* ${cep}\n*Entrega:* ${delivery}\n\n*ITENS DO PEDIDO:*\n`;
+            let text = `*NOVO PEDIDO - VERICTA*\n\n*Cliente:* ${name}\n*CEP:* ${cep}\n*Entrega:* ${delivery}\n\n*ITENS DO PEDIDO:*\n`;
             let total = 0;
             cart.forEach((item, index) => {
                 const sub = item.price * item.qty; total += sub;
