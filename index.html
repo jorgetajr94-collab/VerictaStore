@@ -475,7 +475,7 @@
 
         let PRODUCTS = [];
         const SIZES = ['PP', 'P', 'M', 'G', 'GG'];
-        const PARSE_SIZES = ['pp', 'p', 'm', 'g', 'gg', 'u']; // Tamanhos permitidos para leitura
+        const PARSE_SIZES = ['pp', 'p', 'm', 'g', 'gg']; 
         
         let currentDetailProduct = null;
         let currentDetailImages = [];
@@ -649,7 +649,7 @@
         function startHeroTimer() { heroSlideInterval = setInterval(() => { moveHeroSlide(1); }, 4000); }
         function resetHeroTimer() { clearInterval(heroSlideInterval); startHeroTimer(); }
 
-        // ================= LOGICA DO PRODUTO (LEITURA INTELIGENTE DE ESTOQUE) =================
+        // ================= LOGICA DO PRODUTO (LEITURA INTELIGENTE DE ESTOQUE E COR PERSONALIZADA) =================
         async function loadProductsFromDB() {
             const container = document.getElementById('catalog-container');
             if (!container) return; 
@@ -667,6 +667,13 @@
                     let stockByColorAndSize = {};
                     let totalStock = 0;
                     let hasColorSpecificStock = false;
+
+                    // Verifica se o produto permite cor Personalizada usando a coluna PE como Flag
+                    let allowCustomColor = false;
+                    let peVal = item.pe ? item.pe.toString().trim().toLowerCase() : '';
+                    if (peVal !== '' && peVal !== '0' && peVal !== 'nao' && peVal !== 'não' && peVal !== 'false') {
+                        allowCustomColor = true;
+                    }
 
                     // Leitura Inteligente do Estoque por Cor
                     PARSE_SIZES.forEach(sizeStr => {
@@ -737,6 +744,7 @@
                         stockByColorAndSize: stockByColorAndSize,
                         totalStock: totalStock,
                         hasColorSpecificStock: hasColorSpecificStock,
+                        allowCustomColor: allowCustomColor,
                         colorCombinations: colorCombinations
                     };
                 });
@@ -751,7 +759,6 @@
             } catch (error) { container.innerHTML = '<p style="text-align:center; color: red;">Falha ao carregar vitrine.</p>'; }
         }
 
-        // ================= BUSCA E CATÁLOGO =================
         function toggleSearch() {
             const searchBox = document.getElementById('search-box'); searchBox.classList.toggle('active');
             if (searchBox.classList.contains('active')) document.getElementById('search-input').focus();
@@ -839,11 +846,16 @@
             detailQty = 1; 
             selectedSize = null; 
             
-            const isAcessorio = ['acessorios', 'acessórios', 'acessorio', 'acessório', 'unissex'].includes(product.category);
-            const colorKeys = Object.keys(product.colorCombinations);
+            const colorKeys = Object.keys(product.colorCombinations).filter(k => k !== 'personalizado');
             
-            // LÓGICA DE TAMANHO ÚNICO: Se for tamanho único, não exibe "Personalizado" como padrão.
-            selectedColorCombo = colorKeys.length > 0 ? (isAcessorio ? colorKeys[0] : 'personalizado') : null;
+            // Define a cor inicial baseada na disponibilidade do Personalizado
+            if (product.allowCustomColor) {
+                selectedColorCombo = 'personalizado';
+            } else if (colorKeys.length > 0) {
+                selectedColorCombo = colorKeys[0];
+            } else {
+                selectedColorCombo = null;
+            }
 
             if (selectedColorCombo && selectedColorCombo !== 'personalizado') {
                 currentDetailImages = product.colorCombinations[selectedColorCombo];
@@ -867,11 +879,11 @@
             const colorsContainer = document.getElementById('detail-colors-container');
             colorsContainer.innerHTML = '';
             
-            if(colorKeys.length > 0) {
+            if(product.allowCustomColor || colorKeys.length > 0) {
                 let colorHTML = `<div class="color-section"><div class="color-label">Cores Disponíveis</div><div class="color-options">`;
                 
-                // Se NÃO FOR tamanho único, mostra o arco-íris
-                if (!isAcessorio) {
+                // Exibe o Personalizado APENAS se a flag PE permitir
+                if (product.allowCustomColor) {
                     const selClass = selectedColorCombo === 'personalizado' ? 'selected' : '';
                     colorHTML += `<div class="color-dot custom-gradient ${selClass}" data-color="Personalizado" onclick="selectDetailColor('personalizado', this)"></div>`;
                 }
@@ -897,7 +909,6 @@
                 colorsContainer.innerHTML = colorHTML;
             }
 
-            // Renderiza tamanhos baseados no estoque inteligente
             renderSizes();
             updateMainImage();
             renderThumbnails();
@@ -906,72 +917,55 @@
             if(pushHash) window.location.hash = 'produto-' + id;
         }
 
-        // Função que desenha a grade de tamanhos baseada na cor selecionada
+        // Grade de tamanhos restrita APENAS a PP, P, M, G, GG
         function renderSizes() {
             const sizesContainer = document.getElementById('detail-sizes'); 
             sizesContainer.innerHTML = '';
-            const isAcessorio = ['acessorios', 'acessórios', 'acessorio', 'acessório', 'unissex'].includes(currentDetailProduct.category);
+            
+            let firstAvailableSize = null;
+            let currentSelectedStillAvailable = false;
 
-            if (!isAcessorio) {
-                let firstAvailableSize = null;
-                let currentSelectedStillAvailable = false;
-
-                SIZES.forEach(size => {
-                    let stockOfThisSize = 0;
-                    if (currentDetailProduct.hasColorSpecificStock && selectedColorCombo && selectedColorCombo !== 'personalizado') {
-                        stockOfThisSize = currentDetailProduct.stockByColorAndSize[selectedColorCombo]?.[size] || 0;
-                    } else {
-                        stockOfThisSize = currentDetailProduct.globalStockBySize[size] || 0;
-                    }
-
-                    const chip = document.createElement('div');
-                    if (stockOfThisSize > 0) {
-                        if (!firstAvailableSize) firstAvailableSize = size;
-                        if (selectedSize === size) currentSelectedStillAvailable = true;
-
-                        chip.className = 'size-chip size-selectable'; 
-                        if (selectedSize === size) chip.classList.add('selected');
-                        chip.textContent = size;
-                        chip.onclick = () => { 
-                            selectedSize = size; 
-                            detailQty = 1; 
-                            document.getElementById('detail-qty').value = detailQty; 
-                            document.querySelectorAll('.size-selectable').forEach(c => c.classList.remove('selected')); 
-                            chip.classList.add('selected'); 
-                        };
-                    } else { 
-                        chip.className = 'size-chip'; 
-                        chip.textContent = size; 
-                        chip.style.opacity = '0.3'; 
-                        chip.style.cursor = 'not-allowed'; 
-                        chip.style.textDecoration = 'line-through'; 
-                    }
-                    sizesContainer.appendChild(chip);
-                });
-
-                if (!currentSelectedStillAvailable) {
-                    selectedSize = firstAvailableSize;
-                    if (firstAvailableSize) {
-                        const newActiveChip = Array.from(sizesContainer.children).find(c => c.textContent === firstAvailableSize);
-                        if (newActiveChip) newActiveChip.classList.add('selected');
-                    }
-                }
-            } else {
-                let stockOfU = 0;
+            SIZES.forEach(size => {
+                let stockOfThisSize = 0;
                 if (currentDetailProduct.hasColorSpecificStock && selectedColorCombo && selectedColorCombo !== 'personalizado') {
-                    stockOfU = currentDetailProduct.stockByColorAndSize[selectedColorCombo]?.[('U')] || 0;
+                    stockOfThisSize = currentDetailProduct.stockByColorAndSize[selectedColorCombo]?.[size] || 0;
                 } else {
-                    stockOfU = currentDetailProduct.globalStockBySize['U'] || 0;
+                    stockOfThisSize = currentDetailProduct.globalStockBySize[size] || 0;
                 }
-                
-                if(stockOfU > 0) { 
-                    sizesContainer.innerHTML = `<div class="size-chip selected size-selectable">Tamanho Único</div>`; 
-                    selectedSize = 'U'; 
-                } else {
-                    sizesContainer.innerHTML = `<div class="size-chip" style="opacity: 0.3; cursor: not-allowed; text-decoration: line-through;">Tamanho Único</div>`; 
-                    selectedSize = null;
+
+                const chip = document.createElement('div');
+                if (stockOfThisSize > 0) {
+                    if (!firstAvailableSize) firstAvailableSize = size;
+                    if (selectedSize === size) currentSelectedStillAvailable = true;
+
+                    chip.className = 'size-chip size-selectable'; 
+                    if (selectedSize === size) chip.classList.add('selected');
+                    chip.textContent = size;
+                    chip.onclick = () => { 
+                        selectedSize = size; 
+                        detailQty = 1; 
+                        document.getElementById('detail-qty').value = detailQty; 
+                        document.querySelectorAll('.size-selectable').forEach(c => c.classList.remove('selected')); 
+                        chip.classList.add('selected'); 
+                    };
+                } else { 
+                    chip.className = 'size-chip'; 
+                    chip.textContent = size; 
+                    chip.style.opacity = '0.3'; 
+                    chip.style.cursor = 'not-allowed'; 
+                    chip.style.textDecoration = 'line-through'; 
+                }
+                sizesContainer.appendChild(chip);
+            });
+
+            if (!currentSelectedStillAvailable) {
+                selectedSize = firstAvailableSize;
+                if (firstAvailableSize) {
+                    const newActiveChip = Array.from(sizesContainer.children).find(c => c.textContent === firstAvailableSize);
+                    if (newActiveChip) newActiveChip.classList.add('selected');
                 }
             }
+            
             detailQty = 1;
             document.getElementById('detail-qty').value = detailQty;
         }
@@ -990,8 +984,6 @@
             currentImageIndex = 0;
             updateMainImage();
             renderThumbnails();
-            
-            // Recalcula os tamanhos disponíveis para a nova cor
             renderSizes();
         }
 
