@@ -59,8 +59,8 @@
         /* HERO BANNER COM SETAS E SLIDER INTELIGENTE */
         .hero-section { max-width: 1300px; margin: 0 auto; position: relative; height: 480px; background-color: var(--bg-cream); overflow: hidden; }
         .hero-slider { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
-        .hero-slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 0.8s ease-in-out; display: flex; align-items: center; }
-        .hero-slide.active { opacity: 1; z-index: 2;}
+        .hero-slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 0.8s ease-in-out; display: flex; align-items: center; pointer-events: none; }
+        .hero-slide.active { opacity: 1; z-index: 2; pointer-events: auto;}
         .hero-slide picture { position: absolute; top: 0; left: 0; display: block; width: 100%; height: 100%; z-index: -1; }
         .hero-slide img { width: 100%; height: 100%; object-fit: cover; object-position: right center; }
         .hero-slide::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to right, var(--bg-cream) 0%, var(--bg-cream) 35%, transparent 70%); pointer-events: none; z-index: 0;}
@@ -280,18 +280,20 @@
     <header>
         <div class="nav-container">
             <button class="mobile-menu-btn" onclick="toggleMobileMenu()">&#9776;</button>
-            <a href="javascript:void(0)" class="brand-logo-wrap" onclick="showCatalogPage(true); filterCategory('all', document.getElementById('cat-all'))">
+            <a href="javascript:void(0)" class="brand-logo-wrap" onclick="showCatalogPage(true); filterCategory('todos', document.getElementById('cat-todos'))">
                  <img src="logo.png" class="exact-logo-img" alt="Vericta Logo" onerror="this.src='https://via.placeholder.com/150x50?text=VERICTA'">
             </a>
             <nav class="header-categories" id="mobile-nav">
-                <button class="cat-nav-btn active" id="cat-all" onclick="filterCategory('all', this)">Lançamentos</button>
+                <!-- Alterado: Menu Todos como padrão -->
+                <button class="cat-nav-btn active" id="cat-todos" onclick="filterCategory('todos', this)">Todos</button>
+                <button class="cat-nav-btn" onclick="filterCategory('lancamentos', this)">Lançamentos</button>
                 <button class="cat-nav-btn" onclick="filterCategory('feminino', this)">Feminino</button>
                 <button class="cat-nav-btn" onclick="showCustomersPage(true)">Clientes</button>
                 <button class="cat-nav-btn" onclick="showMaterialsPage(true)">Materiais</button>
-                <button class="cat-nav-btn" onclick="filterCategory('todos', this)">Todos</button>
             </nav>
             <div class="nav-actions">
                 
+                <!-- BOTÃO OCULTO ADMIN -->
                 <button id="btn-admin" class="icon-btn" onclick="openAdminModal()" title="Painel Gestão de Vendas">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
                     <span style="font-size:8px; font-weight:700;">ADMIN</span>
@@ -320,7 +322,7 @@
 
     <div id="toast" class="toast-notify">Ação realizada!</div>
 
-    <!-- ================= MODAL ADMIN ================= -->
+    <!-- ================= MODAL ADMIN COMPLETO ================= -->
     <div class="profile-modal" id="admin-modal" onclick="if(event.target === this) closeAdminModal()">
         <div class="profile-content admin-size">
             <button class="profile-close" onclick="closeAdminModal()">&times;</button>
@@ -332,6 +334,7 @@
                 <button class="admin-tab-btn" onclick="switchAdminTab('relatorio', this)">Fechamento de Caixa</button>
             </div>
             
+            <!-- ABA 1: NOVA VENDA -->
             <div id="admin-view-venda">
                 <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 24px;">Registre a compra do cliente no sistema e gere o código de fidelidade automaticamente.</p>
                 
@@ -350,6 +353,7 @@
                     </div>
                 </div>
                 
+                <!-- Lista de produtos selecionados pelo Admin -->
                 <div id="admin-cart-items" style="margin-bottom: 16px; font-size: 13px;"></div>
 
                 <div class="cust-form-group">
@@ -362,6 +366,7 @@
                 <div id="admin-resultado" style="font-family: monospace; font-size: 28px; font-weight: bold; color: var(--primary-gold); margin-top: 24px; letter-spacing: 2px; text-align: center;"></div>
             </div>
 
+            <!-- ABA 2: RELATÓRIOS E CAIXA -->
             <div id="admin-view-relatorio" style="display:none;">
                 <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Filtre as vendas registradas por período.</p>
                 
@@ -637,16 +642,16 @@
             
             <div class="gallery-grid">
                 <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
-                    <img src="https://images.unsplash.com/photo-1518310383802-640c2de311b2?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80" alt="Cliente Vericta 1">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786567628/imagem_2026-08-12_174714514.png" alt="Cliente Vericta 1">
                 </div>
                 <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
-                    <img src="https://images.unsplash.com/photo-1522898467493-49726bf28798?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80" alt="Cliente Vericta 2">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786567588/imagem_2026-08-12_174633223.png" alt="Cliente Vericta 2">
                 </div>
                 <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
-                    <img src="https://images.unsplash.com/photo-1502904550040-7534597466ae?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80" alt="Cliente Vericta 3">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786567654/imagem_2026-08-12_174739970.png" alt="Cliente Vericta 3">
                 </div>
                 <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
-                    <img src="https://images.unsplash.com/photo-1558369178-66228308d6df?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80" alt="Cliente Vericta 4">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786567571/imagem_2026-08-12_174615963.png" alt="Cliente Vericta 4">
                 </div>
             </div>
         </div>
@@ -658,18 +663,135 @@
                 Voltar
             </button>
             <h2 class="details-title" style="margin-bottom: 8px;">Materiais e Tecidos</h2>
-            <p class="details-description" style="border: none; padding: 0;">Conheça as opções de tecidos disponíveis para criar a sua combinação perfeita. Clique para ampliar.</p>
+            <p class="details-description" style="border: none; padding: 0;">Conheça as opções de tecidos disponíveis para criar a sua combinação perfeita. Caso não encontre a cor que você gostaria, nos informe ao fechar a compra, que te informaremos se temos à disposição. Clique para ampliar.</p>
             
             <div class="gallery-grid">
                 <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
-                    <img src="https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80" alt="Material 1">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786566138/WhatsApp_Image_2026-08-10_at_16.04.14.jpg" alt="Material 1">
                 </div>
                 <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
-                    <img src="https://images.unsplash.com/photo-1606170033648-5d55a3edf314?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80" alt="Material 2">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786566137/WhatsApp_Image_2026-08-10_at_16.04.15.jpg" alt="Material 2">
                 </div>
                 <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
-                    <img src="https://images.unsplash.com/photo-1584288484196-1c7ecdf287d3?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80" alt="Material 3">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786566136/01.jpg" alt="Material 3">
                 </div>
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786566136/02.jpg" alt="Material 4">
+                </div>
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786566136/03.jpg" alt="Material 5">
+                </div>                
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786566135/04.jpg" alt="Material 6">
+                </div> 
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786566134/05.jpg" alt="Material 7">
+                </div> 
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786566134/06.jpg" alt="Material 8">
+                </div> 
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786566133/07.jpg" alt="Material 9">
+                </div> 
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786566132/08.jpg" alt="Material 10">
+                </div> 
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786566132/09.jpg" alt="Material 11">
+                </div> 
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786566131/10.jpg" alt="Material 12">
+                </div> 
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786566131/11.jpg" alt="Material 13">
+                </div> 
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786566130/12.jpg" alt="Material 14">
+                </div> 
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786566130/13.jpg" alt="Material 15">
+                </div> 
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786566130/14.jpg" alt="Material 16">
+                </div> 
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786566129/15.jpg" alt="Material 17">
+                </div> 
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786566128/16.jpg" alt="Material 18">
+                </div> 
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786566128/17.jpg" alt="Material 19">
+                </div> 
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786566128/18.jpg" alt="Material 20">
+                </div> 
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786566128/19.jpg" alt="Material 21">
+                </div> 
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786566127/20.jpg" alt="Material 22">
+                </div> 
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786566126/21.jpg" alt="Material 23">
+                </div> 
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786566126/22.jpg" alt="Material 24">
+                </div> 
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786566125/23.jpg" alt="Material 25">
+                </div> 
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786566125/24.jpg" alt="Material 26">
+                </div> 
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786566125/25.jpg" alt="Material 27">
+                </div> 
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786566123/26.jpg" alt="Material 28">
+                </div> 
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786566123/27.jpg" alt="Material 29">
+                </div> 
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786566123/28.jpg" alt="Material 30">
+                </div> 
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786566122/30.jpg" alt="Material 31">
+                </div> 
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786566122/32.jpg" alt="Material 32">
+                </div> 
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786566121/37.jpg" alt="Material 33">
+                </div> 
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786566120/38.jpg" alt="Material 34">
+                </div> 
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786566120/40.jpg" alt="Material 35">
+                </div> 
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786566118/41.jpg" alt="Material 36">
+                </div> 
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786566117/45.jpg" alt="Material 37">
+                </div> 
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786566117/49.jpg" alt="Material 38">
+                </div> 
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786566117/54.jpg" alt="Material 39">
+                </div> 
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786566116/53.jpg" alt="Material 40">
+                </div> 
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786566116/55.jpg" alt="Material 41">
+                </div> 
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786566116/56.jpg" alt="Material 41">
+                </div> 
             </div>
         </div>
     </div>
@@ -761,6 +883,67 @@
         
         let adminVendaCart = []; 
         let cacheVendasAdmin = []; 
+
+        // ================= CONTROLE DO HERO BANNER =================
+let currentHeroIndex = 0;
+let heroTimer;
+
+function initHeroSlider() {
+    const slides = document.querySelectorAll('.hero-slide');
+    const dotsContainer = document.getElementById('hero-dots');
+    
+    if (slides.length === 0) return;
+
+    // Cria as bolinhas (dots) de navegação baseadas na quantidade de banners
+    dotsContainer.innerHTML = '';
+    slides.forEach((_, index) => {
+        const dot = document.createElement('div');
+        dot.className = index === 0 ? 'hero-dot active' : 'hero-dot';
+        dot.onclick = () => goToHeroSlide(index);
+        dotsContainer.appendChild(dot);
+    });
+
+    // Inicia a transição automática dos banners
+    startHeroTimer();
+}
+
+function moveHeroSlide(direction) {
+    const slides = document.querySelectorAll('.hero-slide');
+    if (slides.length === 0) return;
+    
+    let newIndex = currentHeroIndex + direction;
+    
+    // Faz o carrossel dar a volta quando chega no início ou no fim
+    if (newIndex < 0) newIndex = slides.length - 1;
+    if (newIndex >= slides.length) newIndex = 0;
+    
+    goToHeroSlide(newIndex);
+}
+
+function goToHeroSlide(index) {
+    const slides = document.querySelectorAll('.hero-slide');
+    const dots = document.querySelectorAll('.hero-dot');
+    
+    // Remove a classe 'active' do banner e da bolinha atual
+    if(slides[currentHeroIndex]) slides[currentHeroIndex].classList.remove('active');
+    if(dots[currentHeroIndex]) dots[currentHeroIndex].classList.remove('active');
+    
+    currentHeroIndex = index;
+    
+    // Adiciona a classe 'active' ao novo banner e nova bolinha
+    if(slides[currentHeroIndex]) slides[currentHeroIndex].classList.add('active');
+    if(dots[currentHeroIndex]) dots[currentHeroIndex].classList.add('active');
+    
+    // Reinicia o timer para que o banner não mude imediatamente após o clique manual
+    startHeroTimer();
+}
+
+function startHeroTimer() {
+    clearInterval(heroTimer);
+    heroTimer = setInterval(() => {
+        moveHeroSlide(1);
+    }, 6000); // Muda de banner automaticamente a cada 6 segundos
+}
 
         function formatMoney(value) { return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
 
@@ -888,7 +1071,7 @@
                         currentUser = null; 
                         userProfileData = null;
                         userDisplay.textContent = "Entrar";
-                        btnAdmin.style.display = 'none';
+                        btnAdmin.style.display = 'none'; 
                         loadFavoritesFromStorage();
                         if(document.getElementById('section-title').textContent === "Meus Favoritos") showFavorites();
                     }
@@ -896,7 +1079,7 @@
             }
         }
 
-        // ================= FUNÇÕES DO ADMIN (VENDAS E RELATÓRIOS) =================
+        // ================= FUNÇÕES DO ADMIN =================
         function openAdminModal() {
             document.getElementById('admin-modal').classList.add('active');
             switchAdminTab('venda', document.querySelector('.admin-tab-btn'));
@@ -997,7 +1180,6 @@
             const dataCurta = dataIso.substring(0,10); 
 
             try {
-                // Tenta buscar o nome do cliente no Firebase pelo ID ou pelo Email
                 let clienteNome = "Nome não cadastrado";
                 let userQuery = await db.collection('users').where('clienteId', '==', clienteInput).get();
                 if(userQuery.empty) {
@@ -1064,13 +1246,11 @@
             let mapProdutos = {};
             
             cacheVendasAdmin.forEach(v => {
-                // Mapeia os IDs para Nomes de Produtos
                 const produtosComNome = v.produtos.map(id => {
                     const p = PRODUCTS.find(prod => prod.id === parseInt(id));
                     return p ? `${p.id} - ${p.name}` : `ID: ${id}`;
                 });
 
-                // Mapeia o ID do Cliente para incluir o Nome (se existir)
                 const nomeCli = v.clienteNome && v.clienteNome !== "Nome não cadastrado" ? v.clienteNome : "";
                 const displayCliente = nomeCli ? `<strong>${nomeCli}</strong><br><span style="font-size:11px; color:var(--text-muted);">${v.clienteId}</span>` : `<strong>${v.clienteId}</strong>`;
 
@@ -1109,7 +1289,7 @@
             document.getElementById('rel-produto-table').innerHTML = htmlProduto;
         }
 
-        // ================= MODAL DE PERFIL =================
+        // ================= MODAL DE PERFIL E CADASTRO =================
         function openProfileModal() {
             document.getElementById('profile-modal').classList.add('active');
             if (currentUser) {
@@ -1395,6 +1575,7 @@
                 
                 populateAdminProducts();
 
+                // Lógica de Lançamentos Vazio e Rotas
                 if(window.location.hash.startsWith('#produto-')) {
                     const id = parseInt(window.location.hash.replace('#produto-', ''));
                     openProductDetails(id, false);
@@ -1425,7 +1606,18 @@
 
         function renderCatalog(productsToRender) {
             const container = document.getElementById('catalog-container'); container.innerHTML = '';
-            if(productsToRender.length === 0) { container.innerHTML = '<p style="grid-column: 1/-1; text-align:center; padding: 40px; color: var(--text-muted);">Nenhum produto encontrado.</p>'; return; }
+            
+            if(productsToRender.length === 0) { 
+                const activeBtn = document.querySelector('.cat-nav-btn.active');
+                const catAtual = activeBtn ? activeBtn.textContent : '';
+                
+                if(catAtual.toLowerCase() === 'lançamentos') {
+                    container.innerHTML = '<p style="grid-column: 1/-1; text-align:center; padding: 40px; color: var(--primary-gold); font-size: 18px; font-weight: 600;">Fique de olho! Teremos novos lançamentos em breve.</p>';
+                } else {
+                    container.innerHTML = '<p style="grid-column: 1/-1; text-align:center; padding: 40px; color: var(--text-muted);">Nenhum produto encontrado.</p>';
+                }
+                return; 
+            }
 
             productsToRender.forEach(prod => {
                 const card = document.createElement('div'); card.className = 'product-card';
@@ -1460,14 +1652,20 @@
             document.querySelectorAll('.cat-nav-btn').forEach(btn => btn.classList.remove('active'));
             if(btnElement) btnElement.classList.add('active');
 
-            if (cat === 'all') { document.getElementById('hero-banner').style.display = 'block'; renderCatalog(PRODUCTS); } 
-            else if (cat === 'todos') { document.getElementById('hero-banner').style.display = 'none'; document.getElementById('section-title').style.display = 'block'; document.getElementById('section-title').textContent = "Todos os Produtos"; renderCatalog(PRODUCTS); } 
-            else {
-                document.getElementById('hero-banner').style.display = 'none'; document.getElementById('section-title').style.display = 'block'; document.getElementById('section-title').textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
+            if (cat === 'todos') { 
+                document.getElementById('hero-banner').style.display = 'block'; 
+                renderCatalog(PRODUCTS); 
+            } else {
+                document.getElementById('hero-banner').style.display = 'none'; 
+                document.getElementById('section-title').style.display = 'block'; 
+                document.getElementById('section-title').textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
                 
                 if(cat === 'acessorios') {
                     const acs = ['acessorios', 'acessórios', 'acessorio', 'acessório', 'unissex'];
                     renderCatalog(PRODUCTS.filter(p => acs.includes(p.category)));
+                } else if (cat === 'lancamentos' || cat === 'lançamentos') {
+                    const lanc = ['lancamentos', 'lançamentos', 'lancamento', 'lançamento'];
+                    renderCatalog(PRODUCTS.filter(p => lanc.includes(p.category)));
                 } else {
                     renderCatalog(PRODUCTS.filter(p => p.category === cat));
                 }
