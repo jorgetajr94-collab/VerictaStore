@@ -56,7 +56,7 @@
         .search-container.active { display: flex; opacity: 1; }
         .search-container input { border: 1px solid var(--border-color); padding: 8px 12px; border-radius: 4px; outline: none; width: 250px; font-family: 'Plus Jakarta Sans'; }
 
-        /* HERO BANNER */
+        /* HERO BANNER COM SETAS E SLIDER INTELIGENTE */
         .hero-section { max-width: 1300px; margin: 0 auto; position: relative; height: 480px; background-color: var(--bg-cream); overflow: hidden; }
         .hero-slider { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
         .hero-slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 0.8s ease-in-out; display: flex; align-items: center; }
@@ -294,7 +294,6 @@
             </nav>
             <div class="nav-actions">
                 
-                <!-- BOTÃO OCULTO ADMIN -->
                 <button id="btn-admin" class="icon-btn" onclick="openAdminModal()" title="Painel Gestão de Vendas">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
                     <span style="font-size:8px; font-weight:700;">ADMIN</span>
@@ -323,7 +322,7 @@
 
     <div id="toast" class="toast-notify">Ação realizada!</div>
 
-    <!-- ================= MODAL ADMIN COMPLETO ================= -->
+    <!-- ================= MODAL ADMIN ================= -->
     <div class="profile-modal" id="admin-modal" onclick="if(event.target === this) closeAdminModal()">
         <div class="profile-content admin-size">
             <button class="profile-close" onclick="closeAdminModal()">&times;</button>
@@ -335,7 +334,6 @@
                 <button class="admin-tab-btn" onclick="switchAdminTab('relatorio', this)">Fechamento de Caixa</button>
             </div>
             
-            <!-- ABA 1: NOVA VENDA -->
             <div id="admin-view-venda">
                 <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 24px;">Registre a compra do cliente no sistema e gere o código de fidelidade automaticamente.</p>
                 
@@ -354,7 +352,6 @@
                     </div>
                 </div>
                 
-                <!-- Lista de produtos selecionados pelo Admin -->
                 <div id="admin-cart-items" style="margin-bottom: 16px; font-size: 13px;"></div>
 
                 <div class="cust-form-group">
@@ -367,7 +364,6 @@
                 <div id="admin-resultado" style="font-family: monospace; font-size: 28px; font-weight: bold; color: var(--primary-gold); margin-top: 24px; letter-spacing: 2px; text-align: center;"></div>
             </div>
 
-            <!-- ABA 2: RELATÓRIOS E CAIXA -->
             <div id="admin-view-relatorio" style="display:none;">
                 <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Filtre as vendas registradas por período.</p>
                 
@@ -409,7 +405,7 @@
             <div id="view-login" style="display:none; text-align:center;">
                 <h2 style="font-family: 'Montserrat', sans-serif; font-size: 24px; color: var(--dark-heading); margin-bottom: 16px;">Acesse sua Conta</h2>
                 <p style="color: var(--text-muted); margin-bottom: 32px; font-size: 15px;">Faça login para salvar seus favoritos, concluir suas compras e receber novidades exclusivas.</p>
-                <button onclick="performGoogleLogin()" style="background: #f3eddb; color: rgb(85, 84, 84); border: none; padding: 14px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 15px; box-shadow: 0 4px 12px rgba(66, 133, 244, 0.2);">
+                <button onclick="performGoogleLogin()" style="background: #f3eddb; color: #555454; border: none; padding: 14px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 15px; box-shadow: 0 4px 12px rgba(66, 133, 244, 0.2);">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
                     Continuar com o Google
                 </button>
@@ -894,7 +890,7 @@
                         currentUser = null; 
                         userProfileData = null;
                         userDisplay.textContent = "Entrar";
-                        btnAdmin.style.display = 'none'; 
+                        btnAdmin.style.display = 'none';
                         loadFavoritesFromStorage();
                         if(document.getElementById('section-title').textContent === "Meus Favoritos") showFavorites();
                     }
@@ -902,7 +898,7 @@
             }
         }
 
-        // ================= FUNÇÕES DO ADMIN =================
+        // ================= FUNÇÕES DO ADMIN (VENDAS E RELATÓRIOS) =================
         function openAdminModal() {
             document.getElementById('admin-modal').classList.add('active');
             switchAdminTab('venda', document.querySelector('.admin-tab-btn'));
@@ -985,10 +981,10 @@
         }
 
         async function salvarVendaAdmin() {
-            const cliente = document.getElementById('admin-cliente').value.trim();
+            const clienteInput = document.getElementById('admin-cliente').value.trim();
             const valor = parseFloat(document.getElementById('admin-valor').value);
 
-            if (!cliente || adminVendaCart.length === 0 || !valor || valor <= 0) {
+            if (!clienteInput || adminVendaCart.length === 0 || !valor || valor <= 0) {
                 return showToast("Preencha o cliente, adicione produtos e verifique o valor.");
             }
 
@@ -1003,12 +999,23 @@
             const dataCurta = dataIso.substring(0,10); 
 
             try {
+                // Tenta buscar o nome do cliente no Firebase pelo ID ou pelo Email
+                let clienteNome = "Nome não cadastrado";
+                let userQuery = await db.collection('users').where('clienteId', '==', clienteInput).get();
+                if(userQuery.empty) {
+                    userQuery = await db.collection('users').where('email', '==', clienteInput).get();
+                }
+                if(!userQuery.empty) {
+                    clienteNome = userQuery.docs[0].data().name || "Nome não cadastrado";
+                }
+
                 await db.collection('codigos').doc(code).set({
                     valor: valor, usado: false, criadoEm: dataIso
                 });
 
                 await db.collection('vendas').add({
-                    clienteId: cliente,
+                    clienteId: clienteInput,
+                    clienteNome: clienteNome,
                     produtos: produtosArray,
                     valorTotal: valor,
                     data: dataIso,
@@ -1055,13 +1062,23 @@
         }
 
         function renderTabelasRelatorio() {
-            let htmlCliente = `<thead><tr><th>ID Cliente / E-mail</th><th>IDs dos Produtos</th><th>Valor Total</th></tr></thead><tbody>`;
+            let htmlCliente = `<thead><tr><th>Cliente</th><th>Produtos</th><th>Valor Total</th></tr></thead><tbody>`;
             let mapProdutos = {};
             
             cacheVendasAdmin.forEach(v => {
+                // Mapeia os IDs para Nomes de Produtos
+                const produtosComNome = v.produtos.map(id => {
+                    const p = PRODUCTS.find(prod => prod.id === parseInt(id));
+                    return p ? `${p.id} - ${p.name}` : `ID: ${id}`;
+                });
+
+                // Mapeia o ID do Cliente para incluir o Nome (se existir)
+                const nomeCli = v.clienteNome && v.clienteNome !== "Nome não cadastrado" ? v.clienteNome : "";
+                const displayCliente = nomeCli ? `<strong>${nomeCli}</strong><br><span style="font-size:11px; color:var(--text-muted);">${v.clienteId}</span>` : `<strong>${v.clienteId}</strong>`;
+
                 htmlCliente += `<tr>
-                    <td>${v.clienteId}</td>
-                    <td>${v.produtos.join(', ')}</td>
+                    <td>${displayCliente}</td>
+                    <td>${produtosComNome.join('<br>')}</td>
                     <td style="color:var(--primary-gold); font-weight:bold;">${formatMoney(v.valorTotal)}</td>
                 </tr>`;
 
@@ -1076,14 +1093,18 @@
             }
             document.getElementById('rel-cliente-table').innerHTML = htmlCliente;
 
-            let htmlProduto = `<thead><tr><th>ID do Produto</th><th>Quantidade Vendida</th></tr></thead><tbody>`;
+            let htmlProduto = `<thead><tr><th>Produto</th><th>Quantidade Vendida</th></tr></thead><tbody>`;
             
             const prodKeys = Object.keys(mapProdutos).sort((a,b) => mapProdutos[b] - mapProdutos[a]);
             if(prodKeys.length === 0) {
                 htmlProduto = `<tbody><tr><td colspan="2" style="text-align:center;">Nenhum produto vendido.</td></tr></tbody>`;
             } else {
                 prodKeys.forEach(k => {
-                    htmlProduto += `<tr><td>Produto de ID: ${k}</td><td style="font-weight:bold;">${mapProdutos[k]} un.</td></tr>`;
+                    const p = PRODUCTS.find(prod => prod.id === parseInt(k));
+                    const pName = p ? p.name : '';
+                    const displayProd = pName ? `${k} - ${pName}` : `ID: ${k}`;
+                    
+                    htmlProduto += `<tr><td>${displayProd}</td><td style="font-weight:bold;">${mapProdutos[k]} un.</td></tr>`;
                 });
                 htmlProduto += `</tbody>`;
             }
