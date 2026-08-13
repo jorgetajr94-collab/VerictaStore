@@ -288,6 +288,7 @@
                 <button class="cat-nav-btn" onclick="filterCategory('lancamentos', this)">Lançamentos</button>
                 <button class="cat-nav-btn" onclick="filterCategory('feminino', this)">Feminino</button>
                 <button class="cat-nav-btn" onclick="showCustomersPage(true)">Clientes</button>
+                <button class="cat-nav-btn" onclick="showPremiosPage(true)" style="color: var(--primary-gold); font-weight: 700;">🎁 Prêmios</button>
                 <button class="cat-nav-btn" onclick="showMaterialsPage(true)">Materiais</button>
             </nav>
             <div class="nav-actions">
@@ -337,6 +338,7 @@
             <div class="admin-tabs">
                 <button class="admin-tab-btn active" onclick="switchAdminTab('venda', this)">Fechamento da Compra</button>
                 <button class="admin-tab-btn" onclick="switchAdminTab('relatorio', this)">Fechamento de Caixa</button>
+                <button class="admin-tab-btn" onclick="switchAdminTab('premios', this)">Config. Prêmios</button>
                 <!-- NOVA ABA ADICIONADA -->
                 <button class="admin-tab-btn" onclick="switchAdminTab('clientes', this)">Saldos dos Clientes</button>
             </div>
@@ -420,6 +422,26 @@
                     </table>
                 </div>
             </div> <!-- FIM DA ABA 3 -->
+
+            <!-- ABA 4: CONFIGURAR PRÊMIOS -->
+            <div id="admin-view-premios" style="display:none;">
+                <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Defina os prêmios atuais baseados no seu estoque. Esses textos aparecerão automaticamente para os clientes.</p>
+    
+            <div class="cust-form-group">
+                <label>1 Troféu (R$ 1.000 gastos)</label>
+                <input type="text" id="admin-premio-1000" placeholder="Ex: Par de meias personalizadas Vericta">
+            </div>
+            <div class="cust-form-group">
+                <label>2 Troféus (R$ 2.000 gastos)</label>
+                <input type="text" id="admin-premio-2000" placeholder="Ex: Top esportivo">
+            </div>
+            <div class="cust-form-group">
+                <label>3 Troféus (R$ 3.000 gastos)</label>
+                <input type="text" id="admin-premio-3000" placeholder="Ex: Conjunto completo">
+            </div>
+    
+            <button onclick="salvarConfigPremios()" style="background: var(--primary-gold); color: white; border: none; padding: 16px; border-radius: 8px; font-weight: 600; width: 100%; cursor: pointer; transition: background 0.3s; margin-top: 10px;">SALVAR PRÊMIOS</button>
+        </div>
             
         </div>
     </div>
@@ -735,6 +757,38 @@
             </div>
         </div>
 
+        <!-- ================= PREMIOS VIEW ================= -->
+        <div id="view-premios" class="page-view main-wrapper">
+            <button class="back-btn" onclick="showCatalogPage(true)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                Voltar
+            </button>
+            <h2 class="details-title" style="margin-bottom: 8px;">Programa de Recompensas</h2>
+            <p class="details-description" style="border: none; padding: 0;">A cada R$ 1.000,00 acumulados em compras, você ganha <strong>1 Troféu</strong>. Você pode juntar seus troféus para trocar por prêmios maiores!<br><br><span style="color: #EF4444; font-weight: 600;">⚠️ Atenção:</span> Nossos prêmios variam de acordo com o estoque disponível e a coleção vigente. Consulte a lista abaixo atualizada:</p>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-top: 20px;">
+                <div style="background: var(--bg-white); border: 2px solid var(--border-color); border-radius: var(--radius-md); padding: 30px; text-align: center; box-shadow: var(--shadow-card);">
+                    <div style="font-size: 50px; margin-bottom: 10px;">🧦</div>
+                    <h3 style="color: var(--dark-heading); font-family: 'Montserrat'; font-size: 18px; text-transform: uppercase;">1 Troféu</h3>
+                    <p style="font-size: 13px; color: var(--text-muted);">(R$ 1.000 gastos)</p>
+                    <div id="premio-1000-desc" style="color: var(--primary-gold); font-weight: 800; margin-top: 16px; font-size: 16px;">Carregando...</div>
+                </div>
+                <div style="background: var(--bg-white); border: 2px solid var(--border-color); border-radius: var(--radius-md); padding: 30px; text-align: center; box-shadow: var(--shadow-card);">
+                    <div style="font-size: 50px; margin-bottom: 10px;">🎽</div>
+                    <h3 style="color: var(--dark-heading); font-family: 'Montserrat'; font-size: 18px; text-transform: uppercase;">2 Troféus</h3>
+                    <p style="font-size: 13px; color: var(--text-muted);">(R$ 2.000 gastos)</p>
+                    <div id="premio-2000-desc" style="color: var(--primary-gold); font-weight: 800; margin-top: 16px; font-size: 16px;">Carregando...</div>
+                </div>
+                <div style="background: var(--bg-white); border: 2px solid var(--primary-gold); border-radius: var(--radius-md); padding: 30px; text-align: center; box-shadow: 0 10px 30px rgba(150, 118, 69, 0.2); position: relative;">
+                    <div style="position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--primary-gold); color: white; padding: 4px 12px; border-radius: 20px; font-size: 10px; font-weight: bold; text-transform: uppercase;">Prêmio Máximo</div>
+                    <div style="font-size: 50px; margin-bottom: 10px;">✨</div>
+                    <h3 style="color: var(--dark-heading); font-family: 'Montserrat'; font-size: 18px; text-transform: uppercase;">3 Troféus</h3>
+                    <p style="font-size: 13px; color: var(--text-muted);">(R$ 3.000 gastos)</p>
+                    <div id="premio-3000-desc" style="color: var(--primary-gold); font-weight: 800; margin-top: 16px; font-size: 16px;">Carregando...</div>
+                </div>
+            </div>
+        </div>
+
         <!-- ================= MATERIALS VIEW ================= -->
         <div id="view-materials" class="page-view main-wrapper">
             <button class="back-btn" onclick="showCatalogPage(true)">
@@ -1042,22 +1096,25 @@
             loadCartFromStorage();
             loadProductsFromDB();
             initHeroSlider();
+            carregarConfigPremios(); // <--- NOVA LINHA ADICIONADA AQUI
         });
 
         // ================= GERENCIAMENTO DE ROTAS E HASH =================
         window.addEventListener('hashchange', () => {
-            const hash = window.location.hash;
-            if (hash.startsWith('#produto-')) {
-                const id = parseInt(hash.replace('#produto-', ''));
-                openProductDetails(id, false); 
-            } else if (hash === '#clientes') {
-                showCustomersPage(false);
-            } else if (hash === '#materiais') {
-                showMaterialsPage(false);
-            } else {
-                showCatalogPage(false);
-            }
-        });
+    const hash = window.location.hash;
+    if (hash.startsWith('#produto-')) {
+        const id = parseInt(hash.replace('#produto-', ''));
+        openProductDetails(id, false); 
+    } else if (hash === '#clientes') {
+        showCustomersPage(false);
+    } else if (hash === '#materiais') {
+        showMaterialsPage(false);
+    } else if (hash === '#premios') {
+        showPremiosPage(false);
+    } else {
+        showCatalogPage(false);
+    }
+});
 
         function hideAllPages() {
             document.querySelectorAll('.page-view').forEach(p => p.classList.remove('active'));
@@ -1092,6 +1149,17 @@
             document.getElementById('view-materials').classList.add('active');
             window.scrollTo(0,0);
             if(pushHash) window.location.hash = 'materiais';
+        }
+
+        function showPremiosPage(pushHash = true) {
+            document.getElementById('mobile-nav').classList.remove('open');
+            document.querySelectorAll('.cat-nav-btn').forEach(btn => btn.classList.remove('active'));
+            hideAllPages();
+            document.getElementById('view-premios').classList.add('active');
+            window.scrollTo(0,0);
+            if(pushHash) window.location.hash = 'premios';
+            
+            carregarConfigPremios(); // Carrega sempre os mais recentes do banco
         }
 
         function toggleMobileMenu() { document.getElementById('mobile-nav').classList.toggle('open'); }
@@ -1186,14 +1254,62 @@
             document.getElementById('admin-view-venda').style.display = 'none';
             document.getElementById('admin-view-relatorio').style.display = 'none';
             document.getElementById('admin-view-clientes').style.display = 'none';
+            document.getElementById('admin-view-premios').style.display = 'none';
 
-            if(tab === 'venda') {
-                document.getElementById('admin-view-venda').style.display = 'block';
-            } else if(tab === 'relatorio') {
-                document.getElementById('admin-view-relatorio').style.display = 'block';
-            } else if(tab === 'clientes') {
-                document.getElementById('admin-view-clientes').style.display = 'block';
-                buscarSaldosClientes(); // Busca os dados automaticamente ao abrir a aba
+            if(tab === 'venda') document.getElementById('admin-view-venda').style.display = 'block';
+            else if(tab === 'relatorio') document.getElementById('admin-view-relatorio').style.display = 'block';
+            else if(tab === 'clientes') { document.getElementById('admin-view-clientes').style.display = 'block'; buscarSaldosClientes(); }
+            else if(tab === 'premios') { document.getElementById('admin-view-premios').style.display = 'block'; carregarConfigPremios(); }
+        }
+
+        // === NOVO BANCO DE DADOS DE PRÊMIOS ===
+        async function carregarConfigPremios() {
+            try {
+                const doc = await db.collection('config').doc('premios').get();
+                let p1 = 'Par de meias personalizadas Vericta';
+                let p2 = 'Top Esportivo';
+                let p3 = 'Conjunto Completo';
+
+                if(doc.exists) {
+                    const data = doc.data();
+                    p1 = data.p1000 || p1;
+                    p2 = data.p2000 || p2;
+                    p3 = data.p3000 || p3;
+                }
+
+                // Preenche o modal do Admin
+                if(document.getElementById('admin-premio-1000')) document.getElementById('admin-premio-1000').value = p1;
+                if(document.getElementById('admin-premio-2000')) document.getElementById('admin-premio-2000').value = p2;
+                if(document.getElementById('admin-premio-3000')) document.getElementById('admin-premio-3000').value = p3;
+                
+                // Preenche a página dos Clientes
+                if(document.getElementById('premio-1000-desc')) document.getElementById('premio-1000-desc').textContent = p1;
+                if(document.getElementById('premio-2000-desc')) document.getElementById('premio-2000-desc').textContent = p2;
+                if(document.getElementById('premio-3000-desc')) document.getElementById('premio-3000-desc').textContent = p3;
+
+            } catch(e) {
+                console.error("Erro ao carregar prêmios", e);
+            }
+        }
+
+        async function salvarConfigPremios() {
+            const p1 = document.getElementById('admin-premio-1000').value;
+            const p2 = document.getElementById('admin-premio-2000').value;
+            const p3 = document.getElementById('admin-premio-3000').value;
+            
+            if(!p1 || !p2 || !p3) return showToast("Preencha todos os campos.");
+
+            try {
+                await db.collection('config').doc('premios').set({
+                    p1000: p1,
+                    p2000: p2,
+                    p3000: p3
+                });
+                showToast("Prêmios atualizados e ao vivo!");
+                carregarConfigPremios(); 
+            } catch(e) {
+                console.error(e);
+                showToast("Erro ao salvar prêmios no banco de dados.");
             }
         }
 
