@@ -284,7 +284,6 @@
                  <img src="logo.png" class="exact-logo-img" alt="Vericta Logo" onerror="this.src='https://via.placeholder.com/150x50?text=VERICTA'">
             </a>
             <nav class="header-categories" id="mobile-nav">
-                <!-- Alterado: Menu Todos como padrão -->
                 <button class="cat-nav-btn active" id="cat-todos" onclick="filterCategory('todos', this)">Todos</button>
                 <button class="cat-nav-btn" onclick="filterCategory('lancamentos', this)">Lançamentos</button>
                 <button class="cat-nav-btn" onclick="filterCategory('feminino', this)">Feminino</button>
@@ -292,6 +291,12 @@
                 <button class="cat-nav-btn" onclick="showMaterialsPage(true)">Materiais</button>
             </nav>
             <div class="nav-actions">
+                <!-- BOTÃO DE CONTATO -->
+                <button class="icon-btn" onclick="openContactOptions()" title="Fale Conosco">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+                </svg>
+                </button>
                 
                 <!-- BOTÃO OCULTO ADMIN -->
                 <button id="btn-admin" class="icon-btn" onclick="openAdminModal()" title="Painel Gestão de Vendas">
@@ -332,6 +337,8 @@
             <div class="admin-tabs">
                 <button class="admin-tab-btn active" onclick="switchAdminTab('venda', this)">Fechamento da Compra</button>
                 <button class="admin-tab-btn" onclick="switchAdminTab('relatorio', this)">Fechamento de Caixa</button>
+                <!-- NOVA ABA ADICIONADA -->
+                <button class="admin-tab-btn" onclick="switchAdminTab('clientes', this)">Saldos dos Clientes</button>
             </div>
             
             <!-- ABA 1: NOVA VENDA -->
@@ -396,7 +403,24 @@
                         <table class="admin-table" id="rel-produto-table"></table>
                     </div>
                 </div>
-            </div>
+            </div> <!-- FIM DA ABA 2 -->
+
+            <!-- ABA 3: SALDOS DOS CLIENTES -->
+            <div id="admin-view-clientes" style="display:none;">
+                <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Acompanhe o total gasto (saldo de fidelidade) de cada cliente para atingir a meta de R$ 1.000,00.</p>
+                
+                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                    <input type="text" id="admin-busca-cliente" placeholder="Buscar por nome, e-mail ou ID..." style="flex: 1; padding: 12px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 14px; outline: none;" onkeyup="filtrarSaldosClientes()">
+                    <button onclick="buscarSaldosClientes()" style="background: var(--primary-gold); color: white; border: none; padding: 0 20px; border-radius: 4px; font-weight: 600; cursor: pointer; transition: 0.3s;">ATUALIZAR</button>
+                </div>
+
+                <div id="admin-clientes-wrapper" style="max-height: 350px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 8px;">
+                    <table class="admin-table" id="admin-clientes-table">
+                        <!-- A tabela será preenchida via JavaScript -->
+                    </table>
+                </div>
+            </div> <!-- FIM DA ABA 3 -->
+            
         </div>
     </div>
 
@@ -420,6 +444,10 @@
                 <div class="fidelidade-card">
                     <h3>Seu Saldo: R$ <span id="prof-saldo">0,00</span></h3>
                     <p>Meta: R$ 1.000,00 para ganhar um prêmio exclusivo!</p>
+                    <!-- NOVA MENSAGEM DE BRINDE -->
+                    <div id="prof-brindes-aviso" style="display:none; color: #1EBE5D; font-weight: 800; font-size: 14px; margin-bottom: 12px; padding: 8px; background: #e8f9ef; border-radius: 4px;">
+                        🎉 Você tem <span id="prof-brindes-count">0</span> prêmio(s) conquistado(s)!
+                    </div>
                     <div class="fidelidade-progress">
                         <div class="fidelidade-bar" id="prof-bar"></div>
                     </div>
@@ -653,6 +681,57 @@
                 <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
                     <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786567571/imagem_2026-08-12_174615963.png" alt="Cliente Vericta 4">
                 </div>
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786627473/01.jpg" alt="Cliente Vericta 5">
+                </div>
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786627473/04.jpg" alt="Cliente Vericta 6">
+                </div>
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786627472/02.jpg" alt="Cliente Vericta 7">
+                </div>
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786627472/03.jpg" alt="Cliente Vericta 8">
+                </div>
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786627472/05.jpg" alt="Cliente Vericta 9">
+                </div>
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786627472/06.jpg" alt="Cliente Vericta 10">
+                </div>
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786627472/07.jpg" alt="Cliente Vericta 11">
+                </div>
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786627472/11.jpg" alt="Cliente Vericta 12">
+                </div>
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786627472/13.jpg" alt="Cliente Vericta 13">
+                </div>
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786627471/08.jpg" alt="Cliente Vericta 14">
+                </div>
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786627471/10.jpg" alt="Cliente Vericta 15">
+                </div>
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786627471/15.jpg" alt="Cliente Vericta 16">
+                </div>
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786627470/09.jpg" alt="Cliente Vericta 17">
+                </div>
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786627470/17.jpg" alt="Cliente Vericta 18">
+                </div>
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786627469/12.jpg" alt="Cliente Vericta 19">
+                </div>
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786627469/14.jpg" alt="Cliente Vericta 20">
+                </div>
+                <div class="gallery-item" onclick="openLightboxImage(this.querySelector('img').src)">
+                    <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786627469/16.jpg" alt="Cliente Vericta 4">
+                </div>
             </div>
         </div>
 
@@ -804,6 +883,23 @@
         </div>
     </div>
 
+    <!-- MODAL DE CONTATO -->
+    <div class="profile-modal" id="contact-modal" onclick="if(event.target === this) document.getElementById('contact-modal').classList.remove('active')">
+    <div class="profile-content" style="text-align: center; max-width: 400px;">
+    <button class="profile-close" onclick="document.getElementById('contact-modal').classList.remove('active')">&times;</button>
+        
+    <h2 style="font-family: 'Montserrat', sans-serif; font-size: 24px; color: var(--dark-heading); margin-bottom: 16px;">Fale Conosco</h2>
+    <p style="color: var(--text-muted); margin-bottom: 24px; font-size: 15px;">Escolha por onde deseja ser atendido:</p>
+        
+    <button onclick="contactWhatsApp()" style="background: #25D366; color: white; border: none; padding: 14px; border-radius: 8px; font-weight: 600; width: 100%; cursor: pointer; margin-bottom: 12px; transition: transform 0.2s;">
+            Chamar no WhatsApp
+    </button>
+    <button onclick="contactInstagram()" style="background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); color: white; border: none; padding: 14px; border-radius: 8px; font-weight: 600; width: 100%; cursor: pointer; transition: transform 0.2s;">
+            Mandar Direct no Instagram
+    </button>
+    </div>
+</div>
+
     <div class="cart-overlay" id="cart-overlay" onclick="if(event.target === this) closeCart()">
         <div class="cart-drawer">
             <div class="cart-header">
@@ -885,65 +981,59 @@
         let cacheVendasAdmin = []; 
 
         // ================= CONTROLE DO HERO BANNER =================
-let currentHeroIndex = 0;
-let heroTimer;
+        let currentHeroIndex = 0;
+        let heroTimer;
 
-function initHeroSlider() {
-    const slides = document.querySelectorAll('.hero-slide');
-    const dotsContainer = document.getElementById('hero-dots');
-    
-    if (slides.length === 0) return;
+        function initHeroSlider() {
+            const slides = document.querySelectorAll('.hero-slide');
+            const dotsContainer = document.getElementById('hero-dots');
+            
+            if (slides.length === 0) return;
 
-    // Cria as bolinhas (dots) de navegação baseadas na quantidade de banners
-    dotsContainer.innerHTML = '';
-    slides.forEach((_, index) => {
-        const dot = document.createElement('div');
-        dot.className = index === 0 ? 'hero-dot active' : 'hero-dot';
-        dot.onclick = () => goToHeroSlide(index);
-        dotsContainer.appendChild(dot);
-    });
+            dotsContainer.innerHTML = '';
+            slides.forEach((_, index) => {
+                const dot = document.createElement('div');
+                dot.className = index === 0 ? 'hero-dot active' : 'hero-dot';
+                dot.onclick = () => goToHeroSlide(index);
+                dotsContainer.appendChild(dot);
+            });
 
-    // Inicia a transição automática dos banners
-    startHeroTimer();
-}
+            startHeroTimer();
+        }
 
-function moveHeroSlide(direction) {
-    const slides = document.querySelectorAll('.hero-slide');
-    if (slides.length === 0) return;
-    
-    let newIndex = currentHeroIndex + direction;
-    
-    // Faz o carrossel dar a volta quando chega no início ou no fim
-    if (newIndex < 0) newIndex = slides.length - 1;
-    if (newIndex >= slides.length) newIndex = 0;
-    
-    goToHeroSlide(newIndex);
-}
+        function moveHeroSlide(direction) {
+            const slides = document.querySelectorAll('.hero-slide');
+            if (slides.length === 0) return;
+            
+            let newIndex = currentHeroIndex + direction;
+            
+            if (newIndex < 0) newIndex = slides.length - 1;
+            if (newIndex >= slides.length) newIndex = 0;
+            
+            goToHeroSlide(newIndex);
+        }
 
-function goToHeroSlide(index) {
-    const slides = document.querySelectorAll('.hero-slide');
-    const dots = document.querySelectorAll('.hero-dot');
-    
-    // Remove a classe 'active' do banner e da bolinha atual
-    if(slides[currentHeroIndex]) slides[currentHeroIndex].classList.remove('active');
-    if(dots[currentHeroIndex]) dots[currentHeroIndex].classList.remove('active');
-    
-    currentHeroIndex = index;
-    
-    // Adiciona a classe 'active' ao novo banner e nova bolinha
-    if(slides[currentHeroIndex]) slides[currentHeroIndex].classList.add('active');
-    if(dots[currentHeroIndex]) dots[currentHeroIndex].classList.add('active');
-    
-    // Reinicia o timer para que o banner não mude imediatamente após o clique manual
-    startHeroTimer();
-}
+        function goToHeroSlide(index) {
+            const slides = document.querySelectorAll('.hero-slide');
+            const dots = document.querySelectorAll('.hero-dot');
+            
+            if(slides[currentHeroIndex]) slides[currentHeroIndex].classList.remove('active');
+            if(dots[currentHeroIndex]) dots[currentHeroIndex].classList.remove('active');
+            
+            currentHeroIndex = index;
+            
+            if(slides[currentHeroIndex]) slides[currentHeroIndex].classList.add('active');
+            if(dots[currentHeroIndex]) dots[currentHeroIndex].classList.add('active');
+            
+            startHeroTimer();
+        }
 
-function startHeroTimer() {
-    clearInterval(heroTimer);
-    heroTimer = setInterval(() => {
-        moveHeroSlide(1);
-    }, 6000); // Muda de banner automaticamente a cada 6 segundos
-}
+        function startHeroTimer() {
+            clearInterval(heroTimer);
+            heroTimer = setInterval(() => {
+                moveHeroSlide(1);
+            }, 6000); 
+        }
 
         function formatMoney(value) { return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
 
@@ -1093,12 +1183,17 @@ function startHeroTimer() {
             document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.remove('active'));
             if(btnElement) btnElement.classList.add('active');
             
+            document.getElementById('admin-view-venda').style.display = 'none';
+            document.getElementById('admin-view-relatorio').style.display = 'none';
+            document.getElementById('admin-view-clientes').style.display = 'none';
+
             if(tab === 'venda') {
                 document.getElementById('admin-view-venda').style.display = 'block';
-                document.getElementById('admin-view-relatorio').style.display = 'none';
-            } else {
-                document.getElementById('admin-view-venda').style.display = 'none';
+            } else if(tab === 'relatorio') {
                 document.getElementById('admin-view-relatorio').style.display = 'block';
+            } else if(tab === 'clientes') {
+                document.getElementById('admin-view-clientes').style.display = 'block';
+                buscarSaldosClientes(); // Busca os dados automaticamente ao abrir a aba
             }
         }
 
@@ -1289,6 +1384,95 @@ function startHeroTimer() {
             document.getElementById('rel-produto-table').innerHTML = htmlProduto;
         }
 
+        // ================= CONTROLE DE SALDO DE CLIENTES (ADMIN) =================
+        let cacheClientesAdmin = [];
+
+        async function buscarSaldosClientes() {
+            try {
+                const snapshot = await db.collection('users').get();
+                cacheClientesAdmin = [];
+                
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    // Só adiciona se tiver informações básicas do cliente
+                    if(data.name || data.email || data.clienteId) {
+                        cacheClientesAdmin.push(data);
+                    }
+                });
+                
+                // Ordenar clientes pelos que mais gastaram (maior saldo no topo)
+                cacheClientesAdmin.sort((a, b) => (b.saldoFidelidade || 0) - (a.saldoFidelidade || 0));
+                
+                renderTabelaClientes(cacheClientesAdmin);
+                showToast("Saldos atualizados com sucesso!");
+            } catch(e) {
+                console.error(e);
+                showToast("Erro ao buscar os clientes.");
+            }
+        }
+
+        function renderTabelaClientes(listaClientes) {
+            const table = document.getElementById('admin-clientes-table');
+            let html = `<thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nome / E-mail</th>
+                                <th>Progresso / Brindes</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+            
+            if (listaClientes.length === 0) {
+                html += `<tr><td colspan="3" style="text-align:center; padding: 20px;">Nenhum cliente encontrado.</td></tr>`;
+            } else {
+                listaClientes.forEach(c => {
+                    const id = c.clienteId || 'N/A';
+                    const nome = c.name || 'Sem nome';
+                    const email = c.email || 'Sem e-mail';
+                    const saldo = c.saldoFidelidade || 0;
+                    const brindes = c.brindesGanhos || 0; // Puxa os brindes para o Admin
+                    
+                    // Calcula barra de progresso (limite 100%)
+                    let pct = (saldo / 1000) * 100;
+                    if(pct > 100) pct = 100;
+
+                    // Etiqueta destacada se o cliente ganhou brinde
+                    let badgeBrinde = brindes > 0 ? `<span style="background: var(--whatsapp-green); color: white; padding: 3px 6px; border-radius: 4px; font-size: 10px; font-weight: 800; margin-left: 8px;">🏆 ${brindes} BRINDE(S)</span>` : '';
+
+                    html += `<tr>
+                        <td><strong>${id}</strong></td>
+                        <td>
+                            <strong>${nome}</strong><br>
+                            <span style="font-size:11px; color:var(--text-muted);">${email}</span><br>
+                            <span style="font-size:11px; color:var(--whatsapp-green);">${c.whatsapp || ''}</span>
+                        </td>
+                        <td style="min-width: 170px;">
+                            <div style="color:var(--primary-gold); font-weight:bold; font-size: 14px; margin-bottom: 6px;">
+                                ${formatMoney(saldo)} ${badgeBrinde}
+                            </div>
+                            <div style="width: 100%; height: 6px; background: #E5E5E5; border-radius: 3px; overflow: hidden;">
+                                <div style="height: 100%; background: var(--primary-gold); width: ${pct}%;"></div>
+                            </div>
+                            <div style="font-size: 10px; color: var(--text-muted); margin-top: 4px; text-align: right;">${pct.toFixed(0)}% rumo ao próximo</div>
+                        </td>
+                    </tr>`;
+                });
+            }
+            html += `</tbody>`;
+            table.innerHTML = html;
+        }
+
+        function filtrarSaldosClientes() {
+            const term = document.getElementById('admin-busca-cliente').value.toLowerCase();
+            
+            const filtrados = cacheClientesAdmin.filter(c => {
+                const searchString = `${c.name || ''} ${c.email || ''} ${c.clienteId || ''} ${c.whatsapp || ''}`.toLowerCase();
+                return searchString.includes(term);
+            });
+            
+            renderTabelaClientes(filtrados);
+        }
+
         // ================= MODAL DE PERFIL E CADASTRO =================
         function openProfileModal() {
             document.getElementById('profile-modal').classList.add('active');
@@ -1391,11 +1575,22 @@ function startHeroTimer() {
         function atualizarTelaFidelidade() {
             if(!userProfileData) return;
             let saldo = userProfileData.saldoFidelidade || 0;
+            let brindes = userProfileData.brindesGanhos || 0; // Puxa os brindes do banco
+
             document.getElementById('prof-saldo').textContent = saldo.toLocaleString('pt-BR', {minimumFractionDigits: 2});
             
             let pct = (saldo / 1000) * 100;
             if(pct > 100) pct = 100;
             document.getElementById('prof-bar').style.width = `${pct}%`;
+
+            // Exibe o aviso se ele tiver brindes
+            const avisoBrinde = document.getElementById('prof-brindes-aviso');
+            if(brindes > 0) {
+                avisoBrinde.style.display = 'block';
+                document.getElementById('prof-brindes-count').textContent = brindes;
+            } else {
+                avisoBrinde.style.display = 'none';
+            }
         }
 
         async function resgatarCodigo() {
@@ -1429,14 +1624,37 @@ function startHeroTimer() {
                     resgatadoEm: new Date().toISOString()
                 });
                 
+                // --- NOVA LÓGICA DE SALDO E BRINDES ---
                 let saldoAtual = userProfileData.saldoFidelidade || 0;
+                let brindesAtuais = userProfileData.brindesGanhos || 0;
                 let novoSaldo = saldoAtual + valor;
+                let novosBrindesGanhos = 0;
+
+                // Se o saldo passar de 1000, converte em brindes
+                if (novoSaldo >= 1000) {
+                    novosBrindesGanhos = Math.floor(novoSaldo / 1000); // Ex: 1200 / 1000 = 1 brinde
+                    novoSaldo = novoSaldo % 1000; // Pega o resto (200) para o próximo ciclo
+                    brindesAtuais += novosBrindesGanhos;
+                }
                 
-                await userRef.set({ saldoFidelidade: novoSaldo }, {merge: true});
+                // Salva os dados atualizados no Firebase
+                await userRef.set({ 
+                    saldoFidelidade: novoSaldo,
+                    brindesGanhos: brindesAtuais 
+                }, {merge: true});
+                
                 userProfileData.saldoFidelidade = novoSaldo;
+                userProfileData.brindesGanhos = brindesAtuais;
                 
                 atualizarTelaFidelidade();
-                showToast(`Sucesso! Você adicionou R$ ${valor} de compras ao seu perfil.`);
+                
+                // Avisa o usuário na tela
+                if (novosBrindesGanhos > 0) {
+                    alert(`🎉 PARABÉNS! Você atingiu a meta de R$ 1.000,00 e acaba de ganhar um BRINDE EXCLUSIVO!\n\nEntre em contato conosco para retirar seu prêmio. Seu saldo extra já foi computado.`);
+                } else {
+                    showToast(`Sucesso! Você adicionou R$ ${valor} de compras ao seu perfil.`);
+                }
+                
                 document.getElementById('input-codigo').value = '';
 
             } catch(e) {
@@ -1976,6 +2194,53 @@ function startHeroTimer() {
         }
 
         function showToast(msg) { const toast = document.getElementById('toast'); toast.textContent = msg; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 3000); }
+
+        // ================= SISTEMA DE CONTATO DIRETO =================
+
+        function openContactOptions() {
+            if (!currentUser) {
+                showToast("Faça login para falar conosco.");
+                openProfileModal();
+                return;
+            }
+            
+            if (!userProfileData) {
+                showToast("Carregando seus dados, tente novamente.");
+                return;
+            }
+
+            const hasCompleteProfile = (
+                userProfileData.name && 
+                userProfileData.whatsapp && 
+                userProfileData.cep && 
+                userProfileData.street && 
+                userProfileData.number && 
+                userProfileData.neighborhood && 
+                userProfileData.city && 
+                userProfileData.state
+            );
+
+            if (!hasCompleteProfile) {
+                showToast("Complete seu endereço e WhatsApp para liberar o contato.");
+                openProfileModal();
+                return;
+            }
+
+            document.getElementById('contact-modal').classList.add('active');
+        }
+
+        function contactWhatsApp() {
+            const numeroLoja = "5515991347011";
+            const texto = `Olá! Meu nome é ${userProfileData.name} (ID: ${userProfileData.clienteId}) e gostaria de tirar uma dúvida.`;
+            
+            window.open(`https://wa.me/${numeroLoja}?text=${encodeURIComponent(texto)}`, '_blank');
+            document.getElementById('contact-modal').classList.remove('active');
+        }
+
+        function contactInstagram() {
+            window.open(`https://www.instagram.com/verictasports_/`, '_blank');
+            document.getElementById('contact-modal').classList.remove('active');
+        }
     </script>
 </body>
 </html>
