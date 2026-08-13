@@ -1094,10 +1094,11 @@
         document.addEventListener('DOMContentLoaded', () => {
             initFirebase();
             loadCartFromStorage();
+            loadFavoritesFromStorage();
             loadProductsFromDB();
             initHeroSlider();
-            carregarConfigPremios(); // <--- NOVA LINHA ADICIONADA AQUI
-        });
+            carregarConfigPremios();
+            });
 
         // ================= GERENCIAMENTO DE ROTAS E HASH =================
         window.addEventListener('hashchange', () => {
@@ -1807,6 +1808,49 @@
         window.toggleFavoriteDetail = function(event) {
             if(!currentDetailProduct) return;
             toggleFavorite(event, currentDetailProduct.id);
+        }
+
+        // ================= FUNÇÕES FALTANTES DE FAVORITOS =================
+
+        // Salva os favoritos no armazenamento local do navegador para usuários deslogados
+        function saveFavoritesLocally() {
+            localStorage.setItem('vericta_favorites', JSON.stringify(favorites));
+        }
+
+        // Carrega os favoritos salvos no armazenamento local
+        function loadFavoritesFromStorage() {
+            const saved = localStorage.getItem('vericta_favorites');
+            if (saved) {
+                try { 
+                    favorites = JSON.parse(saved); 
+                } catch(e) { 
+                    favorites = []; 
+                }
+            } else {
+                favorites = [];
+            }
+        }
+
+        // Filtra a vitrine para exibir apenas os produtos favoritados
+        function showFavorites() {
+            // Fecha o menu mobile e a barra de pesquisa se estiverem abertos
+            document.getElementById('mobile-nav').classList.remove('open');
+            document.getElementById('search-box').classList.remove('active');
+            
+            // Oculta o banner principal e exibe o título da seção
+            document.getElementById('hero-banner').style.display = 'none';
+            document.getElementById('section-title').style.display = 'block';
+            document.getElementById('section-title').textContent = "Meus Favoritos";
+            
+            // Remove a classe "active" dos botões do menu
+            document.querySelectorAll('.cat-nav-btn').forEach(btn => btn.classList.remove('active'));
+
+            // Filtra apenas os produtos que estão na array 'favorites' e renderiza
+            const favoriteProducts = PRODUCTS.filter(p => favorites.includes(p.id));
+            renderCatalog(favoriteProducts);
+            
+            // Exibe a página do catálogo com os produtos filtrados
+            showCatalogPage(true);
         }
 
         // ================= LOGICA DO PRODUTO =================
