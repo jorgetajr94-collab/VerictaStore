@@ -990,16 +990,13 @@
         ]; 
 
         // ================= CONFIGURAÇÃO DE BANCOS DE DADOS =================
-        const DATABASE_URL = 'https://sheetdb.io/api/v1/67x4h7xe1wzcg';
-        
-        const firebaseConfig = {
-            apiKey: "AIzaSyCZGWrGi2dD91qq2KOP0_JiNQzJz3xdZbQ",
-            authDomain: "banco-de-dados-vericta.firebaseapp.com",
-            projectId: "banco-de-dados-vericta",
-            storageBucket: "banco-de-dados-vericta.firebasestorage.app",
-            messagingSenderId: "895353456691",
-            appId: "1:895353456691:web:53c4f6bbe2987f86e1fb46"
-        };
+        fetch("https://script.google.com/macros/s/AKfycbzQIiWWa8C63kRVK0ed6ItBLgOJRWIiINpaS6qaQavFRC_H35wsV-qMpOhOqK33fQNK/exec")
+          .then(response => response.json())
+          .then(data => {
+            console.log("Produtos:", data);
+            // Aqui você renderiza seus produtos, imagens e estoque normalmente
+          })
+          .catch(error => console.error("Erro ao carregar produtos:", error));
         
         const COLOR_HEX = {
             'branco': '#FFFFFF', 'preto': '#2C2C2C', 'cinza': '#6B6E70',
