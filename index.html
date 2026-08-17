@@ -1852,119 +1852,156 @@
             showCatalogPage(true);
         }
 
-        // ================= LOGICA DO PRODUTO =================
+        // ================= LOGICA DO PRODUTO COM CACHE LOCAL =================
         async function loadProductsFromDB() {
             const container = document.getElementById('catalog-container');
-            if (!container) return; 
+            if (!container) return;
+
+            const CACHE_KEY = 'vericta_products_cache';
+            const CACHE_TIME_KEY = 'vericta_products_cache_time';
+            const CACHE_DURATION = 5 * 60 * 1000; // 5 minutos de retenção
+
+            const cachedData = localStorage.getItem(CACHE_KEY);
+            const cachedTime = localStorage.getItem(CACHE_TIME_KEY);
+            const now = Date.now();
+
+            // Se houver dados válidos em cache local, renderiza instantaneamente
+            if (cachedData && cachedTime && (now - Number(cachedTime) < CACHE_DURATION)) {
+                try {
+                    processarProdutos(JSON.parse(cachedData));
+                    return;
+                } catch (e) {
+                    console.warn("Erro ao ler cache local, buscando da API...", e);
+                }
+            }
 
             try {
-                const response = await fetch(DATABASE_URL);
+                const response = await fetch(DATABASE_URL, { redirect: "follow" });
                 const rawData = await response.json();
-                if (!Array.isArray(rawData)) { container.innerHTML = '<p style="text-align:center; color: red;">Erro de conexão com o banco de dados.</p>'; return; }
+                
+                if (!Array.isArray(rawData)) {
+                    container.innerHTML = '<p style="text-align:center; color: red;">Erro de conexão com o banco de dados.</p>';
+                    return;
+                }
 
-                PRODUCTS = rawData.map(rawItem => {
-                    const item = {};
-                    for (let key in rawItem) item[key.trim().toLowerCase()] = rawItem[key];
+                // Salva no armazenamento local do navegador
+                localStorage.setItem(CACHE_KEY, JSON.stringify(rawData));
+                localStorage.setItem(CACHE_TIME_KEY, now.toString());
 
-                    let globalStockBySize = {};
-                    let stockByColorAndSize = {};
-                    let totalStock = 0;
-                    let hasColorSpecificStock = false;
+                processarProdutos(rawData);
 
-                    let allowCustomColor = false;
-                    let peVal = item.pe ? item.pe.toString().trim().toLowerCase() : '';
-                    if (peVal !== '' && peVal !== '0' && peVal !== 'nao' && peVal !== 'não' && peVal !== 'false') {
-                        allowCustomColor = true;
-                    }
+            } catch (error) {
+                // Fallback caso a rede falhe
+                if (cachedData) {
+                    processarProdutos(JSON.parse(cachedData));
+                } else {
+                    container.innerHTML = '<p style="text-align:center; color: red;">Falha ao carregar vitrine.</p>';
+                }
+            }
+        }
 
-                    PARSE_SIZES.forEach(sizeStr => {
-                        let val = item[sizeStr] ? item[sizeStr].toString().trim().toLowerCase() : '0';
-                        globalStockBySize[sizeStr.toUpperCase()] = 0;
+        function processarProdutos(rawData) {
+            PRODUCTS = rawData.map(rawItem => {
+                const item = {};
+                for (let key in rawItem) item[key.trim().toLowerCase()] = rawItem[key];
 
-                        if (val.includes('=')) {
-                            hasColorSpecificStock = true;
-                            const parts = val.split(/,|\n|\r/).map(s => s.trim()).filter(s => s !== '');
-                            parts.forEach(part => {
-                                let eqIdx = part.indexOf('=');
-                                if (eqIdx !== -1) {
-                                    let colorKey = part.substring(0, eqIdx).trim();
-                                    let qty = parseInt(part.substring(eqIdx + 1).trim()) || 0;
-                                    
-                                    if (!stockByColorAndSize[colorKey]) stockByColorAndSize[colorKey] = {};
-                                    stockByColorAndSize[colorKey][sizeStr.toUpperCase()] = qty;
-                                    globalStockBySize[sizeStr.toUpperCase()] += qty;
-                                    totalStock += qty;
-                                }
-                            });
-                        } else {
-                            let qty = parseInt(val) || 0;
-                            globalStockBySize[sizeStr.toUpperCase()] = qty;
-                            totalStock += qty;
-                        }
-                    });
+                let globalStockBySize = {};
+                let stockByColorAndSize = {};
+                let totalStock = 0;
+                let hasColorSpecificStock = false;
 
-                    let rawImagesArray = [];
-                    let colorCombinations = {};
+                let allowCustomColor = false;
+                let peVal = item.pe ? item.pe.toString().trim().toLowerCase() : '';
+                if (peVal !== '' && peVal !== '0' && peVal !== 'nao' && peVal !== 'não' && peVal !== 'false') {
+                    allowCustomColor = true;
+                }
 
-                    if (item.image) {
-                        const imgItems = item.image.split(/,|\n|\r/).map(i => i.trim()).filter(i => i !== '');
-                        let lastCombo = null;
-                        
-                        imgItems.forEach(imgData => {
-                            let eqIndex = imgData.indexOf('=');
-                            if(eqIndex !== -1) {
-                                let combo = imgData.substring(0, eqIndex).trim().toLowerCase();
-                                let url = imgData.substring(eqIndex + 1).trim();
+                PARSE_SIZES.forEach(sizeStr => {
+                    let val = item[sizeStr] ? item[sizeStr].toString().trim().toLowerCase() : '0';
+                    globalStockBySize[sizeStr.toUpperCase()] = 0;
+
+                    if (val.includes('=')) {
+                        hasColorSpecificStock = true;
+                        const parts = val.split(/,|\n|\r/).map(s => s.trim()).filter(s => s !== '');
+                        parts.forEach(part => {
+                            let eqIdx = part.indexOf('=');
+                            if (eqIdx !== -1) {
+                                let colorKey = part.substring(0, eqIdx).trim();
+                                let qty = parseInt(part.substring(eqIdx + 1).trim()) || 0;
                                 
-                                lastCombo = combo;
-                                if(!colorCombinations[combo]) colorCombinations[combo] = [];
-                                colorCombinations[combo].push(url);
-                                rawImagesArray.push(url);
-                            } else {
-                                if (lastCombo) {
-                                    if(!colorCombinations[lastCombo]) colorCombinations[lastCombo] = [];
-                                    colorCombinations[lastCombo].push(imgData);
-                                }
-                                rawImagesArray.push(imgData);
+                                if (!stockByColorAndSize[colorKey]) stockByColorAndSize[colorKey] = {};
+                                stockByColorAndSize[colorKey][sizeStr.toUpperCase()] = qty;
+                                globalStockBySize[sizeStr.toUpperCase()] += qty;
+                                totalStock += qty;
                             }
                         });
+                    } else {
+                        let qty = parseInt(val) || 0;
+                        globalStockBySize[sizeStr.toUpperCase()] = qty;
+                        totalStock += qty;
                     }
-                    if (rawImagesArray.length === 0) rawImagesArray.push('https://via.placeholder.com/400x400?text=Vericta');
-
-                    let rawPrice = item.price ? item.price.toString().replace(',', '.') : '0';
-                    let rawCategory = item.category ? item.category.trim().toLowerCase() : 'outros';
-
-                    return {
-                        id: parseInt(item.id) || Math.floor(Math.random() * 1000), 
-                        name: item.name || 'Produto Vericta', 
-                        category: rawCategory,
-                        price: parseFloat(rawPrice), 
-                        desc: item.desc || '', 
-                        images: rawImagesArray, 
-                        globalStockBySize: globalStockBySize, 
-                        stockByColorAndSize: stockByColorAndSize,
-                        totalStock: totalStock,
-                        hasColorSpecificStock: hasColorSpecificStock,
-                        allowCustomColor: allowCustomColor,
-                        colorCombinations: colorCombinations
-                    };
                 });
-                
-                populateAdminProducts();
 
-                // Lógica de Lançamentos Vazio e Rotas
-                if(window.location.hash.startsWith('#produto-')) {
-                    const id = parseInt(window.location.hash.replace('#produto-', ''));
-                    openProductDetails(id, false);
-                } else if(window.location.hash === '#clientes') {
-                    showCustomersPage(false);
-                } else if(window.location.hash === '#materiais') {
-                    showMaterialsPage(false);
-                } else {
-                    renderCatalog(PRODUCTS);
+                let rawImagesArray = [];
+                let colorCombinations = {};
+
+                if (item.image) {
+                    const imgItems = item.image.split(/,|\n|\r/).map(i => i.trim()).filter(i => i !== '');
+                    let lastCombo = null;
+                    
+                    imgItems.forEach(imgData => {
+                        let eqIndex = imgData.indexOf('=');
+                        if(eqIndex !== -1) {
+                            let combo = imgData.substring(0, eqIndex).trim().toLowerCase();
+                            let url = imgData.substring(eqIndex + 1).trim();
+                            
+                            lastCombo = combo;
+                            if(!colorCombinations[combo]) colorCombinations[combo] = [];
+                            colorCombinations[combo].push(url);
+                            rawImagesArray.push(url);
+                        } else {
+                            if (lastCombo) {
+                                if(!colorCombinations[lastCombo]) colorCombinations[lastCombo] = [];
+                                colorCombinations[lastCombo].push(imgData);
+                            }
+                            rawImagesArray.push(imgData);
+                        }
+                    });
                 }
-                
-            } catch (error) { container.innerHTML = '<p style="text-align:center; color: red;">Falha ao carregar vitrine.</p>'; }
+                if (rawImagesArray.length === 0) rawImagesArray.push('https://via.placeholder.com/400x400?text=Vericta');
+
+                let rawPrice = item.price ? item.price.toString().replace(',', '.') : '0';
+                let rawCategory = item.category ? item.category.trim().toLowerCase() : 'outros';
+
+                return {
+                    id: parseInt(item.id) || Math.floor(Math.random() * 1000), 
+                    name: item.name || 'Produto Vericta', 
+                    category: rawCategory,
+                    price: parseFloat(rawPrice), 
+                    desc: item.desc || '', 
+                    images: rawImagesArray, 
+                    globalStockBySize: globalStockBySize, 
+                    stockByColorAndSize: stockByColorAndSize,
+                    totalStock: totalStock,
+                    hasColorSpecificStock: hasColorSpecificStock,
+                    allowCustomColor: allowCustomColor,
+                    colorCombinations: colorCombinations
+                };
+            });
+            
+            populateAdminProducts();
+
+            // Lógica de Lançamentos Vazio e Rotas
+            if(window.location.hash.startsWith('#produto-')) {
+                const id = parseInt(window.location.hash.replace('#produto-', ''));
+                openProductDetails(id, false);
+            } else if(window.location.hash === '#clientes') {
+                showCustomersPage(false);
+            } else if(window.location.hash === '#materiais') {
+                showMaterialsPage(false);
+            } else {
+                renderCatalog(PRODUCTS);
+            }
         }
 
         function toggleSearch() {
