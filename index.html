@@ -214,9 +214,11 @@
         .admin-table th, .admin-table td { padding: 12px; border-bottom: 1px solid var(--border-color); }
         .admin-table th { background: var(--bg-cream); font-weight: 700; color: var(--dark-heading); position: sticky; top: 0; }
         
+        /* CORREÇÃO DO CARRINHO */
         .cart-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(3px); z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
-        .cart-overlay.open .cart-drawer { right: 0; }
+        .cart-overlay.open { opacity: 1; pointer-events: auto; }
         .cart-drawer { position: fixed; top: 0; right: -480px; width: 100%; max-width: 450px; height: 100%; background: var(--bg-white); z-index: 1001; box-shadow: -10px 0 40px rgba(0,0,0,0.1); transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; }
+        .cart-overlay.open .cart-drawer { right: 0; }
         .cart-header { padding: 24px 32px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); }
         .cart-header h2 { font-family: 'Montserrat', serif; font-size: 18px; font-weight: 700; }
         .close-cart-btn { background: none; border: none; color: var(--text-muted); font-size: 28px; cursor: pointer; transition: color 0.3s; }
@@ -338,7 +340,6 @@
                 <button class="admin-tab-btn active" onclick="switchAdminTab('venda', this)">Fechamento da Compra</button>
                 <button class="admin-tab-btn" onclick="switchAdminTab('relatorio', this)">Fechamento de Caixa</button>
                 <button class="admin-tab-btn" onclick="switchAdminTab('premios', this)">Config. Prêmios</button>
-                <!-- NOVA ABA ADICIONADA -->
                 <button class="admin-tab-btn" onclick="switchAdminTab('clientes', this)">Saldos dos Clientes</button>
             </div>
             
@@ -404,7 +405,7 @@
                         <table class="admin-table" id="rel-produto-table"></table>
                     </div>
                 </div>
-            </div> <!-- FIM DA ABA 2 -->
+            </div>
 
             <!-- ABA 3: SALDOS DOS CLIENTES -->
             <div id="admin-view-clientes" style="display:none;">
@@ -416,32 +417,29 @@
                 </div>
 
                 <div id="admin-clientes-wrapper" style="max-height: 350px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 8px;">
-                    <table class="admin-table" id="admin-clientes-table">
-                        <!-- A tabela será preenchida via JavaScript -->
-                    </table>
+                    <table class="admin-table" id="admin-clientes-table"></table>
                 </div>
-            </div> <!-- FIM DA ABA 3 -->
+            </div>
 
             <!-- ABA 4: CONFIGURAR PRÊMIOS -->
             <div id="admin-view-premios" style="display:none;">
                 <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Defina os prêmios atuais baseados no seu estoque. Esses textos aparecerão automaticamente para os clientes.</p>
     
-            <div class="cust-form-group">
-                <label>1 Troféu (R$ 1.000 gastos)</label>
-                <input type="text" id="admin-premio-1000" placeholder="Ex: Par de meias personalizadas Vericta">
+                <div class="cust-form-group">
+                    <label>1 Troféu (R$ 1.000 gastos)</label>
+                    <input type="text" id="admin-premio-1000" placeholder="Ex: Par de meias personalizadas Vericta">
+                </div>
+                <div class="cust-form-group">
+                    <label>2 Troféus (R$ 2.000 gastos)</label>
+                    <input type="text" id="admin-premio-2000" placeholder="Ex: Top esportivo">
+                </div>
+                <div class="cust-form-group">
+                    <label>3 Troféus (R$ 3.000 gastos)</label>
+                    <input type="text" id="admin-premio-3000" placeholder="Ex: Conjunto completo">
+                </div>
+        
+                <button onclick="salvarConfigPremios()" style="background: var(--primary-gold); color: white; border: none; padding: 16px; border-radius: 8px; font-weight: 600; width: 100%; cursor: pointer; transition: background 0.3s; margin-top: 10px;">SALVAR PRÊMIOS</button>
             </div>
-            <div class="cust-form-group">
-                <label>2 Troféus (R$ 2.000 gastos)</label>
-                <input type="text" id="admin-premio-2000" placeholder="Ex: Top esportivo">
-            </div>
-            <div class="cust-form-group">
-                <label>3 Troféus (R$ 3.000 gastos)</label>
-                <input type="text" id="admin-premio-3000" placeholder="Ex: Conjunto completo">
-            </div>
-    
-            <button onclick="salvarConfigPremios()" style="background: var(--primary-gold); color: white; border: none; padding: 16px; border-radius: 8px; font-weight: 600; width: 100%; cursor: pointer; transition: background 0.3s; margin-top: 10px;">SALVAR PRÊMIOS</button>
-        </div>
-            
         </div>
     </div>
 
@@ -465,7 +463,6 @@
                 <div class="fidelidade-card">
                     <h3>Seu Saldo: R$ <span id="prof-saldo">0,00</span></h3>
                     <p>Meta: R$ 1.000,00 para ganhar um prêmio exclusivo!</p>
-                    <!-- NOVA MENSAGEM DE BRINDE -->
                     <div id="prof-brindes-aviso" style="display:none; color: #1EBE5D; font-weight: 800; font-size: 14px; margin-bottom: 12px; padding: 8px; background: #e8f9ef; border-radius: 4px;">
                         🎉 Você tem <span id="prof-brindes-count">0</span> prêmio(s) conquistado(s)!
                     </div>
@@ -551,7 +548,6 @@
                 </button>
 
                 <div class="hero-slider" id="hero-slider">
-                    <!-- SLIDE 1 -->
                     <div class="hero-slide active">
                         <picture>
                             <source media="(max-width: 900px)" srcset="https://res.cloudinary.com/ofymcuuj/image/upload/v1786402319/Centering_person_in_image_202608101950.jpg">
@@ -563,7 +559,6 @@
                             <button class="btn-hero" onclick="document.getElementById('catalog-container').scrollIntoView({behavior: 'smooth'})">Comprar Agora</button>
                         </div>
                     </div>
-                    <!-- SLIDE 2 -->
                     <div class="hero-slide">
                         <picture>
                             <source media="(max-width: 900px)" srcset="https://res.cloudinary.com/ofymcuuj/image/upload/v1786402318/Centering_person_in_image_202608101950_1.jpg">
@@ -575,7 +570,6 @@
                             <button class="btn-hero" onclick="document.getElementById('catalog-container').scrollIntoView({behavior: 'smooth'})">Comprar Agora</button>
                         </div>
                     </div>
-                    <!-- SLIDE 3 -->
                     <div class="hero-slide">
                         <picture>
                             <source media="(max-width: 900px)" srcset="https://res.cloudinary.com/ofymcuuj/image/upload/v1786402319/Person_centered_in_image_202608101950.jpg">
@@ -587,7 +581,6 @@
                             <button class="btn-hero" onclick="document.getElementById('catalog-container').scrollIntoView({behavior: 'smooth'})">Comprar Agora</button>
                         </div>
                     </div>
-                    <!-- SLIDE 4 -->
                     <div class="hero-slide">
                         <picture>
                             <source media="(max-width: 900px)" srcset="https://res.cloudinary.com/ofymcuuj/image/upload/v1786402319/Centering_person_in_image_202608101950_2.jpg">
@@ -599,7 +592,6 @@
                             <button class="btn-hero" onclick="document.getElementById('catalog-container').scrollIntoView({behavior: 'smooth'})">Comprar Agora</button>
                         </div>
                     </div>
-                    <!-- SLIDE 5 -->
                     <div class="hero-slide">
                         <picture>
                             <source media="(max-width: 900px)" srcset="https://images.unsplash.com/photo-1518310383802-640c2de311b2?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80">
@@ -938,20 +930,20 @@
 
     <!-- MODAL DE CONTATO -->
     <div class="profile-modal" id="contact-modal" onclick="if(event.target === this) document.getElementById('contact-modal').classList.remove('active')">
-    <div class="profile-content" style="text-align: center; max-width: 400px;">
-    <button class="profile-close" onclick="document.getElementById('contact-modal').classList.remove('active')">&times;</button>
-        
-    <h2 style="font-family: 'Montserrat', sans-serif; font-size: 24px; color: var(--dark-heading); margin-bottom: 16px;">Fale Conosco</h2>
-    <p style="color: var(--text-muted); margin-bottom: 24px; font-size: 15px;">Escolha por onde deseja ser atendido:</p>
-        
-    <button onclick="contactWhatsApp()" style="background: #25D366; color: white; border: none; padding: 14px; border-radius: 8px; font-weight: 600; width: 100%; cursor: pointer; margin-bottom: 12px; transition: transform 0.2s;">
-            Chamar no WhatsApp
-    </button>
-    <button onclick="contactInstagram()" style="background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); color: white; border: none; padding: 14px; border-radius: 8px; font-weight: 600; width: 100%; cursor: pointer; transition: transform 0.2s;">
-            Mandar Direct no Instagram
-    </button>
+        <div class="profile-content" style="text-align: center; max-width: 400px;">
+            <button class="profile-close" onclick="document.getElementById('contact-modal').classList.remove('active')">&times;</button>
+            
+            <h2 style="font-family: 'Montserrat', sans-serif; font-size: 24px; color: var(--dark-heading); margin-bottom: 16px;">Fale Conosco</h2>
+            <p style="color: var(--text-muted); margin-bottom: 24px; font-size: 15px;">Escolha por onde deseja ser atendido:</p>
+            
+            <button onclick="contactWhatsApp()" style="background: #25D366; color: white; border: none; padding: 14px; border-radius: 8px; font-weight: 600; width: 100%; cursor: pointer; margin-bottom: 12px; transition: transform 0.2s;">
+                Chamar no WhatsApp
+            </button>
+            <button onclick="contactInstagram()" style="background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); color: white; border: none; padding: 14px; border-radius: 8px; font-weight: 600; width: 100%; cursor: pointer; transition: transform 0.2s;">
+                Mandar Direct no Instagram
+            </button>
+        </div>
     </div>
-</div>
 
     <div class="cart-overlay" id="cart-overlay" onclick="if(event.target === this) closeCart()">
         <div class="cart-drawer">
@@ -1097,24 +1089,24 @@
             loadProductsFromDB();
             initHeroSlider();
             carregarConfigPremios();
-            });
+        });
 
         // ================= GERENCIAMENTO DE ROTAS E HASH =================
         window.addEventListener('hashchange', () => {
-    const hash = window.location.hash;
-    if (hash.startsWith('#produto-')) {
-        const id = parseInt(hash.replace('#produto-', ''));
-        openProductDetails(id, false); 
-    } else if (hash === '#clientes') {
-        showCustomersPage(false);
-    } else if (hash === '#materiais') {
-        showMaterialsPage(false);
-    } else if (hash === '#premios') {
-        showPremiosPage(false);
-    } else {
-        showCatalogPage(false);
-    }
-});
+            const hash = window.location.hash;
+            if (hash.startsWith('#produto-')) {
+                const id = parseInt(hash.replace('#produto-', ''));
+                openProductDetails(id, false); 
+            } else if (hash === '#clientes') {
+                showCustomersPage(false);
+            } else if (hash === '#materiais') {
+                showMaterialsPage(false);
+            } else if (hash === '#premios') {
+                showPremiosPage(false);
+            } else {
+                showCatalogPage(false);
+            }
+        });
 
         function hideAllPages() {
             document.querySelectorAll('.page-view').forEach(p => p.classList.remove('active'));
@@ -1158,8 +1150,7 @@
             document.getElementById('view-premios').classList.add('active');
             window.scrollTo(0,0);
             if(pushHash) window.location.hash = 'premios';
-            
-            carregarConfigPremios(); // Carrega sempre os mais recentes do banco
+            carregarConfigPremios();
         }
 
         function toggleMobileMenu() { document.getElementById('mobile-nav').classList.toggle('open'); }
@@ -1262,7 +1253,6 @@
             else if(tab === 'premios') { document.getElementById('admin-view-premios').style.display = 'block'; carregarConfigPremios(); }
         }
 
-        // === NOVO BANCO DE DADOS DE PRÊMIOS ===
         async function carregarConfigPremios() {
             try {
                 const doc = await db.collection('config').doc('premios').get();
@@ -1277,12 +1267,10 @@
                     p3 = data.p3000 || p3;
                 }
 
-                // Preenche o modal do Admin
                 if(document.getElementById('admin-premio-1000')) document.getElementById('admin-premio-1000').value = p1;
                 if(document.getElementById('admin-premio-2000')) document.getElementById('admin-premio-2000').value = p2;
                 if(document.getElementById('admin-premio-3000')) document.getElementById('admin-premio-3000').value = p3;
                 
-                // Preenche a página dos Clientes
                 if(document.getElementById('premio-1000-desc')) document.getElementById('premio-1000-desc').textContent = p1;
                 if(document.getElementById('premio-2000-desc')) document.getElementById('premio-2000-desc').textContent = p2;
                 if(document.getElementById('premio-3000-desc')) document.getElementById('premio-3000-desc').textContent = p3;
@@ -1510,13 +1498,11 @@
                 
                 snapshot.forEach(doc => {
                     const data = doc.data();
-                    // Só adiciona se tiver informações básicas do cliente
                     if(data.name || data.email || data.clienteId) {
                         cacheClientesAdmin.push(data);
                     }
                 });
                 
-                // Ordenar clientes pelos que mais gastaram (maior saldo no topo)
                 cacheClientesAdmin.sort((a, b) => (b.saldoFidelidade || 0) - (a.saldoFidelidade || 0));
                 
                 renderTabelaClientes(cacheClientesAdmin);
@@ -1546,13 +1532,11 @@
                     const nome = c.name || 'Sem nome';
                     const email = c.email || 'Sem e-mail';
                     const saldo = c.saldoFidelidade || 0;
-                    const brindes = c.brindesGanhos || 0; // Puxa os brindes para o Admin
+                    const brindes = c.brindesGanhos || 0;
                     
-                    // Calcula barra de progresso (limite 100%)
                     let pct = (saldo / 1000) * 100;
                     if(pct > 100) pct = 100;
 
-                    // Etiqueta destacada se o cliente ganhou brinde
                     let badgeBrinde = brindes > 0 ? `<span style="background: var(--whatsapp-green); color: white; padding: 3px 6px; border-radius: 4px; font-size: 10px; font-weight: 800; margin-left: 8px;">🏆 ${brindes} BRINDE(S)</span>` : '';
 
                     html += `<tr>
@@ -1691,7 +1675,7 @@
         function atualizarTelaFidelidade() {
             if(!userProfileData) return;
             let saldo = userProfileData.saldoFidelidade || 0;
-            let brindes = userProfileData.brindesGanhos || 0; // Puxa os brindes do banco
+            let brindes = userProfileData.brindesGanhos || 0;
 
             document.getElementById('prof-saldo').textContent = saldo.toLocaleString('pt-BR', {minimumFractionDigits: 2});
             
@@ -1699,7 +1683,6 @@
             if(pct > 100) pct = 100;
             document.getElementById('prof-bar').style.width = `${pct}%`;
 
-            // Exibe o aviso se ele tiver brindes
             const avisoBrinde = document.getElementById('prof-brindes-aviso');
             if(brindes > 0) {
                 avisoBrinde.style.display = 'block';
@@ -1740,20 +1723,17 @@
                     resgatadoEm: new Date().toISOString()
                 });
                 
-                // --- NOVA LÓGICA DE SALDO E BRINDES ---
                 let saldoAtual = userProfileData.saldoFidelidade || 0;
                 let brindesAtuais = userProfileData.brindesGanhos || 0;
                 let novoSaldo = saldoAtual + valor;
                 let novosBrindesGanhos = 0;
 
-                // Se o saldo passar de 1000, converte em brindes
                 if (novoSaldo >= 1000) {
-                    novosBrindesGanhos = Math.floor(novoSaldo / 1000); // Ex: 1200 / 1000 = 1 brinde
-                    novoSaldo = novoSaldo % 1000; // Pega o resto (200) para o próximo ciclo
+                    novosBrindesGanhos = Math.floor(novoSaldo / 1000);
+                    novoSaldo = novoSaldo % 1000;
                     brindesAtuais += novosBrindesGanhos;
                 }
                 
-                // Salva os dados atualizados no Firebase
                 await userRef.set({ 
                     saldoFidelidade: novoSaldo,
                     brindesGanhos: brindesAtuais 
@@ -1764,7 +1744,6 @@
                 
                 atualizarTelaFidelidade();
                 
-                // Avisa o usuário na tela
                 if (novosBrindesGanhos > 0) {
                     alert(`🎉 PARABÉNS! Você atingiu a meta de R$ 1.000,00 e acaba de ganhar um BRINDE EXCLUSIVO!\n\nEntre em contato conosco para retirar seu prêmio. Seu saldo extra já foi computado.`);
                 } else {
@@ -1809,14 +1788,10 @@
             toggleFavorite(event, currentDetailProduct.id);
         }
 
-        // ================= FUNÇÕES FALTANTES DE FAVORITOS =================
-
-        // Salva os favoritos no armazenamento local do navegador para usuários deslogados
         function saveFavoritesLocally() {
             localStorage.setItem('vericta_favorites', JSON.stringify(favorites));
         }
 
-        // Carrega os favoritos salvos no armazenamento local
         function loadFavoritesFromStorage() {
             const saved = localStorage.getItem('vericta_favorites');
             if (saved) {
@@ -1830,25 +1805,19 @@
             }
         }
 
-        // Filtra a vitrine para exibir apenas os produtos favoritados
         function showFavorites() {
-            // Fecha o menu mobile e a barra de pesquisa se estiverem abertos
             document.getElementById('mobile-nav').classList.remove('open');
             document.getElementById('search-box').classList.remove('active');
             
-            // Oculta o banner principal e exibe o título da seção
             document.getElementById('hero-banner').style.display = 'none';
             document.getElementById('section-title').style.display = 'block';
             document.getElementById('section-title').textContent = "Meus Favoritos";
             
-            // Remove a classe "active" dos botões do menu
             document.querySelectorAll('.cat-nav-btn').forEach(btn => btn.classList.remove('active'));
 
-            // Filtra apenas os produtos que estão na array 'favorites' e renderiza
             const favoriteProducts = PRODUCTS.filter(p => favorites.includes(p.id));
             renderCatalog(favoriteProducts);
             
-            // Exibe a página do catálogo com os produtos filtrados
             showCatalogPage(true);
         }
 
@@ -1859,13 +1828,12 @@
 
             const CACHE_KEY = 'vericta_products_cache';
             const CACHE_TIME_KEY = 'vericta_products_cache_time';
-            const CACHE_DURATION = 5 * 60 * 1000; // 5 minutos de retenção
+            const CACHE_DURATION = 5 * 60 * 1000;
 
             const cachedData = localStorage.getItem(CACHE_KEY);
             const cachedTime = localStorage.getItem(CACHE_TIME_KEY);
             const now = Date.now();
 
-            // Se houver dados válidos em cache local, renderiza instantaneamente
             if (cachedData && cachedTime && (now - Number(cachedTime) < CACHE_DURATION)) {
                 try {
                     processarProdutos(JSON.parse(cachedData));
@@ -1884,14 +1852,12 @@
                     return;
                 }
 
-                // Salva no armazenamento local do navegador
                 localStorage.setItem(CACHE_KEY, JSON.stringify(rawData));
                 localStorage.setItem(CACHE_TIME_KEY, now.toString());
 
                 processarProdutos(rawData);
 
             } catch (error) {
-                // Fallback caso a rede falhe
                 if (cachedData) {
                     processarProdutos(JSON.parse(cachedData));
                 } else {
@@ -1991,7 +1957,6 @@
             
             populateAdminProducts();
 
-            // Lógica de Lançamentos Vazio e Rotas
             if(window.location.hash.startsWith('#produto-')) {
                 const id = parseInt(window.location.hash.replace('#produto-', ''));
                 openProductDetails(id, false);
@@ -2324,22 +2289,35 @@
         }
 
         // ================= CARRINHO E ENVIO WHATSAPP =================
-        function openCart() { document.getElementById('cart-overlay').classList.add('open'); }
-        function closeCart() { document.getElementById('cart-overlay').classList.remove('open'); }
-        function removeCartItem(cartId) { cart = cart.filter(item => item.cartId !== cartId); saveCart(); updateCartUI(); }
+        function openCart() { 
+            document.getElementById('cart-overlay').classList.add('open'); 
+        }
+        function closeCart() { 
+            document.getElementById('cart-overlay').classList.remove('open'); 
+        }
+        function removeCartItem(cartId) { 
+            cart = cart.filter(item => item.cartId !== cartId); 
+            saveCart(); 
+            updateCartUI(); 
+        }
 
         function updateCartUI() {
             const container = document.getElementById('cart-items-container');
             const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
-            document.getElementById('cart-header-count').textContent = totalItems; document.getElementById('cart-count').textContent = totalItems;
+            document.getElementById('cart-header-count').textContent = totalItems; 
+            document.getElementById('cart-count').textContent = totalItems;
             const totalValue = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
             document.getElementById('cart-total-value').textContent = formatMoney(totalValue);
 
             container.innerHTML = '';
-            if (cart.length === 0) { container.innerHTML = `<div class="empty-cart-view">O carrinho está vazio.</div>`; return; }
+            if (cart.length === 0) { 
+                container.innerHTML = `<div class="empty-cart-view">O carrinho está vazio.</div>`; 
+                return; 
+            }
 
             cart.forEach(item => {
-                const row = document.createElement('div'); row.className = 'cart-item-row';
+                const row = document.createElement('div'); 
+                row.className = 'cart-item-row';
                 row.innerHTML = `
                     <img src="${item.img}" class="cart-item-img" alt="${item.name}" onerror="this.src='https://via.placeholder.com/68x68?text=V'">
                     <div class="cart-item-info">
@@ -2392,7 +2370,6 @@
         function showToast(msg) { const toast = document.getElementById('toast'); toast.textContent = msg; toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 3000); }
 
         // ================= SISTEMA DE CONTATO DIRETO =================
-
         function openContactOptions() {
             if (!currentUser) {
                 showToast("Faça login para falar conosco.");
