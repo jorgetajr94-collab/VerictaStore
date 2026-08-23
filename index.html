@@ -176,7 +176,7 @@
         .profile-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 3000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
         .profile-modal.active { opacity: 1; pointer-events: auto; }
         .profile-content { position: relative; background: var(--bg-white); width: 95%; max-width: 550px; border-radius: var(--radius-lg); padding: 40px; box-shadow: 0 15px 40px rgba(0,0,0,0.15); max-height: 90vh; overflow-y: auto; }
-        .profile-content.admin-size { max-width: 900px; }
+        .profile-content.admin-size { max-width: 950px; }
         .profile-close { position: absolute; top: 16px; right: 20px; font-size: 28px; background: none; border: none; color: var(--text-muted); cursor: pointer; transition: color 0.2s; }
         .profile-close:hover { color: var(--primary-gold); }
         
@@ -213,9 +213,9 @@
 
         .admin-table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; margin-bottom: 20px; }
         .admin-table th, .admin-table td { padding: 12px; border-bottom: 1px solid var(--border-color); }
-        .admin-table th { background: var(--bg-cream); font-weight: 700; color: var(--dark-heading); position: sticky; top: 0; }
+        .admin-table th { background: var(--bg-cream); font-weight: 700; color: var(--dark-heading); position: sticky; top: 0; z-index: 5; }
         
-        .stock-input { width: 55px; padding: 6px 8px; text-align: center; border: 1px solid var(--border-color); border-radius: 4px; font-size: 13px; font-weight: 600; color: var(--dark-heading); }
+        .stock-input { width: 50px; padding: 6px 4px; text-align: center; border: 1px solid var(--border-color); border-radius: 4px; font-size: 13px; font-weight: 600; color: var(--dark-heading); }
         .stock-input:focus { border-color: var(--primary-gold); outline: none; background: #FFFDF8; }
 
         /* CORREÇÃO DO CARRINHO */
@@ -381,24 +381,25 @@
                 <div id="admin-resultado" style="font-family: monospace; font-size: 28px; font-weight: bold; color: var(--primary-gold); margin-top: 24px; letter-spacing: 2px; text-align: center;"></div>
             </div>
 
-            <!-- ABA GERENCIAR ESTOQUE -->
+            <!-- ABA GERENCIAR ESTOQUE (COM CORES) -->
             <div id="admin-view-estoque" style="display:none;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
                     <div>
-                        <h3 style="font-size: 16px; font-weight: 700; color: var(--dark-heading);">Controle de Estoque por Tamanho</h3>
-                        <p style="color: var(--text-muted); font-size: 12px;">Edite as quantidades diretamente. As alterações são sincronizadas com a sua planilha do Google Sheets.</p>
+                        <h3 style="font-size: 16px; font-weight: 700; color: var(--dark-heading);">Controle de Estoque por Cor e Tamanho</h3>
+                        <p style="color: var(--text-muted); font-size: 12px;">Edite as quantidades por cor e tamanho. Os dados são salvos diretamente na planilha do Google Sheets.</p>
                     </div>
                     <button onclick="salvarEstoqueCompleto()" id="btn-save-stock" style="background: var(--primary-gold); color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: 700; cursor: pointer; transition: background 0.2s;">
                         💾 SALVAR ESTOQUE
                     </button>
                 </div>
 
-                <div style="max-height: 420px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 8px;">
+                <div style="max-height: 440px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 8px;">
                     <table class="admin-table" id="admin-stock-table">
                         <thead>
                             <tr>
                                 <th style="width: 50px;">ID</th>
                                 <th>Produto</th>
+                                <th>Cor / Variação</th>
                                 <th style="text-align: center;">PP</th>
                                 <th style="text-align: center;">P</th>
                                 <th style="text-align: center;">M</th>
@@ -1353,88 +1354,169 @@
             else if(tab === 'premios') { document.getElementById('admin-view-premios').style.display = 'block'; carregarConfigPremios(); }
         }
 
-        // Renderiza a tabela de gerenciamento de estoque
+        // RENDERIZAÇÃO DO ESTOQUE POR COR E TAMANHO
         function renderAdminStockTable() {
             const tbody = document.getElementById('admin-stock-tbody');
             if(!tbody) return;
             tbody.innerHTML = '';
 
             if (PRODUCTS.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:20px;">Nenhum produto carregado.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:20px;">Nenhum produto carregado.</td></tr>';
                 return;
             }
 
             PRODUCTS.forEach(p => {
-                const tr = document.createElement('tr');
-                const pp = p.globalStockBySize['PP'] !== undefined ? p.globalStockBySize['PP'] : 0;
-                const p_qty = p.globalStockBySize['P'] !== undefined ? p.globalStockBySize['P'] : 0;
-                const m = p.globalStockBySize['M'] !== undefined ? p.globalStockBySize['M'] : 0;
-                const g = p.globalStockBySize['G'] !== undefined ? p.globalStockBySize['G'] : 0;
-                const gg = p.globalStockBySize['GG'] !== undefined ? p.globalStockBySize['GG'] : 0;
-                const total = pp + p_qty + m + g + gg;
+                let colorList = [];
+                if (p.hasColorSpecificStock) {
+                    colorList = Object.keys(p.stockByColorAndSize);
+                }
+                
+                // Adiciona cores de combinações de imagem que possam não estar ainda no estoque
+                if (p.colorCombinations) {
+                    Object.keys(p.colorCombinations).forEach(c => {
+                        if (c !== 'personalizado' && !colorList.includes(c)) colorList.push(c);
+                    });
+                }
 
-                tr.innerHTML = `
-                    <td><strong>${p.id}</strong></td>
-                    <td>
-                        <div style="font-weight:600; color:var(--dark-heading);">${p.name}</div>
-                        <span style="font-size:11px; color:var(--text-muted); text-transform:capitalize;">${p.category} | ${formatMoney(p.price)}</span>
-                    </td>
-                    <td style="text-align:center;"><input type="number" min="0" class="stock-input" id="stock-${p.id}-pp" value="${pp}" oninput="recalcRowTotal(${p.id})"></td>
-                    <td style="text-align:center;"><input type="number" min="0" class="stock-input" id="stock-${p.id}-p" value="${p_qty}" oninput="recalcRowTotal(${p.id})"></td>
-                    <td style="text-align:center;"><input type="number" min="0" class="stock-input" id="stock-${p.id}-m" value="${m}" oninput="recalcRowTotal(${p.id})"></td>
-                    <td style="text-align:center;"><input type="number" min="0" class="stock-input" id="stock-${p.id}-g" value="${g}" oninput="recalcRowTotal(${p.id})"></td>
-                    <td style="text-align:center;"><input type="number" min="0" class="stock-input" id="stock-${p.id}-gg" value="${gg}" oninput="recalcRowTotal(${p.id})"></td>
-                    <td style="text-align:center; font-weight:700; color:var(--primary-gold);" id="stock-total-${p.id}">${total}</td>
-                `;
-                tbody.appendChild(tr);
+                if (colorList.length === 0) {
+                    colorList = ['padrao'];
+                }
+
+                colorList.forEach(colorKey => {
+                    const tr = document.createElement('tr');
+                    const rowKey = `${p.id}__${colorKey}`;
+
+                    let pp = 0, p_val = 0, m = 0, g = 0, gg = 0;
+
+                    if (p.hasColorSpecificStock && p.stockByColorAndSize[colorKey]) {
+                        pp = p.stockByColorAndSize[colorKey]['PP'] || 0;
+                        p_val = p.stockByColorAndSize[colorKey]['P'] || 0;
+                        m = p.stockByColorAndSize[colorKey]['M'] || 0;
+                        g = p.stockByColorAndSize[colorKey]['G'] || 0;
+                        gg = p.stockByColorAndSize[colorKey]['GG'] || 0;
+                    } else if (!p.hasColorSpecificStock) {
+                        pp = p.globalStockBySize['PP'] || 0;
+                        p_val = p.globalStockBySize['P'] || 0;
+                        m = p.globalStockBySize['M'] || 0;
+                        g = p.globalStockBySize['G'] || 0;
+                        gg = p.globalStockBySize['GG'] || 0;
+                    }
+
+                    const rowTotal = pp + p_val + m + g + gg;
+                    const displayColor = colorKey === 'padrao' ? '<span style="color:var(--text-muted); font-style:italic;">Padrão / Única</span>' : `<strong>${colorKey.replace('_', ' / ').toUpperCase()}</strong>`;
+
+                    tr.innerHTML = `
+                        <td><strong>${p.id}</strong></td>
+                        <td>
+                            <div style="font-weight:600; color:var(--dark-heading);">${p.name}</div>
+                            <span style="font-size:11px; color:var(--text-muted); text-transform:capitalize;">${p.category}</span>
+                        </td>
+                        <td>${displayColor}</td>
+                        <td style="text-align:center;"><input type="number" min="0" class="stock-input" data-prod-id="${p.id}" data-color="${colorKey}" data-size="PP" id="stock-${rowKey}-pp" value="${pp}" oninput="recalcRowStock('${rowKey}')"></td>
+                        <td style="text-align:center;"><input type="number" min="0" class="stock-input" data-prod-id="${p.id}" data-color="${colorKey}" data-size="P" id="stock-${rowKey}-p" value="${p_val}" oninput="recalcRowStock('${rowKey}')"></td>
+                        <td style="text-align:center;"><input type="number" min="0" class="stock-input" data-prod-id="${p.id}" data-color="${colorKey}" data-size="M" id="stock-${rowKey}-m" value="${m}" oninput="recalcRowStock('${rowKey}')"></td>
+                        <td style="text-align:center;"><input type="number" min="0" class="stock-input" data-prod-id="${p.id}" data-color="${colorKey}" data-size="G" id="stock-${rowKey}-g" value="${g}" oninput="recalcRowStock('${rowKey}')"></td>
+                        <td style="text-align:center;"><input type="number" min="0" class="stock-input" data-prod-id="${p.id}" data-color="${colorKey}" data-size="GG" id="stock-${rowKey}-gg" value="${gg}" oninput="recalcRowStock('${rowKey}')"></td>
+                        <td style="text-align:center; font-weight:700; color:var(--primary-gold);" id="stock-total-${rowKey}">${rowTotal}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
             });
         }
 
-        function recalcRowTotal(prodId) {
-            const pp = parseInt(document.getElementById(`stock-${prodId}-pp`).value) || 0;
-            const p = parseInt(document.getElementById(`stock-${prodId}-p`).value) || 0;
-            const m = parseInt(document.getElementById(`stock-${prodId}-m`).value) || 0;
-            const g = parseInt(document.getElementById(`stock-${prodId}-g`).value) || 0;
-            const gg = parseInt(document.getElementById(`stock-${prodId}-gg`).value) || 0;
+        function recalcRowStock(rowKey) {
+            const pp = parseInt(document.getElementById(`stock-${rowKey}-pp`).value) || 0;
+            const p = parseInt(document.getElementById(`stock-${rowKey}-p`).value) || 0;
+            const m = parseInt(document.getElementById(`stock-${rowKey}-m`).value) || 0;
+            const g = parseInt(document.getElementById(`stock-${rowKey}-g`).value) || 0;
+            const gg = parseInt(document.getElementById(`stock-${rowKey}-gg`).value) || 0;
             const total = pp + p + m + g + gg;
-            const totalEl = document.getElementById(`stock-total-${prodId}`);
+            const totalEl = document.getElementById(`stock-total-${rowKey}`);
             if (totalEl) totalEl.textContent = total;
         }
 
+        // SALVA AS ALTERAÇÕES DE ESTOQUE POR COR
         async function salvarEstoqueCompleto() {
             const btn = document.getElementById('btn-save-stock');
             btn.disabled = true;
             btn.textContent = "SALVANDO...";
 
+            const inputs = document.querySelectorAll('#admin-stock-tbody .stock-input');
+            const mapProductColors = {};
+
+            inputs.forEach(input => {
+                const prodId = input.dataset.prodId;
+                const color = input.dataset.color;
+                const size = input.dataset.size;
+                const qty = parseInt(input.value) || 0;
+
+                if (!mapProductColors[prodId]) mapProductColors[prodId] = {};
+                if (!mapProductColors[prodId][color]) mapProductColors[prodId][color] = {};
+                mapProductColors[prodId][color][size] = qty;
+            });
+
             const updates = [];
 
             PRODUCTS.forEach(p => {
-                const pp = parseInt(document.getElementById(`stock-${p.id}-pp`).value) || 0;
-                const p_val = parseInt(document.getElementById(`stock-${p.id}-p`).value) || 0;
-                const m = parseInt(document.getElementById(`stock-${p.id}-m`).value) || 0;
-                const g = parseInt(document.getElementById(`stock-${p.id}-g`).value) || 0;
-                const gg = parseInt(document.getElementById(`stock-${p.id}-gg`).value) || 0;
+                const pColorsData = mapProductColors[p.id];
+                if (!pColorsData) return;
+
+                const colorKeys = Object.keys(pColorsData);
+                const isColorSpecific = !(colorKeys.length === 1 && colorKeys[0] === 'padrao');
+
+                let sizePayload = {};
+
+                PARSE_SIZES.forEach(sz => {
+                    const upperSz = sz.toUpperCase();
+                    if (isColorSpecific) {
+                        const parts = [];
+                        colorKeys.forEach(ck => {
+                            const val = pColorsData[ck][upperSz] || 0;
+                            parts.push(`${ck}=${val}`);
+                        });
+                        sizePayload[sz] = parts.join('\n');
+                    } else {
+                        sizePayload[sz] = pColorsData['padrao'] ? (pColorsData['padrao'][upperSz] || 0) : 0;
+                    }
+                });
 
                 updates.push({
                     id: p.id,
-                    pp: pp,
-                    p: p_val,
-                    m: m,
-                    g: g,
-                    gg: gg
+                    pp: sizePayload['pp'],
+                    p: sizePayload['p'],
+                    m: sizePayload['m'],
+                    g: sizePayload['g'],
+                    gg: sizePayload['gg']
                 });
 
-                // Atualiza localmente
-                p.globalStockBySize['PP'] = pp;
-                p.globalStockBySize['P'] = p_val;
-                p.globalStockBySize['M'] = m;
-                p.globalStockBySize['G'] = g;
-                p.globalStockBySize['GG'] = gg;
-                p.totalStock = pp + p_val + m + g + gg;
+                // Atualiza objetos locais
+                p.hasColorSpecificStock = isColorSpecific;
+                if (isColorSpecific) {
+                    p.stockByColorAndSize = pColorsData;
+                    let totalGlobal = 0;
+                    PARSE_SIZES.forEach(sz => {
+                        const upperSz = sz.toUpperCase();
+                        let subSum = 0;
+                        colorKeys.forEach(ck => {
+                            subSum += pColorsData[ck][upperSz] || 0;
+                        });
+                        p.globalStockBySize[upperSz] = subSum;
+                        totalGlobal += subSum;
+                    });
+                    p.totalStock = totalGlobal;
+                } else {
+                    let totalGlobal = 0;
+                    PARSE_SIZES.forEach(sz => {
+                        const upperSz = sz.toUpperCase();
+                        const val = pColorsData['padrao'][upperSz] || 0;
+                        p.globalStockBySize[upperSz] = val;
+                        totalGlobal += val;
+                    });
+                    p.totalStock = totalGlobal;
+                }
             });
 
             try {
-                // Envia para o Google Apps Script via POST
                 await fetch(DATABASE_URL, {
                     method: 'POST',
                     mode: 'no-cors',
@@ -1442,7 +1524,6 @@
                     body: JSON.stringify({ updates: updates })
                 });
 
-                // Limpa o cache local para garantir sincronização
                 localStorage.removeItem('vericta_products_cache');
                 localStorage.removeItem('vericta_products_cache_time');
 
