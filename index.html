@@ -41,7 +41,7 @@
         .exact-logo-img { height: 50px; width: auto; object-fit: contain; transition: transform 0.3s ease; }
         
         .header-categories { display: flex; gap: 24px; }
-        .cat-nav-btn { background: transparent; border: none; font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 500; color: var(--text-main); text-transform: uppercase; letter-spacing: 1px; cursor: padding: 8px 0; position: relative; transition: color 0.3s ease; }
+        .cat-nav-btn { background: transparent; border: none; font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 500; color: var(--text-main); text-transform: uppercase; letter-spacing: 1px; cursor: pointer; padding: 8px 0; position: relative; transition: color 0.3s ease; }
         .cat-nav-btn::after { content: ''; position: absolute; width: 0; height: 2px; bottom: 0; left: 50%; background-color: var(--primary-gold); transition: all 0.3s ease; transform: translateX(-50%); }
         .cat-nav-btn:hover, .cat-nav-btn.active { color: var(--primary-gold); font-weight: 600; }
         .cat-nav-btn.active::after { width: 100%; }
@@ -176,7 +176,7 @@
         .profile-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 3000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
         .profile-modal.active { opacity: 1; pointer-events: auto; }
         .profile-content { position: relative; background: var(--bg-white); width: 95%; max-width: 550px; border-radius: var(--radius-lg); padding: 40px; box-shadow: 0 15px 40px rgba(0,0,0,0.15); max-height: 90vh; overflow-y: auto; }
-        .profile-content.admin-size { max-width: 800px; }
+        .profile-content.admin-size { max-width: 900px; }
         .profile-close { position: absolute; top: 16px; right: 20px; font-size: 28px; background: none; border: none; color: var(--text-muted); cursor: pointer; transition: color 0.2s; }
         .profile-close:hover { color: var(--primary-gold); }
         
@@ -215,11 +215,14 @@
         .admin-table th, .admin-table td { padding: 12px; border-bottom: 1px solid var(--border-color); }
         .admin-table th { background: var(--bg-cream); font-weight: 700; color: var(--dark-heading); position: sticky; top: 0; }
         
+        .stock-input { width: 55px; padding: 6px 8px; text-align: center; border: 1px solid var(--border-color); border-radius: 4px; font-size: 13px; font-weight: 600; color: var(--dark-heading); }
+        .stock-input:focus { border-color: var(--primary-gold); outline: none; background: #FFFDF8; }
+
         /* CORREÇÃO DO CARRINHO */
         .cart-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(3px); z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
-        .cart-overlay.open { opacity: 1; pointer-events: auto; }
-        .cart-drawer { position: fixed; top: 0; right: -480px; width: 100%; max-width: 450px; height: 100%; background: var(--bg-white); z-index: 1001; box-shadow: -10px 0 40px rgba(0,0,0,0.1); transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; }
         .cart-overlay.open .cart-drawer { right: 0; }
+        .cart-drawer { position: fixed; top: 0; right: -480px; width: 100%; max-width: 450px; height: 100%; background: var(--bg-white); z-index: 1001; box-shadow: -10px 0 40px rgba(0,0,0,0.1); transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; }
+        .cart-overlay.open { opacity: 1; pointer-events: auto; }
         .cart-header { padding: 24px 32px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); }
         .cart-header h2 { font-family: 'Montserrat', serif; font-size: 18px; font-weight: 700; }
         .close-cart-btn { background: none; border: none; color: var(--text-muted); font-size: 28px; cursor: pointer; transition: color 0.3s; }
@@ -287,7 +290,7 @@
             </a>
             <nav class="header-categories" id="mobile-nav">
                 <button class="cat-nav-btn active" id="cat-todos" onclick="filterCategory('todos', this)">Todos</button>
-                <button class="cat-nav-btn" onclick="filterCategory('lancamentos', this)">Lançamentos</button>
+                <button class="cat-nav-btn" id="cat-lancamentos" onclick="filterCategory('lancamentos', this)">Lançamentos</button>
                 <button class="cat-nav-btn" onclick="filterCategory('feminino', this)">Feminino</button>
                 <button class="cat-nav-btn" onclick="showCustomersPage(true)">Clientes</button>
                 <button class="cat-nav-btn" onclick="showPremiosPage(true)" style="color: var(--primary-gold); font-weight: 700;">🎁 Prêmios</button>
@@ -339,6 +342,7 @@
             
             <div class="admin-tabs">
                 <button class="admin-tab-btn active" onclick="switchAdminTab('venda', this)">Fechamento da Compra</button>
+                <button class="admin-tab-btn" onclick="switchAdminTab('estoque', this)">Gerenciar Estoque</button>
                 <button class="admin-tab-btn" onclick="switchAdminTab('novo-cliente', this)">Cadastrar Cliente</button>
                 <button class="admin-tab-btn" onclick="switchAdminTab('relatorio', this)">Fechamento de Caixa</button>
                 <button class="admin-tab-btn" onclick="switchAdminTab('premios', this)">Config. Prêmios</button>
@@ -375,6 +379,39 @@
                 <button onclick="salvarVendaAdmin()" style="background: var(--dark-heading); color: white; border: none; padding: 16px; border-radius: 8px; font-weight: 600; width: 100%; cursor: pointer; transition: background 0.3s; margin-top: 10px;">SALVAR VENDA E GERAR CÓDIGO</button>
                 
                 <div id="admin-resultado" style="font-family: monospace; font-size: 28px; font-weight: bold; color: var(--primary-gold); margin-top: 24px; letter-spacing: 2px; text-align: center;"></div>
+            </div>
+
+            <!-- ABA GERENCIAR ESTOQUE -->
+            <div id="admin-view-estoque" style="display:none;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+                    <div>
+                        <h3 style="font-size: 16px; font-weight: 700; color: var(--dark-heading);">Controle de Estoque por Tamanho</h3>
+                        <p style="color: var(--text-muted); font-size: 12px;">Edite as quantidades diretamente. As alterações são sincronizadas com a sua planilha do Google Sheets.</p>
+                    </div>
+                    <button onclick="salvarEstoqueCompleto()" id="btn-save-stock" style="background: var(--primary-gold); color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: 700; cursor: pointer; transition: background 0.2s;">
+                        💾 SALVAR ESTOQUE
+                    </button>
+                </div>
+
+                <div style="max-height: 420px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 8px;">
+                    <table class="admin-table" id="admin-stock-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 50px;">ID</th>
+                                <th>Produto</th>
+                                <th style="text-align: center;">PP</th>
+                                <th style="text-align: center;">P</th>
+                                <th style="text-align: center;">M</th>
+                                <th style="text-align: center;">G</th>
+                                <th style="text-align: center;">GG</th>
+                                <th style="text-align: center;">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-stock-tbody">
+                            <!-- Preenchido dinamicamente -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             <!-- ABA NOVO CLIENTE (CADASTRO MANUAL) -->
@@ -1302,16 +1339,123 @@
             if(btnElement) btnElement.classList.add('active');
             
             document.getElementById('admin-view-venda').style.display = 'none';
+            document.getElementById('admin-view-estoque').style.display = 'none';
             document.getElementById('admin-view-novo-cliente').style.display = 'none';
             document.getElementById('admin-view-relatorio').style.display = 'none';
             document.getElementById('admin-view-clientes').style.display = 'none';
             document.getElementById('admin-view-premios').style.display = 'none';
 
             if(tab === 'venda') document.getElementById('admin-view-venda').style.display = 'block';
+            else if(tab === 'estoque') { document.getElementById('admin-view-estoque').style.display = 'block'; renderAdminStockTable(); }
             else if(tab === 'novo-cliente') document.getElementById('admin-view-novo-cliente').style.display = 'block';
             else if(tab === 'relatorio') document.getElementById('admin-view-relatorio').style.display = 'block';
             else if(tab === 'clientes') { document.getElementById('admin-view-clientes').style.display = 'block'; buscarSaldosClientes(); }
             else if(tab === 'premios') { document.getElementById('admin-view-premios').style.display = 'block'; carregarConfigPremios(); }
+        }
+
+        // Renderiza a tabela de gerenciamento de estoque
+        function renderAdminStockTable() {
+            const tbody = document.getElementById('admin-stock-tbody');
+            if(!tbody) return;
+            tbody.innerHTML = '';
+
+            if (PRODUCTS.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:20px;">Nenhum produto carregado.</td></tr>';
+                return;
+            }
+
+            PRODUCTS.forEach(p => {
+                const tr = document.createElement('tr');
+                const pp = p.globalStockBySize['PP'] !== undefined ? p.globalStockBySize['PP'] : 0;
+                const p_qty = p.globalStockBySize['P'] !== undefined ? p.globalStockBySize['P'] : 0;
+                const m = p.globalStockBySize['M'] !== undefined ? p.globalStockBySize['M'] : 0;
+                const g = p.globalStockBySize['G'] !== undefined ? p.globalStockBySize['G'] : 0;
+                const gg = p.globalStockBySize['GG'] !== undefined ? p.globalStockBySize['GG'] : 0;
+                const total = pp + p_qty + m + g + gg;
+
+                tr.innerHTML = `
+                    <td><strong>${p.id}</strong></td>
+                    <td>
+                        <div style="font-weight:600; color:var(--dark-heading);">${p.name}</div>
+                        <span style="font-size:11px; color:var(--text-muted); text-transform:capitalize;">${p.category} | ${formatMoney(p.price)}</span>
+                    </td>
+                    <td style="text-align:center;"><input type="number" min="0" class="stock-input" id="stock-${p.id}-pp" value="${pp}" oninput="recalcRowTotal(${p.id})"></td>
+                    <td style="text-align:center;"><input type="number" min="0" class="stock-input" id="stock-${p.id}-p" value="${p_qty}" oninput="recalcRowTotal(${p.id})"></td>
+                    <td style="text-align:center;"><input type="number" min="0" class="stock-input" id="stock-${p.id}-m" value="${m}" oninput="recalcRowTotal(${p.id})"></td>
+                    <td style="text-align:center;"><input type="number" min="0" class="stock-input" id="stock-${p.id}-g" value="${g}" oninput="recalcRowTotal(${p.id})"></td>
+                    <td style="text-align:center;"><input type="number" min="0" class="stock-input" id="stock-${p.id}-gg" value="${gg}" oninput="recalcRowTotal(${p.id})"></td>
+                    <td style="text-align:center; font-weight:700; color:var(--primary-gold);" id="stock-total-${p.id}">${total}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function recalcRowTotal(prodId) {
+            const pp = parseInt(document.getElementById(`stock-${prodId}-pp`).value) || 0;
+            const p = parseInt(document.getElementById(`stock-${prodId}-p`).value) || 0;
+            const m = parseInt(document.getElementById(`stock-${prodId}-m`).value) || 0;
+            const g = parseInt(document.getElementById(`stock-${prodId}-g`).value) || 0;
+            const gg = parseInt(document.getElementById(`stock-${prodId}-gg`).value) || 0;
+            const total = pp + p + m + g + gg;
+            const totalEl = document.getElementById(`stock-total-${prodId}`);
+            if (totalEl) totalEl.textContent = total;
+        }
+
+        async function salvarEstoqueCompleto() {
+            const btn = document.getElementById('btn-save-stock');
+            btn.disabled = true;
+            btn.textContent = "SALVANDO...";
+
+            const updates = [];
+
+            PRODUCTS.forEach(p => {
+                const pp = parseInt(document.getElementById(`stock-${p.id}-pp`).value) || 0;
+                const p_val = parseInt(document.getElementById(`stock-${p.id}-p`).value) || 0;
+                const m = parseInt(document.getElementById(`stock-${p.id}-m`).value) || 0;
+                const g = parseInt(document.getElementById(`stock-${p.id}-g`).value) || 0;
+                const gg = parseInt(document.getElementById(`stock-${p.id}-gg`).value) || 0;
+
+                updates.push({
+                    id: p.id,
+                    pp: pp,
+                    p: p_val,
+                    m: m,
+                    g: g,
+                    gg: gg
+                });
+
+                // Atualiza localmente
+                p.globalStockBySize['PP'] = pp;
+                p.globalStockBySize['P'] = p_val;
+                p.globalStockBySize['M'] = m;
+                p.globalStockBySize['G'] = g;
+                p.globalStockBySize['GG'] = gg;
+                p.totalStock = pp + p_val + m + g + gg;
+            });
+
+            try {
+                // Envia para o Google Apps Script via POST
+                await fetch(DATABASE_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ updates: updates })
+                });
+
+                // Limpa o cache local para garantir sincronização
+                localStorage.removeItem('vericta_products_cache');
+                localStorage.removeItem('vericta_products_cache_time');
+
+                showToast("Estoque atualizado e sincronizado!");
+                renderCatalog(PRODUCTS);
+
+            } catch(e) {
+                console.error("Erro ao sincronizar estoque:", e);
+                showToast("Erro ao conectar com a planilha.");
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "💾 SALVAR ESTOQUE";
+            }
         }
 
         async function carregarConfigPremios() {
@@ -1681,7 +1825,6 @@
 
             let secondaryApp = null;
             try {
-                // Instância secundária para não deslogar o Admin
                 secondaryApp = firebase.initializeApp(firebaseConfig, "SecondaryApp_" + Date.now());
                 const secondaryAuth = secondaryApp.auth();
 
