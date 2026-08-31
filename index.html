@@ -171,6 +171,63 @@
         
         .btn-add-to-cart-large { width: 100%; background: var(--dark-heading); color: var(--bg-white); border: none; padding: 18px; border-radius: 30px; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; transition: all 0.3s ease; }
         .btn-add-to-cart-large:hover { background: var(--primary-gold); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(150, 118, 69, 0.2); }
+        .btn-add-to-cart-large:disabled { background: #ccc; cursor: not-allowed; box-shadow: none; transform: none; }
+
+        /* ESTILOS DE MARCA D'ÁGUA / SELO ESGOTADO */
+        .watermark-esgotado {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-15deg);
+            background-color: rgba(217, 83, 79, 0.9);
+            color: #FFFFFF;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            font-size: 26px;
+            padding: 12px 30px;
+            border-radius: 8px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            pointer-events: none;
+            z-index: 25;
+            white-space: nowrap;
+            border: 2px solid #FFFFFF;
+        }
+
+        .badge-esgotado-texto {
+            display: inline-block;
+            background-color: #D9534F;
+            color: #FFFFFF;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 20px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+
+        .catalog-out-of-stock-watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-12deg);
+            background-color: rgba(0, 0, 0, 0.75);
+            color: #FFFFFF;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            font-size: 18px;
+            padding: 8px 18px;
+            border-radius: 4px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            pointer-events: none;
+            z-index: 6;
+            border: 1px solid rgba(255,255,255,0.4);
+        }
 
         /* MODAIS E CART DRAWER */
         .profile-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 3000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
@@ -719,7 +776,7 @@
             </button>
             <div class="details-container">
                 <div class="gallery-section">
-                    <div class="main-image-container">
+                    <div class="main-image-container" id="main-gallery-container">
                         <button class="nav-arrow left" onclick="navigateGallery(-1)">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
                         </button>
@@ -764,7 +821,7 @@
                             <button class="qty-picker-btn" onclick="changeDetailQty(1)">+</button>
                         </div>
                     </div>
-                    <button class="btn-add-to-cart-large" onclick="addToCartFromDetail()">Adicionar ao Carrinho</button>
+                    <button class="btn-add-to-cart-large" id="btn-add-cart-detail" onclick="addToCartFromDetail()">Adicionar ao Carrinho</button>
                 </div>
             </div>
         </div>
@@ -1371,7 +1428,6 @@
                     colorList = Object.keys(p.stockByColorAndSize);
                 }
                 
-                // Adiciona cores de combinações de imagem que possam não estar ainda no estoque
                 if (p.colorCombinations) {
                     Object.keys(p.colorCombinations).forEach(c => {
                         if (c !== 'personalizado' && !colorList.includes(c)) colorList.push(c);
@@ -1489,7 +1545,6 @@
                     gg: sizePayload['gg']
                 });
 
-                // Atualiza objetos locais
                 p.hasColorSpecificStock = isColorSpecific;
                 if (isColorSpecific) {
                     p.stockByColorAndSize = pColorsData;
@@ -2394,12 +2449,19 @@
 
             productsToRender.forEach(prod => {
                 const card = document.createElement('div'); card.className = 'product-card';
-                const isOutOfStock = prod.totalStock <= 0;
-                if(!isOutOfStock) card.onclick = () => openProductDetails(prod.id);
+                
+                // Calcula estoque total em todas as cores/tamanhos
+                const isTotalOutOfStock = prod.totalStock <= 0;
+                
+                card.onclick = () => openProductDetails(prod.id);
 
                 const isFav = favorites.includes(prod.id);
                 const favClass = isFav ? 'btn-favorite-card active' : 'btn-favorite-card';
-                let outOfStockHTML = isOutOfStock ? `<div class="out-of-stock-overlay">ESGOTADO</div>` : '';
+                
+                // Marca d'água no card do catálogo se o produto inteiro estiver zerado
+                let outOfStockHTML = isTotalOutOfStock 
+                    ? `<div class="catalog-out-of-stock-watermark">ESGOTADO</div>` 
+                    : '';
 
                 card.innerHTML = `
                     <div class="card-img-wrapper">
@@ -2411,7 +2473,7 @@
                         <img src="${prod.images[0]}" alt="${prod.name}" loading="lazy" onerror="this.src='https://via.placeholder.com/400x400?text=Vericta'">
                     </div>
                     <div class="card-content">
-                        <h3 class="card-title">${prod.name}</h3>
+                        <h3 class="card-title">${prod.name} ${isTotalOutOfStock ? '<span class="badge-esgotado-texto">Esgotado</span>' : ''}</h3>
                         <div class="card-price">${formatMoney(prod.price)}</div>
                     </div>
                 `;
@@ -2448,7 +2510,7 @@
 
         function openProductDetails(id, pushHash = true) {
             const product = PRODUCTS.find(p => p.id === id);
-            if(!product || product.totalStock <= 0) return; 
+            if(!product) return;
             
             currentDetailProduct = product; 
             detailQty = 1; 
@@ -2472,7 +2534,7 @@
             currentImageIndex = 0;
 
             document.getElementById('bread-category').textContent = product.category; document.getElementById('bread-category').style.textTransform = "capitalize";
-            document.getElementById('bread-name').textContent = product.name; document.getElementById('detail-title').textContent = product.name;
+            document.getElementById('bread-name').textContent = product.name; 
             document.getElementById('detail-price').textContent = formatMoney(product.price); document.getElementById('detail-desc').textContent = product.desc;
             document.getElementById('detail-qty').value = detailQty;
 
@@ -2519,8 +2581,66 @@
             updateMainImage();
             renderThumbnails();
             
+            // Aplica/reverte as marcas d'água de acordo com a cor atual
+            checkAndApplyOutofStockWatermark();
+            
             showDetailsPage();
             if(pushHash) window.location.hash = 'produto-' + id;
+        }
+
+        // VERIFICA ESTOQUE E APLICA MARCA D'ÁGUA DE ESGOTADO NA FOTO/DESCRIÇÃO
+        function checkAndApplyOutofStockWatermark() {
+            if (!currentDetailProduct) return;
+
+            // Calcula o estoque disponível para a cor selecionada
+            let colorStock = 0;
+            if (currentDetailProduct.hasColorSpecificStock && selectedColorCombo && selectedColorCombo !== 'personalizado') {
+                if (currentDetailProduct.stockByColorAndSize[selectedColorCombo]) {
+                    Object.values(currentDetailProduct.stockByColorAndSize[selectedColorCombo]).forEach(v => colorStock += (parseInt(v) || 0));
+                }
+            } else {
+                colorStock = currentDetailProduct.totalStock;
+            }
+
+            const mainImgContainer = document.getElementById('main-gallery-container');
+            const titleEl = document.getElementById('detail-title');
+            const btnAddCart = document.getElementById('btn-add-cart-detail');
+
+            // Remove marca d'água existente da imagem
+            let existingImgWatermark = mainImgContainer.querySelector('.watermark-esgotado');
+            if (existingImgWatermark) existingImgWatermark.remove();
+
+            // Remove badge existente do título
+            let existingTitleBadge = titleEl.querySelector('.badge-esgotado-texto');
+            if (existingTitleBadge) existingTitleBadge.remove();
+
+            // Limpa título base
+            titleEl.textContent = currentDetailProduct.name;
+
+            if (colorStock <= 0) {
+                // Inserir Marca d'água na Foto Principal
+                const watermark = document.createElement('div');
+                watermark.className = 'watermark-esgotado';
+                watermark.innerText = 'ESGOTADO';
+                mainImgContainer.appendChild(watermark);
+
+                // Inserir Badge no Título da Descrição
+                const badge = document.createElement('span');
+                badge.className = 'badge-esgotado-texto';
+                badge.innerText = 'Esgotado nesta cor';
+                titleEl.appendChild(badge);
+
+                // Desabilitar botão de adicionar ao carrinho
+                if (btnAddCart) {
+                    btnAddCart.disabled = true;
+                    btnAddCart.textContent = 'Indisponível nesta cor';
+                }
+            } else {
+                if (btnAddCart) {
+                    btnAddCart.disabled = false;
+                    btnAddCart.textContent = 'Adicionar ao Carrinho';
+                }
+            }
         }
 
         function renderSizes() {
@@ -2590,6 +2710,7 @@
             updateMainImage();
             renderThumbnails();
             renderSizes();
+            checkAndApplyOutofStockWatermark();
         }
 
         window.openLightboxImage = function(src) {
@@ -2661,9 +2782,14 @@
         }
 
         function addToCartFromDetail() {
-            if(!currentDetailProduct || !selectedSize) { alert("Selecione um tamanho."); return; }
+            if(!currentDetailProduct || !selectedSize) { alert("Selecione um tamanho disponível."); return; }
             const maxStock = getMaxStock();
             
+            if(maxStock <= 0) {
+                showToast("Esta variação está esgotada!");
+                return;
+            }
+
             let colorDesc = "";
             if(selectedColorCombo && selectedColorCombo !== 'personalizado') {
                 colorDesc = ` (${selectedColorCombo.replace('_', '/')})`;
