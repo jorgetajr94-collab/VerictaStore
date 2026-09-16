@@ -80,6 +80,30 @@
         .hero-dot { width: 12px; height: 4px; border-radius: 2px; background: rgba(150, 118, 69, 0.3); cursor: pointer; transition: all 0.3s; }
         .hero-dot.active { background: var(--primary-gold); width: 24px; }
 
+        /* CARROSSEL CLIENTES REAIS */
+        .clients-carousel-section { max-width: 1300px; margin: 40px auto 0; padding: 0 24px; position: relative; }
+        .clients-carousel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .clients-carousel-title { font-family: 'Montserrat', sans-serif; font-size: 24px; font-weight: 700; color: var(--dark-heading); }
+        .clients-slider-container { position: relative; display: flex; align-items: center; }
+        .clients-slider { display: flex; gap: 20px; overflow-x: auto; scroll-behavior: smooth; width: 100%; scrollbar-width: none; }
+        .clients-slider::-webkit-scrollbar { display: none; }
+        .clients-slider-item { 
+            min-width: 260px; 
+            height: 360px;    
+            border-radius: var(--radius-md); 
+            overflow: hidden; 
+            box-shadow: var(--shadow-card); 
+            cursor: zoom-in; 
+            flex-shrink: 0; 
+            background: #F8F8F8;
+        }
+        .clients-slider-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
+        .clients-slider-item:hover img { transform: scale(1.05); }
+        .slider-arrow { background: var(--bg-white); color: var(--dark-heading); border: 1px solid var(--border-color); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; position: absolute; z-index: 10; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: all 0.3s; }
+        .slider-arrow:hover { background: var(--primary-gold); color: white; border-color: var(--primary-gold); }
+        .slider-arrow.left { left: -10px; }
+        .slider-arrow.right { right: -10px; }
+
         /* VIEWS MANAGEMENT E GRIDS DE GALERIA */
         .page-view { display: none; }
         .page-view.active { display: block; }
@@ -229,6 +253,20 @@
             border: 1px solid rgba(255,255,255,0.4);
         }
 
+        /* LAYOUT MODO PERSONALIZADO */
+        .details-container.custom-mode { grid-template-columns: 1fr; max-width: 1000px; margin: 0 auto; }
+        .details-container.custom-mode .gallery-section { display: none; }
+
+        #custom-images-container { display: none; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 32px; padding-bottom: 32px; border-bottom: 1px solid var(--border-color); background: #FDFBF7; padding: 24px; border-radius: var(--radius-lg); }
+        .details-container.custom-mode #custom-images-container { display: grid; }
+
+        .custom-box-title { font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 700; color: var(--dark-heading); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 1px; text-align: center;}
+        .custom-img-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; max-height: 400px; overflow-y: auto; padding-right: 8px; }
+        .custom-img-grid::-webkit-scrollbar { width: 6px; }
+        .custom-img-grid::-webkit-scrollbar-thumb { background: var(--primary-gold); border-radius: 10px; }
+        .custom-img-grid img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: var(--radius-md); cursor: zoom-in; border: 1px solid var(--border-color); transition: transform 0.2s; }
+        .custom-img-grid img:hover { transform: scale(1.05); border-color: var(--primary-gold); }
+
         /* MODAIS E CART DRAWER */
         .profile-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 3000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
         .profile-modal.active { opacity: 1; pointer-events: auto; }
@@ -327,6 +365,8 @@
             .hero-nav-arrow.left { left: 8px; }
             .hero-nav-arrow.right { right: 8px; }
             
+            .clients-slider-item {min-width: 150px; height: 220px;}
+
             .main-wrapper { padding: 0 16px; }
             .details-container { grid-template-columns: 1fr; padding: 24px 16px; gap: 24px; }
             .main-gallery-img { height: 400px; }
@@ -334,6 +374,10 @@
             .card-img-wrapper { height: 240px; }
             
             .profile-content { padding: 24px; }
+            #custom-images-container { grid-template-columns: 1fr; padding: 16px; gap: 24px; }
+        }
+        @media (max-width: 600px) {
+            .clients-slider-item { min-width: 140px; height: 200px; }
         }
     </style>
 </head>
@@ -349,7 +393,7 @@
                 <button class="cat-nav-btn active" id="cat-todos" onclick="filterCategory('todos', this)">Todos</button>
                 <button class="cat-nav-btn" id="cat-lancamentos" onclick="filterCategory('lancamentos', this)">Lançamentos</button>
                 <button class="cat-nav-btn" onclick="filterCategory('feminino', this)">Feminino</button>
-                <button class="cat-nav-btn" onclick="showCustomersPage(true)">Clientes</button>
+                <button class="cat-nav-btn" onclick="showCustomersPage(true)">Clientes Reais ✨</button>
                 <button class="cat-nav-btn" onclick="showPremiosPage(true)" style="color: var(--primary-gold); font-weight: 700;">🎁 Prêmios</button>
                 <button class="cat-nav-btn" onclick="showMaterialsPage(true)">Materiais</button>
             </nav>
@@ -720,7 +764,7 @@
                         </picture>
                         <div class="hero-content">
                             <h1 class="hero-title">Novos<br>Lançamentos</h1>
-                            <p class="hero-subtitle">Aproveite para conhecer e aproveitar os novos lançamentos da Vericta.</p>
+                            <p class="hero-subtitle">Aproveite para conhecer e aproveitar os novos lançamentos da Vericta. Grades fechadas, sem reposição. Garanta já sua peça única.</p>
                             <button class="btn-hero" onclick="irParaLancamentos()">Ver Lançamentos</button>
                         </div>
                     </div>
@@ -731,7 +775,7 @@
                         </picture>
                         <div class="hero-content">
                             <h1 class="hero-title">Moda, performance<br>e preço baixo.</h1>
-                            <p class="hero-subtitle">Compre o seu Macaquinho Advanced de 30/08 a 15/09 e ganhe Frete Grátis! Leve 2 ou mais unidades e ganhe também um lindo Top de Zíper.</p>
+                            <p class="hero-subtitle">Aqui você tem roupas exclusivas e macaquinhos personalizados com as cores da sua escolha. Escolha já a sua opção e seja única no seu esporte.</p>
                             <button class="btn-hero" onclick="document.getElementById('catalog-container').scrollIntoView({behavior: 'smooth'})">Comprar Agora</button>
                         </div>
                     </div>
@@ -752,14 +796,55 @@
                             <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786399021/Complete_image_leaving_person_un__202608101856.jpg" alt="Área de Clientes">
                         </picture>
                         <div class="hero-content">
-                            <h1 class="hero-title">Área de<br>Clientes</h1>
+                            <h1 class="hero-title">Clientes Reais ✨</h1>
                             <p class="hero-subtitle">Inspire-se nos modelos criados e vestidos por quem confia em nós.</p>
-                            <button class="btn-hero" onclick="showCustomersPage(true)">Ver Galeria de Clientes</button>
+                            <button class="btn-hero" onclick="showCustomersPage(true)">Ver Clientes Reais ✨</button>
                         </div>
                     </div>
                 </div>
 
                 <div class="hero-dots" id="hero-dots"></div>
+            </div>
+
+            <!-- CARROSSEL CLIENTES REAIS ✨ -->
+            <div class="clients-carousel-section" id="clients-carousel-section">
+                <div class="clients-carousel-header">
+                    <h2 class="clients-carousel-title">Se Inspire nas nossas maravilhosas clientes ✨</h2>
+                    <button class="back-btn" style="margin:0;" onclick="showCustomersPage(true)">
+                        Ver todos
+                    </button>
+                </div>
+                <div class="clients-slider-container">
+                    <button class="slider-arrow left" onclick="scrollClientsSlider(-1)">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    </button>
+                    <div class="clients-slider" id="clients-slider">
+                        <div class="clients-slider-item" onclick="openLightboxImage('https://res.cloudinary.com/ofymcuuj/image/upload/v1786567628/imagem_2026-08-12_174714514.png')"><img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786567628/imagem_2026-08-12_174714514.png" alt="Cliente"></div>
+                        <div class="clients-slider-item" onclick="openLightboxImage('https://res.cloudinary.com/ofymcuuj/image/upload/v1786567588/imagem_2026-08-12_174633223.png')"><img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786567588/imagem_2026-08-12_174633223.png" alt="Cliente"></div>
+                        <div class="clients-slider-item" onclick="openLightboxImage('https://res.cloudinary.com/ofymcuuj/image/upload/v1786567654/imagem_2026-08-12_174739970.png')"><img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786567654/imagem_2026-08-12_174739970.png" alt="Cliente"></div>
+                        <div class="clients-slider-item" onclick="openLightboxImage('https://res.cloudinary.com/ofymcuuj/image/upload/v1786567571/imagem_2026-08-12_174615963.png')"><img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786567571/imagem_2026-08-12_174615963.png" alt="Cliente"></div>
+                        <div class="clients-slider-item" onclick="openLightboxImage('https://res.cloudinary.com/ofymcuuj/image/upload/v1786627473/01.jpg')"><img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786627473/01.jpg" alt="Cliente"></div>
+                        <div class="clients-slider-item" onclick="openLightboxImage('https://res.cloudinary.com/ofymcuuj/image/upload/v1786627473/04.jpg')"><img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786627473/04.jpg" alt="Cliente"></div>
+                        <div class="clients-slider-item" onclick="openLightboxImage('https://res.cloudinary.com/ofymcuuj/image/upload/v1786627472/02.jpg')"><img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786627472/02.jpg" alt="Cliente"></div>
+                        <div class="clients-slider-item" onclick="openLightboxImage('https://res.cloudinary.com/ofymcuuj/image/upload/v1786627472/03.jpg')"><img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786627472/03.jpg" alt="Cliente"></div>
+                        <div class="clients-slider-item" onclick="openLightboxImage('https://res.cloudinary.com/ofymcuuj/image/upload/v1786627472/05.jpg')"><img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786627472/05.jpg" alt="Cliente"></div>
+                        <div class="clients-slider-item" onclick="openLightboxImage('https://res.cloudinary.com/ofymcuuj/image/upload/v1786627472/06.jpg')"><img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786627472/06.jpg" alt="Cliente"></div>
+                        <div class="clients-slider-item" onclick="openLightboxImage('https://res.cloudinary.com/ofymcuuj/image/upload/v1786627472/07.jpg')"><img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786627472/07.jpg" alt="Cliente"></div>
+                        <div class="clients-slider-item" onclick="openLightboxImage('https://res.cloudinary.com/ofymcuuj/image/upload/v1786627472/11.jpg')"><img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786627472/11.jpg" alt="Cliente"></div>
+                        <div class="clients-slider-item" onclick="openLightboxImage('https://res.cloudinary.com/ofymcuuj/image/upload/v1786627472/13.jpg')"><img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786627472/13.jpg" alt="Cliente"></div>
+                        <div class="clients-slider-item" onclick="openLightboxImage('https://res.cloudinary.com/ofymcuuj/image/upload/v1786627471/08.jpg')"><img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786627471/08.jpg" alt="Cliente"></div>
+                        <div class="clients-slider-item" onclick="openLightboxImage('https://res.cloudinary.com/ofymcuuj/image/upload/v1786627471/10.jpg')"><img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786627471/10.jpg" alt="Cliente"></div>
+                        <div class="clients-slider-item" onclick="openLightboxImage('https://res.cloudinary.com/ofymcuuj/image/upload/v1786627471/15.jpg')"><img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786627471/15.jpg" alt="Cliente"></div>
+                        <div class="clients-slider-item" onclick="openLightboxImage('https://res.cloudinary.com/ofymcuuj/image/upload/v1786627470/09.jpg')"><img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786627470/09.jpg" alt="Cliente"></div>
+                        <div class="clients-slider-item" onclick="openLightboxImage('https://res.cloudinary.com/ofymcuuj/image/upload/v1786627470/17.jpg')"><img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786627470/17.jpg" alt="Cliente"></div>
+                        <div class="clients-slider-item" onclick="openLightboxImage('https://res.cloudinary.com/ofymcuuj/image/upload/v1786627469/12.jpg')"><img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786627469/12.jpg" alt="Cliente"></div>
+                        <div class="clients-slider-item" onclick="openLightboxImage('https://res.cloudinary.com/ofymcuuj/image/upload/v1786627469/14.jpg')"><img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786627469/14.jpg" alt="Cliente"></div>
+                        <div class="clients-slider-item" onclick="openLightboxImage('https://res.cloudinary.com/ofymcuuj/image/upload/v1786627469/16.jpg')"><img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786627469/16.jpg" alt="Cliente"></div>
+                    </div>
+                    <button class="slider-arrow right" onclick="scrollClientsSlider(1)">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </button>
+                </div>
             </div>
 
             <main class="main-wrapper">
@@ -809,6 +894,18 @@
                     <div id="detail-price" class="details-price">R$ 0,00</div>
                     <p id="detail-desc" class="details-description">Descrição</p>
                     
+                    <!-- NOVAS CAIXAS DE IMAGEM: MODO PERSONALIZADO -->
+                    <div id="custom-images-container">
+                        <div>
+                            <h4 class="custom-box-title">Se inspire em algumas opções ✨</h4>
+                            <div class="custom-img-grid" id="custom-inspire-grid"></div>
+                        </div>
+                        <div>
+                            <h4 class="custom-box-title">Escolha suas cores 🎨</h4>
+                            <div class="custom-img-grid" id="custom-materials-grid"></div>
+                        </div>
+                    </div>
+                    
                     <div id="detail-colors-container"></div>
 
                     <div class="selector-label">Tamanho</div>
@@ -832,7 +929,7 @@
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
                 Voltar
             </button>
-            <h2 class="details-title" style="margin-bottom: 8px;">Área de Clientes</h2>
+            <h2 class="details-title" style="margin-bottom: 8px;">Clientes Reais ✨</h2>
             <p class="details-description" style="border: none; padding: 0;">Inspire-se nos modelos criados por nossos clientes. Clique nas fotos para ampliar.</p>
             
             <div class="gallery-grid">
@@ -1178,6 +1275,98 @@
         
         let adminVendaCart = []; 
         let cacheVendasAdmin = []; 
+
+        // Arrays para preenchimento dinâmico das caixas "Personalizado"
+        const CLIENT_IMAGES = [
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786567628/imagem_2026-08-12_174714514.png',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786567588/imagem_2026-08-12_174633223.png',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786567654/imagem_2026-08-12_174739970.png',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786567571/imagem_2026-08-12_174615963.png',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786627473/01.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786627473/04.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786627472/02.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786627472/03.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786627472/05.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786627472/06.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786627472/07.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786627472/11.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786627472/13.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786627471/08.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786627471/10.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786627471/15.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786627470/09.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786627470/17.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786627469/12.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786627469/14.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786627469/16.jpg'
+        ];
+
+        const MATERIAL_IMAGES = [
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786566138/WhatsApp_Image_2026-08-10_at_16.04.14.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786566137/WhatsApp_Image_2026-08-10_at_16.04.15.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786566136/001.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786566136/002.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786566136/003.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786566135/004.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786566134/005.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786566134/006.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786566133/007.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786566132/008.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786566132/009.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786566131/010.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786566131/011.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786566130/012.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786566130/013.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786566130/014.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786566129/015.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786566128/016.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786566128/017.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786566128/18.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786566128/19.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786566127/20.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786566126/21.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786566126/22.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786566125/23.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786566125/24.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786566125/25.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786566123/26.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786566123/27.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786566123/28.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786566122/30.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786566122/32.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786566121/37.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786566120/38.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786566120/40.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786566118/41.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786566117/45.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786566117/49.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786566117/54.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786566116/53.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786566116/55.jpg',
+            'https://res.cloudinary.com/ofymcuuj/image/upload/v1786566116/56.jpg'
+        ];
+
+        // Função para popular as grades de imagem no modo custom
+        function fillCustomGrids() {
+            const inspireGrid = document.getElementById('custom-inspire-grid');
+            inspireGrid.innerHTML = '';
+            
+            // Imagens originais do produto
+            currentDetailProduct.images.forEach(img => {
+                inspireGrid.innerHTML += `<img src="${img}" onclick="openLightboxImage(this.src)">`;
+            });
+            // Imagens das Clientes
+            CLIENT_IMAGES.forEach(img => {
+                inspireGrid.innerHTML += `<img src="${img}" onclick="openLightboxImage(this.src)">`;
+            });
+
+            const materialsGrid = document.getElementById('custom-materials-grid');
+            if(materialsGrid.innerHTML === '') {
+                MATERIAL_IMAGES.forEach(img => {
+                    materialsGrid.innerHTML += `<img src="${img}" onclick="openLightboxImage(this.src)">`;
+                });
+            }
+        }
 
         // ================= CONTROLE DO HERO BANNER =================
         let currentHeroIndex = 0;
@@ -2259,6 +2448,7 @@
             document.getElementById('search-box').classList.remove('active');
             
             document.getElementById('hero-banner').style.display = 'none';
+            if(document.getElementById('clients-carousel-section')) document.getElementById('clients-carousel-section').style.display = 'none';
             document.getElementById('section-title').style.display = 'block';
             document.getElementById('section-title').textContent = "Meus Favoritos";
             
@@ -2425,6 +2615,7 @@
 
         function handleSearch(term) {
             showCatalogPage(true); document.getElementById('mobile-nav').classList.remove('open'); document.getElementById('hero-banner').style.display = 'none';
+            if(document.getElementById('clients-carousel-section')) document.getElementById('clients-carousel-section').style.display = 'none';
             document.getElementById('section-title').style.display = 'block'; document.getElementById('section-title').textContent = `Resultados para "${term}"`;
             document.querySelectorAll('.cat-nav-btn').forEach(b => b.classList.remove('active'));
 
@@ -2489,9 +2680,11 @@
 
             if (cat === 'todos') { 
                 document.getElementById('hero-banner').style.display = 'block'; 
+                if(document.getElementById('clients-carousel-section')) document.getElementById('clients-carousel-section').style.display = 'block';
                 renderCatalog(PRODUCTS); 
             } else {
                 document.getElementById('hero-banner').style.display = 'none'; 
+                if(document.getElementById('clients-carousel-section')) document.getElementById('clients-carousel-section').style.display = 'none';
                 document.getElementById('section-title').style.display = 'block'; 
                 document.getElementById('section-title').textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
                 
@@ -2578,10 +2771,17 @@
             }
 
             renderSizes();
-            updateMainImage();
-            renderThumbnails();
             
-            // Aplica/reverte as marcas d'água de acordo com a cor atual
+            // Garante layout correto caso o produto abra direto na cor personalizado
+            if(selectedColorCombo === 'personalizado') {
+                document.querySelector('.details-container').classList.add('custom-mode');
+                fillCustomGrids();
+            } else {
+                document.querySelector('.details-container').classList.remove('custom-mode');
+                updateMainImage();
+                renderThumbnails();
+            }
+            
             checkAndApplyOutofStockWatermark();
             
             showDetailsPage();
@@ -2702,13 +2902,20 @@
 
             if(combo === 'personalizado') {
                 currentDetailImages = currentDetailProduct.images;
-            } else if (currentDetailProduct.colorCombinations[combo]) {
-                currentDetailImages = currentDetailProduct.colorCombinations[combo];
+                document.querySelector('.details-container').classList.add('custom-mode');
+                fillCustomGrids();
+            } else {
+                if (currentDetailProduct.colorCombinations[combo]) {
+                    currentDetailImages = currentDetailProduct.colorCombinations[combo];
+                } else {
+                    currentDetailImages = currentDetailProduct.images;
+                }
+                document.querySelector('.details-container').classList.remove('custom-mode');
+                updateMainImage();
+                renderThumbnails();
             }
             
             currentImageIndex = 0;
-            updateMainImage();
-            renderThumbnails();
             renderSizes();
             checkAndApplyOutofStockWatermark();
         }
@@ -2939,6 +3146,15 @@
             const btnLancamentos = document.getElementById('cat-lancamentos');
             filterCategory('lancamentos', btnLancamentos);
             document.getElementById('catalog-container').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // FUNÇÃO NAVEGAÇÃO CARROSSEL CLIENTES
+        function scrollClientsSlider(direction) {
+            const slider = document.getElementById('clients-slider');
+            if(slider) {
+                const scrollAmount = slider.offsetWidth;
+                slider.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+            }
         }
     </script>
 </body>
