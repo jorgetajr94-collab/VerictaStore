@@ -3189,42 +3189,49 @@
         }
 
         // FUNÇÃO LER PLANILHA E GRAVAÇÃO NO BANCO DE DADOS
-        async function sincronizarComPlanilha() {
-            const btn = document.getElementById('btn-sync-planilha');
-            btn.disabled = true;
-            btn.textContent = "BAIXANDO DA PLANILHA...";
+            async function sincronizarComPlanilha() {
+                const btn = document.getElementById('btn-sync-planilha');
+                btn.disabled = true;
+                btn.textContent = "A TRANSFERIR DA PLANILHA...";
 
-            try {
-                // 1. Puxa os dados da sua planilha via Apps Script
-                const response = await fetch(DATABASE_URL, { redirect: "follow" });
-                const rawData = await response.json();
+                try {
+                    const response = await fetch(DATABASE_URL, { redirect: "follow" });
+                    const rawData = await response.json();
 
-                if (!Array.isArray(rawData)) throw new Error("Erro no formato da planilha.");
+                    if (!Array.isArray(rawData)) throw new Error("Erro no formato da planilha.");
 
-                btn.textContent = "ATUALIZANDO SITE...";
+                    btn.textContent = "A ATUALIZAR O SITE...";
 
-                // 2. Grava todos os produtos na coleção 'produtos' do Firestore
-                const batch = db.batch();
-                rawData.forEach(item => {
-                    // O ID do produto será o nome do documento no Firestore
-                    const docId = item.id.toString();
-                    const prodRef = db.collection('produtos').doc(docId);
-                    batch.set(prodRef, item);
-                });
+                    const batch = db.batch();
+                    
+                    rawData.forEach(rawItem => {
+                        // Normaliza todas as colunas para minúsculas e sem espaços
+                        const item = {};
+                        for (let key in rawItem) {
+                            item[key.trim().toLowerCase()] = rawItem[key];
+                        }
 
-                await batch.commit();
-                
-                showToast("Catálogo atualizado com sucesso!");
-                loadProductsFromDB(); // Atualiza a tela
+                        // Verifica se o ID existe de facto antes de gravar
+                        if (item.id) {
+                            const docId = item.id.toString();
+                            const prodRef = db.collection('produtos').doc(docId);
+                            batch.set(prodRef, item);
+                        }
+                    });
 
-            } catch (e) {
-                console.error(e);
-                showToast("Erro ao sincronizar com a planilha.");
-            } finally {
-                btn.disabled = false;
-                btn.textContent = "🔄 IMPORTAR DA PLANILHA";
+                    await batch.commit();
+                    
+                    showToast("Catálogo atualizado com sucesso!");
+                    loadProductsFromDB(); 
+
+                } catch (e) {
+                    console.error(e);
+                    showToast("Erro ao sincronizar com a planilha. Verifique a consola.");
+                } finally {
+                    btn.disabled = false;
+                    btn.textContent = "🔄 IMPORTAR DA PLANILHA";
+                }
             }
-        }
     </script>
 </body>
 </html>
