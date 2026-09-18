@@ -8,8 +8,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Bibliotecas do Firebase -->
+    <!-- Bibliotecas do Firebase e Analytics -->
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-analytics-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
@@ -908,13 +909,31 @@
                         <div class="custom-gallery-col">
                             <h4 class="custom-box-title">Se inspire em algumas opções ✨</h4>
                             <img id="custom-inspire-main" class="custom-main-img" src="" onclick="openLightboxImage(this.src, inspireImages, currentInspireIndex)" title="Clique para ampliar">
-                            <div class="custom-thumbs-row" id="custom-inspire-thumbs"></div>
+                            
+                            <div class="thumbnails-wrapper">
+                                <button class="thumb-nav-arrow left" onclick="scrollCustomThumbs('inspire', -1)">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                                </button>
+                                <div class="custom-thumbs-row" id="custom-inspire-thumbs"></div>
+                                <button class="thumb-nav-arrow right" onclick="scrollCustomThumbs('inspire', 1)">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                                </button>
+                            </div>
                         </div>
                         
                         <div class="custom-gallery-col">
                             <h4 class="custom-box-title">Escolha suas cores 🎨</h4>
                             <img id="custom-materials-main" class="custom-main-img" src="" onclick="openLightboxImage(this.src, materialsImages, currentMaterialsIndex)" title="Clique para ampliar">
-                            <div class="custom-thumbs-row" id="custom-materials-thumbs"></div>
+                            
+                            <div class="thumbnails-wrapper">
+                                <button class="thumb-nav-arrow left" onclick="scrollCustomThumbs('materials', -1)">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                                </button>
+                                <div class="custom-thumbs-row" id="custom-materials-thumbs"></div>
+                                <button class="thumb-nav-arrow right" onclick="scrollCustomThumbs('materials', 1)">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                                </button>
+                            </div>
                         </div>
                     </div>
                     
@@ -1595,6 +1614,7 @@
         function initFirebase() {
             if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "") {
                 firebase.initializeApp(firebaseConfig);
+                firebase.analytics(); // ADICIONADO PARA ATIVAR O GOOGLE ANALYTICS
                 auth = firebase.auth();
                 db = firebase.firestore();
 
@@ -2530,11 +2550,9 @@
             const container = document.getElementById('catalog-container');
             if (!container) return;
 
-            // Loading visual elegante enquanto busca
             container.innerHTML = '<p style="grid-column: 1/-1; text-align:center; padding: 40px; color: var(--primary-gold); font-weight: 600;">Carregando a coleção, por favor aguarde... ✨</p>';
 
             try {
-                // Busca os dados diretamente do Firestore (milissegundos)
                 const snapshot = await db.collection('produtos').get();
                 const rawData = [];
                 
@@ -2547,7 +2565,6 @@
                     return;
                 }
 
-                // Mantém a sua lógica exata de processamento de tamanhos, cores e estoque
                 processarProdutos(rawData);
 
             } catch (error) {
@@ -2628,9 +2645,13 @@
 
                 let rawPrice = item.price ? item.price.toString().replace(',', '.') : '0';
                 let rawCategory = item.category ? item.category.trim().toLowerCase() : 'outros';
+                
+                // LÓGICA DE ORDENAÇÃO
+                let rawOrdem = item.ordem !== undefined && item.ordem !== '' ? parseInt(item.ordem) : 9999;
 
                 return {
                     id: parseInt(item.id) || Math.floor(Math.random() * 1000), 
+                    ordem: rawOrdem,
                     name: item.name || 'Produto Vericta', 
                     category: rawCategory,
                     price: parseFloat(rawPrice), 
@@ -2644,6 +2665,9 @@
                     colorCombinations: colorCombinations
                 };
             });
+            
+            // LÓGICA DE ORDENAÇÃO APLICADA AQUI
+            PRODUCTS.sort((a, b) => a.ordem - b.ordem);
             
             populateAdminProducts();
 
@@ -2692,15 +2716,12 @@
             productsToRender.forEach(prod => {
                 const card = document.createElement('div'); card.className = 'product-card';
                 
-                // Calcula estoque total em todas as cores/tamanhos
                 const isTotalOutOfStock = prod.totalStock <= 0;
-                
                 card.onclick = () => openProductDetails(prod.id);
 
                 const isFav = favorites.includes(prod.id);
                 const favClass = isFav ? 'btn-favorite-card active' : 'btn-favorite-card';
                 
-                // Marca d'água no card do catálogo se o produto inteiro estiver zerado
                 let outOfStockHTML = isTotalOutOfStock 
                     ? `<div class="catalog-out-of-stock-watermark">ESGOTADO</div>` 
                     : '';
@@ -2991,6 +3012,13 @@
             row.scrollBy({ left: direction * 150, behavior: 'smooth' });
         }
 
+        // ADICIONADO: FUNÇÃO DE SCROLL DAS CAIXAS CUSTOMIZADAS
+        function scrollCustomThumbs(type, direction) {
+            const rowId = type === 'inspire' ? 'custom-inspire-thumbs' : 'custom-materials-thumbs';
+            const row = document.getElementById(rowId);
+            if(row) row.scrollBy({ left: direction * 150, behavior: 'smooth' });
+        }
+
         function renderThumbnails() {
             const thumbsContainer = document.getElementById('detail-thumbnails'); thumbsContainer.innerHTML = '';
             
@@ -3189,49 +3217,47 @@
         }
 
         // FUNÇÃO LER PLANILHA E GRAVAÇÃO NO BANCO DE DADOS
-            async function sincronizarComPlanilha() {
-                const btn = document.getElementById('btn-sync-planilha');
-                btn.disabled = true;
-                btn.textContent = "A TRANSFERIR DA PLANILHA...";
+        async function sincronizarComPlanilha() {
+            const btn = document.getElementById('btn-sync-planilha');
+            btn.disabled = true;
+            btn.textContent = "BAIXANDO DA PLANILHA...";
 
-                try {
-                    const response = await fetch(DATABASE_URL, { redirect: "follow" });
-                    const rawData = await response.json();
+            try {
+                // 1. Puxa os dados da sua planilha via Apps Script
+                const response = await fetch(DATABASE_URL, { redirect: "follow" });
+                const rawData = await response.json();
 
-                    if (!Array.isArray(rawData)) throw new Error("Erro no formato da planilha.");
+                if (!Array.isArray(rawData)) throw new Error("Erro no formato da planilha.");
 
-                    btn.textContent = "A ATUALIZAR O SITE...";
+                btn.textContent = "ATUALIZANDO SITE...";
 
-                    const batch = db.batch();
-                    
-                    rawData.forEach(rawItem => {
-                        // Normaliza todas as colunas para minúsculas e sem espaços
-                        const item = {};
-                        for (let key in rawItem) {
-                            item[key.trim().toLowerCase()] = rawItem[key];
-                        }
+                // 2. Grava todos os produtos na coleção 'produtos' do Firestore
+                const batch = db.batch();
+                rawData.forEach(rawItem => {
+                    const item = {};
+                    for (let key in rawItem) {
+                        item[key.trim().toLowerCase()] = rawItem[key];
+                    }
+                    if (item.id) {
+                        const docId = item.id.toString();
+                        const prodRef = db.collection('produtos').doc(docId);
+                        batch.set(prodRef, item);
+                    }
+                });
 
-                        // Verifica se o ID existe de facto antes de gravar
-                        if (item.id) {
-                            const docId = item.id.toString();
-                            const prodRef = db.collection('produtos').doc(docId);
-                            batch.set(prodRef, item);
-                        }
-                    });
+                await batch.commit();
+                
+                showToast("Catálogo atualizado com sucesso!");
+                loadProductsFromDB(); // Atualiza a tela
 
-                    await batch.commit();
-                    
-                    showToast("Catálogo atualizado com sucesso!");
-                    loadProductsFromDB(); 
-
-                } catch (e) {
-                    console.error(e);
-                    showToast("Erro ao sincronizar com a planilha. Verifique a consola.");
-                } finally {
-                    btn.disabled = false;
-                    btn.textContent = "🔄 IMPORTAR DA PLANILHA";
-                }
+            } catch (e) {
+                console.error(e);
+                showToast("Erro ao sincronizar com a planilha.");
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "🔄 IMPORTAR DA PLANILHA";
             }
+        }
     </script>
 </body>
 </html>
