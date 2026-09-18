@@ -3221,35 +3221,46 @@
             const btn = document.getElementById('btn-sync-planilha');
             btn.disabled = true;
             btn.textContent = "BAIXANDO DA PLANILHA...";
-
+        
             try {
                 // 1. Puxa os dados da sua planilha via Apps Script
                 const response = await fetch(DATABASE_URL, { redirect: "follow" });
                 const rawData = await response.json();
-
+        
                 if (!Array.isArray(rawData)) throw new Error("Erro no formato da planilha.");
-
-                btn.textContent = "ATUALIZANDO SITE...";
-
-                // 2. Grava todos os produtos na coleção 'produtos' do Firestore
+        
+                btn.textContent = "LIMPANDO E ATUALIZANDO...";
+        
                 const batch = db.batch();
+        
+                // 2. Apaga TODOS os produtos antigos do Firestore para evitar duplicatas "fantasmas"
+                const snapshot = await db.collection('produtos').get();
+                snapshot.forEach(doc => {
+                    batch.delete(doc.ref);
+                });
+        
+                // 3. Grava apenas os produtos que existem atualmente na planilha
                 rawData.forEach(rawItem => {
                     const item = {};
+                    // Normaliza as colunas da planilha para minúsculas
                     for (let key in rawItem) {
                         item[key.trim().toLowerCase()] = rawItem[key];
                     }
-                    if (item.id) {
-                        const docId = item.id.toString();
+                    
+                    // Só importa se a linha realmente tiver um ID e um Nome válido
+                    if (item.id && item.name) {
+                        const docId = item.id.toString().trim();
                         const prodRef = db.collection('produtos').doc(docId);
                         batch.set(prodRef, item);
                     }
                 });
-
+        
+                // Executa a limpeza e a gravação de uma só vez
                 await batch.commit();
                 
-                showToast("Catálogo atualizado com sucesso!");
-                loadProductsFromDB(); // Atualiza a tela
-
+                showToast("Catálogo sincronizado com sucesso!");
+                loadProductsFromDB(); // Atualiza a tela imediatamente
+        
             } catch (e) {
                 console.error(e);
                 showToast("Erro ao sincronizar com a planilha.");
