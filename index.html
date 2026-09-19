@@ -392,6 +392,17 @@
 </head>
 <body>
 
+    <!-- Banner de aviso para In-App Browsers -->
+<div id="webview-banner" style="display: none; background-color: #ff3b30; color: white; padding: 15px 20px; text-align: center; font-family: sans-serif; position: fixed; top: 0; left: 0; width: 100%; z-index: 9999; box-sizing: border-box; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+  <p style="margin: 0; font-size: 14px; line-height: 1.4;">
+    <strong>Aviso:</strong> Você está usando o navegador do WhatsApp.<br>
+    Para conseguir fazer login e finalizar sua compra na Vericta Store, toque no ícone de opções <strong>(três pontinhos ou bússola/Safari)</strong> e escolha <strong>"Abrir no navegador"</strong>.
+  </p>
+  <button onclick="fecharBanner()" style="margin-top: 10px; background: white; color: #ff3b30; border: none; padding: 8px 16px; border-radius: 4px; font-weight: bold; cursor: pointer;">
+    Entendi
+  </button>
+</div>
+
     <header>
         <div class="nav-container">
             <button class="mobile-menu-btn" onclick="toggleMobileMenu()">&#9776;</button>
@@ -3269,6 +3280,30 @@
                 btn.textContent = "🔄 IMPORTAR DA PLANILHA";
             }
         }
+
+            function detectarWebView() {
+                // Pega as informações do navegador do usuário
+                const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+                
+                // Expressão regular para encontrar os principais navegadores internos (WhatsApp, Instagram, Facebook)
+                const regrasInApp = /WhatsApp|Instagram|FBAV|FBAN/i;
+
+                // Se o userAgent bater com a regra, exibe o banner
+                if (regrasInApp.test(userAgent)) {
+                document.getElementById('webview-banner').style.display = 'block';
+                // Opcional: Adiciona uma margem no topo do body para o banner não cobrir o menu
+                document.body.style.marginTop = '100px'; 
+                }
+            }
+
+            // Função para o botão de fechar o banner
+            function fecharBanner() {
+                document.getElementById('webview-banner').style.display = 'none';
+                document.body.style.marginTop = '0px';
+            }
+
+            // Roda a detecção assim que a página carregar
+            document.addEventListener('DOMContentLoaded', detectarWebView);
     </script>
 </body>
 </html>
