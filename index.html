@@ -66,6 +66,18 @@
         .hero-slide img { width: 100%; height: 100%; object-fit: cover; object-position: right center; }
         .hero-slide::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to right, var(--bg-cream) 0%, var(--bg-cream) 35%, transparent 70%); pointer-events: none; z-index: 0;}
         
+        /* Estilo para o slide de vídeo (Alinhado à direita, preenchendo a tela) */
+        .hero-slide video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* Faz o vídeo preencher a área sem barras pretas */
+            object-position: right center; /* Fixa o vídeo na direita da tela */
+            z-index: -1;
+        }
+
         .hero-content { position: relative; z-index: 2; padding: 0 70px; max-width: 650px; width: 100%; }
         .hero-title { font-family: 'Montserrat', sans-serif; font-size: 56px; font-weight: 800; color: var(--primary-gold); line-height: 1.1; margin-bottom: 16px; text-transform: uppercase; }
         .hero-subtitle { font-size: 18px; color: var(--text-main); margin-bottom: 30px; font-weight: 500; }
@@ -800,7 +812,23 @@
                 </button>
 
                 <div class="hero-slider" id="hero-slider">
+                    <!-- 1. VÍDEO COMO PRIMEIRO ITEM -->
                     <div class="hero-slide active">
+                        <video autoplay muted loop playsinline>
+                            <source src="https://res.cloudinary.com/ofymcuuj/video/upload/v1790021161/Vericta_site_2.mp4" type="video/mp4">
+                            Seu navegador não suporta vídeos.
+                        </video>
+                        
+                        <!-- Texto que vai ficar na esquerda sobre o degradê -->
+                        <div class="hero-content">
+                            <h1 class="hero-title">SEJA<br>ÚNICA</h1>
+                            <p class="hero-subtitle">Só aqui você consegue ser única no seu esporte, com os macaquinhos personalizados Vericta.</p>
+                            <button class="btn-hero" onclick="document.getElementById('catalog-container').scrollIntoView({behavior: 'smooth'})">Comprar Agora</button>
+                        </div>
+                    </div>
+
+                    <!-- 2. Lançamento 1 -->
+                    <div class="hero-slide">
                         <picture>
                             <source media="(max-width: 900px)" srcset="https://res.cloudinary.com/ofymcuuj/image/upload/v1786402319/Centering_person_in_image_202608101950.jpg">
                             <img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786399017/Complete_image_leaving_person_un__202608101856_2.jpg" alt="Lançamento 1">
@@ -811,6 +839,8 @@
                             <button class="btn-hero" onclick="irParaLancamentos()">Ver Lançamentos</button>
                         </div>
                     </div>
+                    
+                    <!-- 3. Lançamento 2 -->
                     <div class="hero-slide">
                         <picture>
                             <source media="(max-width: 900px)" srcset="https://res.cloudinary.com/ofymcuuj/image/upload/v1786402318/Centering_person_in_image_202608101950_1.jpg">
@@ -822,6 +852,8 @@
                             <button class="btn-hero" onclick="document.getElementById('catalog-container').scrollIntoView({behavior: 'smooth'})">Comprar Agora</button>
                         </div>
                     </div>
+                    
+                    <!-- 4. Materiais e Tecidos -->
                     <div class="hero-slide">
                         <picture>
                             <source media="(max-width: 900px)" srcset="https://res.cloudinary.com/ofymcuuj/image/upload/v1786402319/Person_centered_in_image_202608101950.jpg">
@@ -833,6 +865,8 @@
                             <button class="btn-hero" onclick="showMaterialsPage(true)">Ver Materiais</button>
                         </div>
                     </div>
+                    
+                    <!-- 5. Área de Clientes -->
                     <div class="hero-slide">
                         <picture>
                             <source media="(max-width: 900px)" srcset="https://images.unsplash.com/photo-1518310383802-640c2de311b2?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80">
@@ -867,7 +901,7 @@
                         <div class="clients-slider-item" onclick="openLightboxImage('https://res.cloudinary.com/ofymcuuj/image/upload/v1786567654/imagem_2026-08-12_174739970.png')"><img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786567654/imagem_2026-08-12_174739970.png" alt="Cliente"></div>
                         <div class="clients-slider-item" onclick="openLightboxImage('https://res.cloudinary.com/ofymcuuj/image/upload/v1786567571/imagem_2026-08-12_174615963.png')"><img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786567571/imagem_2026-08-12_174615963.png" alt="Cliente"></div>
                         <div class="clients-slider-item" onclick="openLightboxImage('https://res.cloudinary.com/ofymcuuj/image/upload/v1786627473/01.jpg')"><img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786627473/01.jpg" alt="Cliente"></div>
-                        <div class="clients-slider-item" onclick="openLightboxImage('https://res.cloudinary.com/ofymcuuj/image/upload/v1786627473/04.jpg')"><img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786627473/04.jpg" alt="Cliente"></div>
+                        <div class="clients-slider-item" onclick="openLightboxImage('https://res.cloudinary.com/ofymcuuj/image/upload/v1786627473/04.jpg')"><img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786627472/04.jpg" alt="Cliente"></div>
                         <div class="clients-slider-item" onclick="openLightboxImage('https://res.cloudinary.com/ofymcuuj/image/upload/v1786627472/02.jpg')"><img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786627472/02.jpg" alt="Cliente"></div>
                         <div class="clients-slider-item" onclick="openLightboxImage('https://res.cloudinary.com/ofymcuuj/image/upload/v1786627472/03.jpg')"><img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786627472/03.jpg" alt="Cliente"></div>
                         <div class="clients-slider-item" onclick="openLightboxImage('https://res.cloudinary.com/ofymcuuj/image/upload/v1786627472/05.jpg')"><img src="https://res.cloudinary.com/ofymcuuj/image/upload/v1786627472/05.jpg" alt="Cliente"></div>
@@ -1565,7 +1599,7 @@
             clearInterval(heroTimer);
             heroTimer = setInterval(() => {
                 moveHeroSlide(1);
-            }, 6000); 
+            }, 15000); // <-- Alterado de 6000 para 15000 ms (15 segundos)
         }
 
         function formatMoney(value) { return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
